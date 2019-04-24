@@ -3,12 +3,44 @@
 using namespace cv;
 using namespace std;
 
+//Global variables
+Mat frame, frame_HSV, frame_threshold;
+
+//Variables for HSV
 const int max_value_H = 360 / 2;
 const int max_value = 255;
 const String window_capture_name = "Video Capture";
 const String window_detection_name = "Object Detection";
-int low_H = 0, low_S = 0, low_V = 0;
-int high_H = max_value_H, high_S = max_value, high_V = max_value;
+int low_H = 68, low_S = 110, low_V = 171;
+int high_H = 93, high_S = max_value, high_V = max_value;
+
+//Variables for areabar
+int areaSliderMin = 1000;
+int areaSliderMax = 70000;
+
+cv::Ptr<cv::SimpleBlobDetector> detector;
+cv::Mat blobImg;
+cv::SimpleBlobDetector::Params params;
+std::vector<cv::KeyPoint> myBlobs;
+cv::Mat inputImg;
+
+
+void areaBar(int, void*) {
+	params.minDistBetweenBlobs = 1.0;    //Minimum 1 pixel between blobs
+	params.filterByArea = true;            //Checking for area
+	params.filterByColor = false;        //We're doing a binary detection, we don't want color
+	params.minArea = areaSliderMin;        //Minimum value of the area
+	params.maxArea = areaSliderMax;        //Maximum value of the area
+	params.thresholdStep = 100;            //Slider steps
+	params.blobColor = 0;                //Color we're checking for
+	params.filterByCircularity = false;    //We dont check for circularity
+	params.filterByInertia = false;        //We dont check for Intertia
+	params.filterByConvexity = false;    //We dont check for convexity
+
+	//Creating a detector with the settings above
+	 detector = cv::SimpleBlobDetector::create(params);
+
+}
 
 static void on_low_H_thresh_trackbar(int, void *)
 {
@@ -43,6 +75,21 @@ static void on_high_V_thresh_trackbar(int, void *)
 
 int main(int argc, const char** argv)
 {
+	params.minDistBetweenBlobs = 1.0;    //Minimum 1 pixel between blobs
+	params.filterByArea = true;            //Checking for area
+	params.filterByColor = false;        //We're doing a binary detection, we don't want color
+	params.minArea = areaSliderMin;        //Minimum value of the area
+	params.maxArea = areaSliderMax;        //Maximum value of the area
+	params.thresholdStep = 100;            //Slider steps
+	params.blobColor = 0;                //Color we're checking for
+	params.filterByCircularity = false;    //We dont check for circularity
+	params.filterByInertia = false;        //We dont check for Intertia
+	params.filterByConvexity = false;    //We dont check for convexity
+
+	//Creating a detector with the settings above
+	detector = cv::SimpleBlobDetector::create(params);
+
+
 	namedWindow(window_capture_name);
 	namedWindow(window_detection_name);
 
@@ -54,8 +101,9 @@ int main(int argc, const char** argv)
 	createTrackbar("Low V", window_detection_name, &low_V, max_value, on_low_V_thresh_trackbar);
 	createTrackbar("High V", window_detection_name, &high_V, max_value, on_high_V_thresh_trackbar);
 
+	createTrackbar("area", window_detection_name, &areaSliderMin, areaSliderMax, areaBar);
 
-	Mat frame, frame_HSV, frame_threshold;
+	
 
 	VideoCapture cap(0);
 	if (!cap.isOpened()) {
@@ -78,6 +126,22 @@ int main(int argc, const char** argv)
 		// Show the frames
 		imshow(window_capture_name, frame);
 		imshow(window_detection_name, frame_threshold);
+		
+
+		//Detecting the blobs
+		detector->detect(frame_threshold, myBlobs);
+
+		//Drawing keypoints (red circles)
+		drawKeypoints(frame_threshold, myBlobs, blobImg, cv::Scalar(0, 0, 255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+
+		//For text drawing purposes
+		for (cv::KeyPoint k : myBlobs)
+		{
+			putText(blobImg, std::to_string(k.size), cv::Point(k.pt.x, k.pt.y), cv::FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0, 255, 0), 2.0);
+		}
+
+		//Showing the text
+		cv::imshow("binair beeld", blobImg);
 
 		//imshow("test", frame);
 		waitKey(5);
