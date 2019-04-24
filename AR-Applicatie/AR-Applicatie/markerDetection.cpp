@@ -3,6 +3,9 @@
 using namespace cv;
 using namespace std;
 
+struct Points {
+	float x, y;
+};
 //Global variables
 Mat frame, frame_HSV, frame_threshold;
 
@@ -134,6 +137,15 @@ int main(int argc, const char** argv)
 		//Drawing keypoints (red circles)
 		drawKeypoints(frame_threshold, myBlobs, blobImg, cv::Scalar(0, 0, 255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
+		for (cv::KeyPoint k : myBlobs) 
+		{
+			
+
+			Points points{ k.pt.x, k.pt.y };
+
+			cout << points.x << endl;
+			
+		}
 		//For text drawing purposes
 		for (cv::KeyPoint k : myBlobs)
 		{
