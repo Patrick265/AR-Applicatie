@@ -3,8 +3,8 @@
 #include "markerDetection.h"
 
 /*
-	This class is used for marker detection
-	Author: Tim de Booij, Max van Noordennen, Tom Martens
+//	This class is used for marker detection
+//	Author: Tim de Booij, Max van Noordennen, Tom Martens
 */
 
 
@@ -44,11 +44,11 @@ int areaSliderMax = 70000;
 
 
 /*
-	This function is a callback and used for setting the params and changing the params.
-
-	@param int is for callback
-	@param void* is for the callback
-	
+//	This function is a callback and used for setting the params and changing the params.
+//
+//	@param int is for callback
+//	@param void* is for the callback
+//	
 */
 void areaBar(int, void*) {
 	params.minDistBetweenBlobs = 1.0;    //Minimum 1 pixel between blobs
@@ -69,84 +69,95 @@ void areaBar(int, void*) {
 
 }
 
-static void onLowHThreshTrackbar(int, void *)
-*/
-
-	@param void* is for the callback
-	@param int is for callback
-
-	This function is a callback and used for changing the low_H
 /*
+//  This function is a callback and used for changing the low_H
+//
+//	@param void* is for the callback
+//	@param int is for callback
+//
+*/
+static void onLowHThreshTrackbar(int, void *)
 {
 	lowH = cv::min(highH - 1, lowH);
 	cv::setTrackbarPos("Low H", windowDetectionName, lowH);
 }
-static void onHighHThreshTrackbar(int, void *)
+
+/*
+//  This function is a callback and used for changing the high_H
+//
+//	@param void* is for the callback
+//	@param int is for callback
+//
 */
 
-	@param void* is for the callback
-	@param int is for callback
-
-	This function is a callback and used for changing the high_H
-/*
-
+static void onHighHThreshTrackbar(int, void *)
 {
 	highH = cv::max(highH, lowH + 1);
 	cv::setTrackbarPos("High H", windowDetectionName, highH);
 }
-static void onLowSThreshTrackbar(int, void *)
 
 /*
-
-	This function is a callback and used for changing the low_S
-	@param int is for callback
-	@param void* is for the callback
-
+//
+//	This function is a callback and used for changing the low_S
+//
+//	@param int is for callback
+//	@param void* is for the callback
+//
 */
+static void onLowSThreshTrackbar(int, void *)
 {
 	lowS = cv::min(highS - 1, lowS);
 	cv::setTrackbarPos("Low S", windowDetectionName, lowS);
 }
-static void onHighSThreshTrackbar(int, void *)
 
 /*
-	This function is a callback and used for changing the high_S
-
-	@param int is for callback
-	@param void* is for the callback
-
+//	This function is a callback and used for changing the high_S
+//
+//	@param int is for callback
+//	@param void* is for the callback
+//
 */
+static void onHighSThreshTrackbar(int, void *)
 {
 	highS = cv::max(highS, lowS + 1);
 	cv::setTrackbarPos("High S", windowDetectionName, highS);
 }
-static void onLowVThreshTrackbar(int, void *)
 
 /*
-	This function is a callback and used for changing the low_V
-
-	@param int is for callback
-	@param void* is for the callback
-
+//	This function is a callback and used for changing the low_V
+//
+//	@param int is for callback
+//	@param void* is for the callback
+//
 */
+static void onLowVThreshTrackbar(int, void *)
 {
 	lowV = cv::min(highV - 1, lowV);
 	cv::setTrackbarPos("Low V", windowDetectionName, lowV);
 }
-static void onHighVThreshTrackbar(int, void *)
 
-	This function is a callback and used for changing the high_V
 /*
-
-	@param int is for callback
-	@param void* is for the callback
-
+//	This function is a callback and used for changing the high_V
+//
+//	@param int is for callback
+//	@param void* is for the callback
+//
 */
+static void onHighVThreshTrackbar(int, void *)
 {
 	highV = cv::max(highV, lowV + 1);
 	cv::setTrackbarPos("High V", windowDetectionName, highV);
 }
 
+/*
+//	This function is used for checking the bounds of the debug screen
+//
+//	@param cv::Point point1 is used for checking the x and the y value of the first point
+//	@param cv::Point point2 is used for checking the x and the y value of the second point
+//
+//	@return returnvalue returns the value 0 or 1, 0 for not in bounds and 1 for in bounds
+//
+*/
 int checkBounds(cv::Point point1, cv::Point point2) {
 	int returnValue = 0;
 	if (markerPosition.x >= point1.x && markerPosition.x <= point2.x && markerPosition.y >= point1.y && markerPosition.y <= point2.y) {
@@ -157,6 +168,9 @@ int checkBounds(cv::Point point1, cv::Point point2) {
 	return returnValue;
 }
 
+/*
+//	This function is used for detecting the marker
+*/
 void detectMarker() {
 	int size = 0;
 	for (cv::KeyPoint k : myBlobs)
@@ -170,6 +184,9 @@ void detectMarker() {
 	}
 }
 
+/*
+//	this function is used for drawing the bounds of the debug screen
+*/
 void drawBounds() {
 	//Draw Horizontal raster
 	cv::line(blobImg, cv::Point(0, height / SCREEN_DIVIDER_RATIO), cv::Point(width, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 255, 255), 2);
@@ -181,6 +198,9 @@ void drawBounds() {
 
 }
 
+/*
+// this function is used for checking the bounds of the debug screen
+*/
 void checkBounds() {
 	//Check left bound
 	if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO)) == 1) {
@@ -208,6 +228,11 @@ void checkBounds() {
 	}
 }
 
+/*
+// this function is used for starting the markerdetection
+//
+// @param input this is the input for what modus you want to be in, 0 for Webcam and 1 for mouse and keyboard
+*/
 int runMarkerDetection(int input)
 {
 	if (input == MARKERDETECTION_WITH_OPENCV) {
