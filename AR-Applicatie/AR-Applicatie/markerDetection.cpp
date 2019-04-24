@@ -1,5 +1,9 @@
 #include <opencv2/opencv.hpp>
 
+/*
+	This class is used for marker detection
+	Author: Tim de Booij, Max van Noordennen, Tom Martens
+*/
 using namespace cv;
 using namespace std;
 
@@ -32,6 +36,13 @@ cv::SimpleBlobDetector::Params params;
 std::vector<cv::KeyPoint> myBlobs;
 cv::Mat inputImg;
 
+/*
+	This function is a callback and used for setting the params and changing the params.
+
+	@param int is for callback
+	@param void* is for the callback
+	
+*/
 void areaBar(int, void*) {
 	params.minDistBetweenBlobs = 1.0;    //Minimum 1 pixel between blobs
 	params.filterByArea = true;            //Checking for area
@@ -49,31 +60,78 @@ void areaBar(int, void*) {
 
 }
 
+/*
+	This function is a callback and used for changing the low_H
+
+	@param int is for callback
+	@param void* is for the callback
+
+*/
 static void on_low_H_thresh_trackbar(int, void *)
 {
 	low_H = min(high_H - 1, low_H);
 	setTrackbarPos("Low H", window_detection_name, low_H);
 }
+
+/*
+	This function is a callback and used for changing the high_H
+
+	@param int is for callback
+	@param void* is for the callback
+
+*/
 static void on_high_H_thresh_trackbar(int, void *)
 {
 	high_H = max(high_H, low_H + 1);
 	setTrackbarPos("High H", window_detection_name, high_H);
 }
+
+/*
+	This function is a callback and used for changing the low_S
+
+	@param int is for callback
+	@param void* is for the callback
+
+*/
 static void on_low_S_thresh_trackbar(int, void *)
 {
 	low_S = min(high_S - 1, low_S);
 	setTrackbarPos("Low S", window_detection_name, low_S);
 }
+
+/*
+	This function is a callback and used for changing the high_S
+
+	@param int is for callback
+	@param void* is for the callback
+
+*/
 static void on_high_S_thresh_trackbar(int, void *)
 {
 	high_S = max(high_S, low_S + 1);
 	setTrackbarPos("High S", window_detection_name, high_S);
 }
+
+/*
+	This function is a callback and used for changing the low_V
+
+	@param int is for callback
+	@param void* is for the callback
+
+*/
 static void on_low_V_thresh_trackbar(int, void *)
 {
 	low_V = min(high_V - 1, low_V);
 	setTrackbarPos("Low V", window_detection_name, low_V);
 }
+
+/*
+	This function is a callback and used for changing the high_V
+
+	@param int is for callback
+	@param void* is for the callback
+
+*/
 static void on_high_V_thresh_trackbar(int, void *)
 {
 	high_V = max(high_V, low_V + 1);
