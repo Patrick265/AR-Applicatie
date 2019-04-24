@@ -15,8 +15,8 @@ const int max_value_H = 360 / 2;
 const int max_value = 255;
 const String window_capture_name = "Video Capture";
 const String window_detection_name = "Object Detection";
-int low_H = 68, low_S = 110, low_V = 171;
-int high_H = 93, high_S = max_value, high_V = max_value;
+int low_H = 0, low_S = 200, low_V = 115;
+int high_H = 180, high_S = max_value, high_V = max_value;
 
 //Variables for camera
 int width;
@@ -40,9 +40,12 @@ void areaBar(int, void*) {
 	params.maxArea = areaSliderMax;        //Maximum value of the area
 	params.thresholdStep = 100;            //Slider steps
 	params.blobColor = 0;                //Color we're checking for
-	params.filterByCircularity = false;    //We dont check for circularity
+	params.filterByCircularity = true;    //We dont check for circularity
 	params.filterByInertia = false;        //We dont check for Intertia
-	params.filterByConvexity = false;    //We dont check for convexity
+	params.filterByConvexity = true;    //We dont check for convexity
+	params.minConvexity = 0.5;
+	params.minCircularity = 0.15;
+
 
 	//Creating a detector with the settings above
 	 detector = cv::SimpleBlobDetector::create(params);
@@ -100,9 +103,12 @@ int main(int argc, const char** argv)
 	params.maxArea = areaSliderMax;        //Maximum value of the area
 	params.thresholdStep = 100;            //Slider steps
 	params.blobColor = 0;                //Color we're checking for
-	params.filterByCircularity = false;    //We dont check for circularity
+	params.filterByCircularity = true;    //We dont check for circularity
 	params.filterByInertia = false;        //We dont check for Intertia
-	params.filterByConvexity = false;    //We dont check for convexity
+	params.filterByConvexity = true;    //We dont check for convexity
+	params.minConvexity = 0.5;
+	params.minCircularity = 0.15;
+
 
 	//Creating a detector with the settings above
 	detector = cv::SimpleBlobDetector::create(params);
