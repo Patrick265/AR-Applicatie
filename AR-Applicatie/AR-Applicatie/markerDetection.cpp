@@ -1,22 +1,29 @@
 #include <opencv2/opencv.hpp>
+#include <string>
 
-using namespace cv;
-using namespace std;
+#define SCREEN_DIVIDER_RATIO 5
+#define SCREEN_RIGHT_SIDE_BOUND_START 4
+
 
 struct Points {
 	float x, y;
 };
+
 //Global variables
-Mat frame, frame_HSV, frame_threshold;
-Point markerPosition;
+cv::Mat frame, frame_HSV, frame_threshold;
+cv::Point markerPosition;
+cv::Ptr<cv::SimpleBlobDetector> detector;
+cv::Mat blobImg;
+cv::SimpleBlobDetector::Params params;
+std::vector<cv::KeyPoint> myBlobs;
 
 //Variables for HSV
-const int max_value_H = 360 / 2;
-const int max_value = 255;
-const String window_capture_name = "Video Capture";
-const String window_detection_name = "Object Detection";
-int low_H = 0, low_S = 200, low_V = 115;
-int high_H = 180, high_S = max_value, high_V = max_value;
+const int maxValueH = 360 / 2;
+const int maxValue = 255;
+const std::string windowCaptureName = "Video Capture";
+const std::string windowDetectionName = "Object Detection";
+int lowH = 68, lowS = 110, lowV = 171;
+int highH = 93, highS = maxValue, highV = maxValue;
 
 //Variables for camera
 int width;
@@ -26,11 +33,7 @@ int height;
 int areaSliderMin = 1000;
 int areaSliderMax = 70000;
 
-cv::Ptr<cv::SimpleBlobDetector> detector;
-cv::Mat blobImg;
-cv::SimpleBlobDetector::Params params;
-std::vector<cv::KeyPoint> myBlobs;
-cv::Mat inputImg;
+
 
 void areaBar(int, void*) {
 	params.minDistBetweenBlobs = 1.0;    //Minimum 1 pixel between blobs
@@ -40,47 +43,44 @@ void areaBar(int, void*) {
 	params.maxArea = areaSliderMax;        //Maximum value of the area
 	params.thresholdStep = 100;            //Slider steps
 	params.blobColor = 0;                //Color we're checking for
-	params.filterByCircularity = true;    //We dont check for circularity
+	params.filterByCircularity = false;    //We dont check for circularity
 	params.filterByInertia = false;        //We dont check for Intertia
-	params.filterByConvexity = true;    //We dont check for convexity
-	params.minConvexity = 0.5;
-	params.minCircularity = 0.15;
-
+	params.filterByConvexity = false;    //We dont check for convexity
 
 	//Creating a detector with the settings above
 	 detector = cv::SimpleBlobDetector::create(params);
 
 }
 
-static void on_low_H_thresh_trackbar(int, void *)
+static void onLowHThreshTrackbar(int, void *)
 {
-	low_H = min(high_H - 1, low_H);
-	setTrackbarPos("Low H", window_detection_name, low_H);
+	lowH = cv::min(highH - 1, lowH);
+	cv::setTrackbarPos("Low H", windowDetectionName, lowH);
 }
-static void on_high_H_thresh_trackbar(int, void *)
+static void onHighHThreshTrackbar(int, void *)
 {
-	high_H = max(high_H, low_H + 1);
-	setTrackbarPos("High H", window_detection_name, high_H);
+	highH = cv::max(highH, lowH + 1);
+	cv::setTrackbarPos("High H", windowDetectionName, highH);
 }
-static void on_low_S_thresh_trackbar(int, void *)
+static void onLowSThreshTrackbar(int, void *)
 {
-	low_S = min(high_S - 1, low_S);
-	setTrackbarPos("Low S", window_detection_name, low_S);
+	lowS = cv::min(highS - 1, lowS);
+	cv::setTrackbarPos("Low S", windowDetectionName, lowS);
 }
-static void on_high_S_thresh_trackbar(int, void *)
+static void onHighSThreshTrackbar(int, void *)
 {
-	high_S = max(high_S, low_S + 1);
-	setTrackbarPos("High S", window_detection_name, high_S);
+	highS = cv::max(highS, lowS + 1);
+	cv::setTrackbarPos("High S", windowDetectionName, highS);
 }
-static void on_low_V_thresh_trackbar(int, void *)
+static void onLowVThreshTrackbar(int, void *)
 {
-	low_V = min(high_V - 1, low_V);
-	setTrackbarPos("Low V", window_detection_name, low_V);
+	lowV = cv::min(highV - 1, lowV);
+	cv::setTrackbarPos("Low V", windowDetectionName, lowV);
 }
-static void on_high_V_thresh_trackbar(int, void *)
+static void onHighVThreshTrackbar(int, void *)
 {
-	high_V = max(high_V, low_V + 1);
-	setTrackbarPos("High V", window_detection_name, high_V);
+	highV = cv::max(highV, lowV + 1);
+	cv::setTrackbarPos("High V", windowDetectionName, highV);
 }
 
 int checkBounds(cv::Point point1, cv::Point point2) {
@@ -103,34 +103,31 @@ int main(int argc, const char** argv)
 	params.maxArea = areaSliderMax;        //Maximum value of the area
 	params.thresholdStep = 100;            //Slider steps
 	params.blobColor = 0;                //Color we're checking for
-	params.filterByCircularity = true;    //We dont check for circularity
+	params.filterByCircularity = false;    //We dont check for circularity
 	params.filterByInertia = false;        //We dont check for Intertia
-	params.filterByConvexity = true;    //We dont check for convexity
-	params.minConvexity = 0.5;
-	params.minCircularity = 0.15;
-
+	params.filterByConvexity = false;    //We dont check for convexity
 
 	//Creating a detector with the settings above
 	detector = cv::SimpleBlobDetector::create(params);
 
 
-	namedWindow(window_capture_name);
-	namedWindow(window_detection_name);
+	cv::namedWindow(windowCaptureName);
+	cv::namedWindow(windowDetectionName);
 
 	// Trackbars to set thresholds for HSV values
-	createTrackbar("Low H", window_detection_name, &low_H, max_value_H, on_low_H_thresh_trackbar);
-	createTrackbar("High H", window_detection_name, &high_H, max_value_H, on_high_H_thresh_trackbar);
-	createTrackbar("Low S", window_detection_name, &low_S, max_value, on_low_S_thresh_trackbar);
-	createTrackbar("High S", window_detection_name, &high_S, max_value, on_high_S_thresh_trackbar);
-	createTrackbar("Low V", window_detection_name, &low_V, max_value, on_low_V_thresh_trackbar);
-	createTrackbar("High V", window_detection_name, &high_V, max_value, on_high_V_thresh_trackbar);
+	cv::createTrackbar("Low H", windowDetectionName, &lowH, maxValueH, onLowHThreshTrackbar);
+	cv::createTrackbar("High H", windowDetectionName, &highH, maxValueH, onHighHThreshTrackbar);
+	cv::createTrackbar("Low S", windowDetectionName, &lowS, maxValue, onLowSThreshTrackbar);
+	cv::createTrackbar("High S", windowDetectionName, &highS, maxValue, onHighSThreshTrackbar);
+	cv::createTrackbar("Low V", windowDetectionName, &lowV, maxValue, onLowVThreshTrackbar);
+	cv::createTrackbar("High V", windowDetectionName, &highV, maxValue, onHighVThreshTrackbar);
 
-	createTrackbar("area", window_detection_name, &areaSliderMin, areaSliderMax, areaBar);
+	cv::createTrackbar("area", windowDetectionName, &areaSliderMin, areaSliderMax, areaBar);
 
 
-	VideoCapture cap(0);
+	cv::VideoCapture cap(0);
 	if (!cap.isOpened()) {
-		cerr << "No camera detected on this system" << endl;
+		std::cerr << "No camera detected on this system" << std::endl;
 		return -1;
 	}
 
@@ -140,19 +137,19 @@ int main(int argc, const char** argv)
 	while (true) {
 		cap >> frame;
 		if (frame.empty()) {
-			cerr << "Frame invalid and skipped!" << endl;
+			std::cerr << "Frame invalid and skipped!" << std::endl;
 			continue;
 		}
 		flip(frame, frame, 1);
 
 
 		// Convert from BGR to HSV colorspace
-		cvtColor(frame, frame_HSV, COLOR_BGR2HSV);
+		cvtColor(frame, frame_HSV, cv::COLOR_BGR2HSV);
 		// Detect the object based on HSV Range Values
-		inRange(frame_HSV, Scalar(low_H, low_S, low_V), Scalar(high_H, high_S, high_V), frame_threshold);
+		inRange(frame_HSV, cv::Scalar(lowH, lowS, lowV), cv::Scalar(highH, highS, highV), frame_threshold);
 		// Show the frames
-		imshow(window_capture_name, frame);
-		imshow(window_detection_name, frame_threshold);
+		imshow(windowCaptureName, frame);
+		imshow(windowDetectionName, frame_threshold);
 		
 
 		//Detecting the blobs
@@ -177,26 +174,38 @@ int main(int argc, const char** argv)
 			putText(blobImg, std::to_string(k.size), cv::Point(k.pt.x, k.pt.y), cv::FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0, 255, 0), 2.0);
 		}
 
-		cv::line(blobImg, cv::Point(0, height/5), cv::Point(width,height/5), CV_RGB(255, 255, 255), 2);
-		cv::line(blobImg, cv::Point(0, height /5 * 4), cv::Point(width, height / 5 * 4), CV_RGB(255, 255, 255), 2);
+		//Draw Horizontal raster
+		cv::line(blobImg, cv::Point(0, height/SCREEN_DIVIDER_RATIO), cv::Point(width,height/SCREEN_DIVIDER_RATIO), CV_RGB(255, 255, 255), 2);
+		cv::line(blobImg, cv::Point(0, height /SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), cv::Point(width, height /SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 255, 255), 2);
 
-		cv::line(blobImg, cv::Point(width / 5, 0), cv::Point(width / 5, height ), CV_RGB(255, 255, 255), 2);
-		cv::line(blobImg, cv::Point(width / 5 * 4, 0), cv::Point(width / 5 * 4, height), CV_RGB(255, 255, 255), 2);
+		//Draw Vertical raster
+		cv::line(blobImg, cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO, height ), CV_RGB(255, 255, 255), 2);
+		cv::line(blobImg, cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height), CV_RGB(255, 255, 255), 2);
 
-		if (checkBounds(cv::Point(width / 5, 0), cv::Point(width / 5 * 4, height / 5)) == 1) {
-			cv::rectangle(blobImg, cv::Point(width / 5, 0), cv::Point(width / 5 * 4, height / 5), CV_RGB(255, 0, 0), 5, 1, 0);
+
+		//Check left bound
+		if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO)) == 1) {
+			cv::rectangle(blobImg, cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 0, 0), 5, 1, 0);
 		}
-		if (checkBounds(cv::Point(0, height / 5), cv::Point(width / 5, height / 5 * 4)) == 1) {
-			cv::rectangle(blobImg, cv::Point(0, height/5), cv::Point(width/5, height/5*4), CV_RGB(255, 0, 0), 5, 1, 0);
+
+		//Check Upper bound
+		if (checkBounds(cv::Point(0, height / SCREEN_DIVIDER_RATIO), cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START)) == 1) {
+			cv::rectangle(blobImg, cv::Point(0, height/5), cv::Point(width/ SCREEN_DIVIDER_RATIO, height/ SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
 		}
-		if (checkBounds(cv::Point(width/5*4, height / 5), cv::Point(width, height / 5 * 4)) == 1) {
-			cv::rectangle(blobImg, cv::Point(width / 5 * 4, height / 5), cv::Point(width, height / 5 * 4), CV_RGB(255, 0, 0), 5, 1, 0);
+
+		//Check right bound
+		if (checkBounds(cv::Point(width/ SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO), cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START)) == 1) {
+			cv::rectangle(blobImg, cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO), cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
 		}
-		if (checkBounds(cv::Point(width/5, height / 5*4), cv::Point(width / 5*4, height)) == 1) {
-			cv::rectangle(blobImg, cv::Point(width / 5, height / 5 * 4), cv::Point(width / 5 * 4, height), CV_RGB(255, 0, 0), 5, 1, 0);
+
+		//Check lower bound
+		if (checkBounds(cv::Point(width/5, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height)) == 1) {
+			cv::rectangle(blobImg, cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height), CV_RGB(255, 0, 0), 5, 1, 0);
 		}
-		if (checkBounds(cv::Point(width / 5, height / 5), cv::Point(width / 5 * 4, height/5*4)) == 1) {
-			cv::rectangle(blobImg, cv::Point(width / 5, height / 5), cv::Point(width / 5 * 4, height / 5 * 4), CV_RGB(255, 0, 0), 5, 1, 0);
+
+		//Check middle bound
+		if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height/ SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START)) == 1) {
+			cv::rectangle(blobImg, cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
 		}
 		
 		
@@ -204,7 +213,7 @@ int main(int argc, const char** argv)
 		cv::imshow("binair beeld", blobImg);
 
 		//imshow("test", frame);
-		waitKey(5);
+		cv::waitKey(5);
 	}
 
 	return 0;
