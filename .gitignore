@@ -19,7 +19,7 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-# *.dll
+*.dll
 
 # Fortran module files
 *.mod
@@ -66,10 +66,14 @@ x86/
 [Aa][Rr][Mm]64/
 bld/
 [Bb]in/
-!*/freeglut/bin/
-!*/freeglut/bin/x64/
 [Oo]bj/
 [Ll]og/
+
+# Freeglut stuff
+!*/freeglut/bin/
+!*/freeglut/bin/x64/
+!*/freeglut/lib/
+!*/freeglut/lib/x64/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
