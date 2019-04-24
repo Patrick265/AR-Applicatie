@@ -1,28 +1,28 @@
 #include <GL/freeglut.h>
 #include <opencv2/opencv.hpp>
 #include <iostream>
-
+#include "markerDetection.h"
 void render(void);
 
 void keyboard(unsigned char c, int x, int y);
 
 void mouse(int button, int state, int x, int y);
 
-//int main(int argc, char** argv) {
-//	glutInit(&argc, argv);
-//	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-//	glutInitWindowPosition(100, 100);
-//	glutInitWindowSize(640, 480);
-//	glutCreateWindow("Simple GLUT Application");
-//
-//	glutDisplayFunc(render);
-//	glutKeyboardFunc(keyboard);
-//	glutMouseFunc(mouse);
-//
-//	
-//
-//	glutMainLoop();
-//}
+int main(int argc, char** argv) {
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+	glutInitWindowPosition(100, 100);
+	glutInitWindowSize(640, 480);
+	glutCreateWindow("Simple GLUT Application");
+
+	glutDisplayFunc(render);
+	glutKeyboardFunc(keyboard);
+	glutMouseFunc(mouse);
+
+	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
+
+	glutMainLoop();
+}
 
 void keyboard(unsigned char c, int x, int y) {
 	if (c == 27) {

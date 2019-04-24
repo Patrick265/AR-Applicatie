@@ -130,6 +130,9 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="markerDetection.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="markerDetection.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
