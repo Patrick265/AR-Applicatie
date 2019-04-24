@@ -8,6 +8,7 @@ struct Points {
 };
 //Global variables
 Mat frame, frame_HSV, frame_threshold;
+Point markerPosition;
 
 //Variables for HSV
 const int max_value_H = 360 / 2;
@@ -79,6 +80,16 @@ static void on_high_V_thresh_trackbar(int, void *)
 	setTrackbarPos("High V", window_detection_name, high_V);
 }
 
+int checkBounds(cv::Point point1, cv::Point point2) {
+	int returnValue = 0;
+	if (markerPosition.x >= point1.x && markerPosition.x <= point2.x && markerPosition.y >= point1.y && markerPosition.y <= point2.y) {
+		std::cout << "point is in bounds" << std::endl;
+		returnValue = 1;
+	}
+
+	return returnValue;
+}
+
 int main(int argc, const char** argv)
 {
 
@@ -126,7 +137,7 @@ int main(int argc, const char** argv)
 			cerr << "Frame invalid and skipped!" << endl;
 			continue;
 		}
-
+		flip(frame, frame, 1);
 
 
 		// Convert from BGR to HSV colorspace
@@ -144,9 +155,15 @@ int main(int argc, const char** argv)
 		//Drawing keypoints (red circles)
 		drawKeypoints(frame_threshold, myBlobs, blobImg, cv::Scalar(0, 0, 255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
+		int size = 0;
 		for (cv::KeyPoint k : myBlobs) 
 		{
-			Points points{ k.pt.x, k.pt.y };
+			if (k.size > size) {
+				Points points{ k.pt.x, k.pt.y };
+				markerPosition.x = k.pt.x;
+				markerPosition.y = k.pt.y;
+				size = k.size;
+			}
 		}
 		//For text drawing purposes
 		for (cv::KeyPoint k : myBlobs)
@@ -160,6 +177,23 @@ int main(int argc, const char** argv)
 		cv::line(blobImg, cv::Point(width / 5, 0), cv::Point(width / 5, height ), CV_RGB(255, 255, 255), 2);
 		cv::line(blobImg, cv::Point(width / 5 * 4, 0), cv::Point(width / 5 * 4, height), CV_RGB(255, 255, 255), 2);
 
+		if (checkBounds(cv::Point(width / 5, 0), cv::Point(width / 5 * 4, height / 5)) == 1) {
+			cv::rectangle(blobImg, cv::Point(width / 5, 0), cv::Point(width / 5 * 4, height / 5), CV_RGB(255, 0, 0), 5, 1, 0);
+		}
+		if (checkBounds(cv::Point(0, height / 5), cv::Point(width / 5, height / 5 * 4)) == 1) {
+			cv::rectangle(blobImg, cv::Point(0, height/5), cv::Point(width/5, height/5*4), CV_RGB(255, 0, 0), 5, 1, 0);
+		}
+		if (checkBounds(cv::Point(width/5*4, height / 5), cv::Point(width, height / 5 * 4)) == 1) {
+			cv::rectangle(blobImg, cv::Point(width / 5 * 4, height / 5), cv::Point(width, height / 5 * 4), CV_RGB(255, 0, 0), 5, 1, 0);
+		}
+		if (checkBounds(cv::Point(width/5, height / 5*4), cv::Point(width / 5*4, height)) == 1) {
+			cv::rectangle(blobImg, cv::Point(width / 5, height / 5 * 4), cv::Point(width / 5 * 4, height), CV_RGB(255, 0, 0), 5, 1, 0);
+		}
+		if (checkBounds(cv::Point(width / 5, height / 5), cv::Point(width / 5 * 4, height/5*4)) == 1) {
+			cv::rectangle(blobImg, cv::Point(width / 5, height / 5), cv::Point(width / 5 * 4, height / 5 * 4), CV_RGB(255, 0, 0), 5, 1, 0);
+		}
+		
+		
 		//Showing the text
 		cv::imshow("binair beeld", blobImg);
 
