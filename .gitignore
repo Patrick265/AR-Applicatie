@@ -66,6 +66,8 @@ x86/
 [Aa][Rr][Mm]64/
 bld/
 [Bb]in/
+!*/freeglut/bin/
+!*/freeglut/bin/x64/
 [Oo]bj/
 [Ll]og/
 
