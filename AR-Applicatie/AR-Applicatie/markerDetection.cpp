@@ -17,6 +17,10 @@ const String window_detection_name = "Object Detection";
 int low_H = 68, low_S = 110, low_V = 171;
 int high_H = 93, high_S = max_value, high_V = max_value;
 
+//Variables for camera
+int width;
+int height;
+
 //Variables for areabar
 int areaSliderMin = 1000;
 int areaSliderMax = 70000;
@@ -26,7 +30,6 @@ cv::Mat blobImg;
 cv::SimpleBlobDetector::Params params;
 std::vector<cv::KeyPoint> myBlobs;
 cv::Mat inputImg;
-
 
 void areaBar(int, void*) {
 	params.minDistBetweenBlobs = 1.0;    //Minimum 1 pixel between blobs
@@ -78,6 +81,7 @@ static void on_high_V_thresh_trackbar(int, void *)
 
 int main(int argc, const char** argv)
 {
+
 	params.minDistBetweenBlobs = 1.0;    //Minimum 1 pixel between blobs
 	params.filterByArea = true;            //Checking for area
 	params.filterByColor = false;        //We're doing a binary detection, we don't want color
@@ -106,7 +110,6 @@ int main(int argc, const char** argv)
 
 	createTrackbar("area", window_detection_name, &areaSliderMin, areaSliderMax, areaBar);
 
-	
 
 	VideoCapture cap(0);
 	if (!cap.isOpened()) {
@@ -114,12 +117,16 @@ int main(int argc, const char** argv)
 		return -1;
 	}
 
+	width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
+	height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+
 	while (true) {
 		cap >> frame;
 		if (frame.empty()) {
 			cerr << "Frame invalid and skipped!" << endl;
 			continue;
 		}
+
 
 
 		// Convert from BGR to HSV colorspace
@@ -139,18 +146,19 @@ int main(int argc, const char** argv)
 
 		for (cv::KeyPoint k : myBlobs) 
 		{
-			
-
 			Points points{ k.pt.x, k.pt.y };
-
-			cout << points.x << endl;
-			
 		}
 		//For text drawing purposes
 		for (cv::KeyPoint k : myBlobs)
 		{
 			putText(blobImg, std::to_string(k.size), cv::Point(k.pt.x, k.pt.y), cv::FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0, 255, 0), 2.0);
 		}
+
+		cv::line(blobImg, cv::Point(0, height/5), cv::Point(width,height/5), CV_RGB(255, 255, 255), 2);
+		cv::line(blobImg, cv::Point(0, height /5 * 4), cv::Point(width, height / 5 * 4), CV_RGB(255, 255, 255), 2);
+
+		cv::line(blobImg, cv::Point(width / 5, 0), cv::Point(width / 5, height ), CV_RGB(255, 255, 255), 2);
+		cv::line(blobImg, cv::Point(width / 5 * 4, 0), cv::Point(width / 5 * 4, height), CV_RGB(255, 255, 255), 2);
 
 		//Showing the text
 		cv::imshow("binair beeld", blobImg);
