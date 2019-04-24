@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.28307.329
+VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AR-Applicatie", "AR-Applicatie\AR-Applicatie.vcxproj", "{1B6774CB-EAD0-4020-B4AC-E5B19A4402DC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CV-Week1", "..\..\..\Vision\Computer-Vision\ComputerVision\CV-Week1\CV-Week1.vcxproj", "{A6BBD080-849A-4EEF-BD27-6CFCCB309E3D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,11 +23,19 @@ Global
 		{1B6774CB-EAD0-4020-B4AC-E5B19A4402DC}.Release|x64.Build.0 = Release|x64
 		{1B6774CB-EAD0-4020-B4AC-E5B19A4402DC}.Release|x86.ActiveCfg = Release|Win32
 		{1B6774CB-EAD0-4020-B4AC-E5B19A4402DC}.Release|x86.Build.0 = Release|Win32
+		{A6BBD080-849A-4EEF-BD27-6CFCCB309E3D}.Debug|x64.ActiveCfg = Debug|x64
+		{A6BBD080-849A-4EEF-BD27-6CFCCB309E3D}.Debug|x64.Build.0 = Debug|x64
+		{A6BBD080-849A-4EEF-BD27-6CFCCB309E3D}.Debug|x86.ActiveCfg = Debug|Win32
+		{A6BBD080-849A-4EEF-BD27-6CFCCB309E3D}.Debug|x86.Build.0 = Debug|Win32
+		{A6BBD080-849A-4EEF-BD27-6CFCCB309E3D}.Release|x64.ActiveCfg = Release|x64
+		{A6BBD080-849A-4EEF-BD27-6CFCCB309E3D}.Release|x64.Build.0 = Release|x64
+		{A6BBD080-849A-4EEF-BD27-6CFCCB309E3D}.Release|x86.ActiveCfg = Release|Win32
+		{A6BBD080-849A-4EEF-BD27-6CFCCB309E3D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {74BEE2D7-7269-4C80-B56F-74E1E97FF971}
+		SolutionGuid = {1F6C04E0-0B33-4C58-A96E-901D9D6B72C8}
 	EndGlobalSection
 EndGlobal
