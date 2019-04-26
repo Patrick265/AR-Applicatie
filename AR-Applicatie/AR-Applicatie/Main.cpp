@@ -1,7 +1,8 @@
-#include <GL/GLUT.h>
+#define _USE_MATH_DEFINES
+#include <cmath>
+
+#include <GL/freeglut.h>
 #include <opencv2/opencv.hpp>
-#include <iostream>
-#include <algorithm>
 
 #include "util/ObjLoader.h"
 #include "util/TextureHandler.h"
@@ -10,20 +11,34 @@
 const float WIDTH = 1600;
 const float HEIGHT = 800;
 
-float startTime;
-float currentTime;
+float lastFrameTime;
 
 float fTheta;
 
 std::vector<GameObject> game_objects;
 
-enum renderMode { ORTHO, PERSP };
-int currentRenderMode;
+// enum renderMode { ORTHO, PERSP };
+// int currentRenderMode;
 
-void render(void);
-void keyboard(unsigned char c, int x, int y);
-void mouse(int button, int state, int x, int y);
-void idle(void);
+struct Camera
+{
+	float
+	posX = 2,
+	posY = 2,
+	posZ = 2,
+	rotX = 45,
+	rotY = -45;
+} camera;
+
+bool keys[255];
+bool justMovedMouse = false;
+
+void onIdle();
+void onDisplay();
+void onKey(unsigned char c, int x, int y);
+void onKeyUp(unsigned char c, int x, int y);
+void onMousePassiveMotion(int x, int y);
+void moveCamera(float angle, float fac);
 
 void standardRenderOperations();
 void drawMesh(Graphics::mesh mesh, uint16_t texture_id);
@@ -31,17 +46,18 @@ void drawMesh(Graphics::mesh mesh, uint16_t texture_id);
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-	glutInitWindowPosition(100, 100);
+	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - WIDTH) / 2, (glutGet(GLUT_SCREEN_HEIGHT) - HEIGHT) / 2);
 	glutInitWindowSize(WIDTH, HEIGHT);
 	glutCreateWindow("Game Of Thrones: AR");
 
-	glutDisplayFunc(render);
-	glutKeyboardFunc(keyboard);
-	glutMouseFunc(mouse);
-	glutIdleFunc(idle);
+	glutIdleFunc(onIdle);
+	glutDisplayFunc(onDisplay);
+	glutKeyboardFunc(onKey);
+	glutKeyboardUpFunc(onKeyUp);
+	glutPassiveMotionFunc(onMousePassiveMotion);
 
-	Math::vec3d pos = { 0, 50, -30 };
-	Math::vec3d rot = { 90.0f, 0.0f, 0.0f };
+	Math::vec3d pos = { 2, 0, -2 };
+	Math::vec3d rot = { 0.0f, 0.0f, 0.0f };
 	Math::vec3d scale = { 1.0f, 1.0f, 1.0f };
 
 	GameObject obj1(ObjLoader::loadObj("Resources/Toot_Braustein/Toot_Braustein.obj"),
@@ -59,49 +75,42 @@ int main(int argc, char** argv) {
 	game_objects.push_back(obj1);
 	game_objects.push_back(obj2);
 
-	startTime = glutGet(GLUT_ELAPSED_TIME);
+	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
+	
+	glutWarpPointer(WIDTH / 2, HEIGHT / 2);
 
 	glutMainLoop();
 }
 
-void keyboard(unsigned char c, int x, int y) 
+void onIdle() 
 {
+	//Calculate delta time
+	float currentTime = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
+	float deltaTime = currentTime - lastFrameTime;
+	lastFrameTime = currentTime;
 
-	//Spacebar
-	if (c == 32) {
-		if (currentRenderMode == PERSP)
-			currentRenderMode = ORTHO;
-		else
-			currentRenderMode = PERSP;
-	}
+	fTheta += 30.0f * deltaTime;
 
-	if (c == 27) {
-		exit(0);
-	}
-}
-
-void mouse(int button, int state, int x, int y) {
-	if (button == GLUT_RIGHT_BUTTON) {
-		exit(0);
-	}
-}
-
-void idle(void) 
-{
-	//Deltatime
-	currentTime = glutGet(GLUT_ELAPSED_TIME);
-	float deltaTime = currentTime - startTime;
-	startTime = currentTime;
-	//-----
-
-	fTheta += 0.05f * deltaTime;
+	const float speed = 6;
+	if (keys[int('a')]) moveCamera(0, deltaTime * speed);
+	if (keys[int('d')]) moveCamera(180, deltaTime * speed);
+	if (keys[int('w')]) moveCamera(90, deltaTime * speed);
+	if (keys[int('s')]) moveCamera(270, deltaTime * speed);
+	if (keys[int('e')]) camera.posZ += deltaTime * speed;
+	if (keys[int('q')]) camera.posZ -= deltaTime * speed;
 
 	glutPostRedisplay();
 }
 
-void render(void) 
+void onDisplay() 
 {
 	standardRenderOperations();
+
+	// Test cube in the center of the world
+	glPushMatrix();
+	glTranslatef(-0.5, -0.5, -0.5);
+	glutSolidCube(1);
+	glPopMatrix();
 
 	for (GameObject game_obj : game_objects) {
 
@@ -138,18 +147,18 @@ void standardRenderOperations()
 
 	glLoadIdentity();
 
-	//Swapping between perspective and orthographic mode
-	if (currentRenderMode == PERSP)
-		gluPerspective(70.0f, WIDTH / HEIGHT, 1.0f, 10000.0f);
-	else if (currentRenderMode == ORTHO)
-		glOrtho(-20, 20, -20, 20, 1.0, 10000.0f);
-
+	//Swapping between perspective and orthographic mode (disabled)
+	// if (currentRenderMode == PERSP)
+	gluPerspective(70.0f, WIDTH / HEIGHT, 0.1f, 1000.0f);
+	// else if (currentRenderMode == ORTHO)
+	// 	glOrtho(-20, 20, -20, 20, 1.0, 10000.0f);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(0, -20, 10,
-		0, 0, 0,
-		0, 1, 0);
+	// Change to camera position
+	glRotatef(camera.rotX, 1, 0, 0);
+	glRotatef(camera.rotY, 0, 1, 0);
+	glTranslatef(-camera.posX, -camera.posZ, -camera.posY);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
@@ -181,4 +190,44 @@ void drawMesh(Graphics::mesh mesh, uint16_t texture_id)
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 
+}
+
+void onKey(unsigned char keyId, int x, int y)
+{
+	if (keyId == VK_ESCAPE)
+		exit(1);
+	keys[keyId] = true;
+}
+
+void onKeyUp(unsigned char keyId, int, int)
+{
+	keys[keyId] = false;
+}
+
+void onMousePassiveMotion(int x, int y)
+{
+	int dx = x - WIDTH / 2;
+	int dy = y - HEIGHT / 2;
+	if ((dx != 0 || dy != 0) && abs(dx) < 400 && abs(dy) < 400 && !justMovedMouse)
+	{
+		camera.rotY += dx / 10.0f;
+		camera.rotX += dy / 10.0f;
+		if (camera.rotX < -90)
+			camera.rotX = -90;
+		if (camera.rotX > 90)
+			camera.rotX = 90;
+	}
+	if (!justMovedMouse)
+	{
+		glutWarpPointer(WIDTH / 2, HEIGHT / 2);
+		justMovedMouse = true;
+	}
+	else
+		justMovedMouse = false;
+}
+
+void moveCamera(float angle, float fac)
+{
+	camera.posX -= (float)cos((camera.rotY + angle) / 180 * M_PI) * fac;
+	camera.posY -= (float)sin((camera.rotY + angle) / 180 * M_PI) * fac;
 }
