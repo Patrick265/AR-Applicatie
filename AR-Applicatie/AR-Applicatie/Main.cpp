@@ -44,13 +44,13 @@ int main(int argc, char** argv) {
 	Math::vec3d rot = { 90.0f, 0.0f, 0.0f };
 	Math::vec3d scale = { 1.0f, 1.0f, 1.0f };
 
-	GameObject obj1(ObjLoader::LoadObj("Resources/Toot_Braustein/Toot_Braustein.obj"),
+	GameObject obj1(ObjLoader::loadObj("Resources/Toot_Braustein/Toot_Braustein.obj"),
 		    TextureHandler::addTexture("Resources/Toot_Braustein/Toot_Braustein.jpg"));
 	obj1.setPosition(pos);
 	obj1.setRotation(rot);
 	obj1.setScale(scale);
 
-	GameObject obj2(ObjLoader::LoadObj("Resources/Hammer/hammer.obj"),
+	GameObject obj2(ObjLoader::loadObj("Resources/Hammer/hammer.obj"),
 			TextureHandler::addTexture("Resources/Hammer/hammer.png"));
 	obj2.setPosition(Math::vector_add(pos, pos));
 	obj2.setRotation(rot);

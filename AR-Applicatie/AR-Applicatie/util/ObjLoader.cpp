@@ -19,7 +19,7 @@ static std::vector<std::string> split(std::string str, const char separator)
 	return strings;
 }
 
-Graphics::mesh ObjLoader::LoadObj(std::string filename)
+Graphics::mesh ObjLoader::loadObj(std::string filename)
 {
 	Graphics::mesh mesh;
 

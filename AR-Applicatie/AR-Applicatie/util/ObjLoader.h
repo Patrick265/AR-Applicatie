@@ -12,5 +12,5 @@ public:
 
 		Returns the extracted mesh
 	*/
-	static Graphics::mesh LoadObj(const std::string filename);
+	static Graphics::mesh loadObj(const std::string filename);
 };
