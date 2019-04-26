@@ -17,9 +17,6 @@ float fTheta;
 
 std::vector<GameObject> game_objects;
 
-// enum renderMode { ORTHO, PERSP };
-// int currentRenderMode;
-
 struct Camera
 {
 	float
@@ -32,6 +29,7 @@ struct Camera
 
 bool keys[255];
 bool justMovedMouse = false;
+bool mouseControl = true;
 
 void onIdle();
 void onDisplay();
@@ -42,6 +40,7 @@ void moveCamera(float angle, float fac);
 
 void standardRenderOperations();
 void drawMesh(Graphics::mesh mesh, uint16_t texture_id);
+void displayText();
 
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);
@@ -56,7 +55,7 @@ int main(int argc, char** argv) {
 	glutKeyboardUpFunc(onKeyUp);
 	glutPassiveMotionFunc(onMousePassiveMotion);
 
-	Math::vec3d pos = { 2, 0, -2 };
+	Math::vec3d pos = { -5, 0, 0 };
 	Math::vec3d rot = { 0.0f, 0.0f, 0.0f };
 	Math::vec3d scale = { 1.0f, 1.0f, 1.0f };
 
@@ -65,6 +64,8 @@ int main(int argc, char** argv) {
 	obj1.setPosition(pos);
 	obj1.setRotation(rot);
 	obj1.setScale(scale);
+
+	pos = {5, 0, 0 };
 
 	GameObject obj2(ObjLoader::loadObj("Resources/Hammer/hammer.obj"),
 			TextureHandler::addTexture("Resources/Hammer/hammer.png"));
@@ -135,6 +136,8 @@ void onDisplay()
 		glPopMatrix();
 	}
 
+	displayText();
+
 	glutSwapBuffers();
 }
 
@@ -192,11 +195,41 @@ void drawMesh(Graphics::mesh mesh, uint16_t texture_id)
 
 }
 
+void displayText()
+{
+	// Create a string that displays the current camera location and rotation
+	std::string text = "x " + std::to_string(camera.posX) + "\ny " + std::to_string(camera.posY) + "\nz " +
+		std::to_string(camera.posZ) + "\nX " + std::to_string(camera.rotX) + "\nY " + std::to_string(camera.rotY);
+
+	int xpos = -15;
+	int ypos = 20;
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
+	glLoadIdentity();
+	glOrtho(0.0, 100.0, 100.0, 0.0, 0.0, 1.0);
+	glRasterPos2f(xpos, ypos);
+	glColor3f(1, 1, 1);
+	int len = text.length();
+	for (int i = 0; i < len; i++)
+	{
+		if (text[i] == '\n')
+		{
+			ypos += 2;
+			glRasterPos2f(xpos, ypos);
+			continue;
+		}
+		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
+	}
+	glColor3f(1, 1, 1);
+}
+
 void onKey(unsigned char keyId, int x, int y)
 {
 	if (keyId == VK_ESCAPE)
 		exit(1);
-	keys[keyId] = true;
+	if (keyId == 'c')
+		mouseControl = !mouseControl;	keys[keyId] = true;
 }
 
 void onKeyUp(unsigned char keyId, int, int)
@@ -206,6 +239,9 @@ void onKeyUp(unsigned char keyId, int, int)
 
 void onMousePassiveMotion(int x, int y)
 {
+	if (!mouseControl)
+		return;
+
 	int dx = x - WIDTH / 2;
 	int dy = y - HEIGHT / 2;
 	if ((dx != 0 || dy != 0) && abs(dx) < 400 && abs(dy) < 400 && !justMovedMouse)
