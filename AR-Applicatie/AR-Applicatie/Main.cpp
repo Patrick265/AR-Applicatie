@@ -56,8 +56,8 @@ int main(int argc, char** argv) {
 	glutKeyboardUpFunc(onKeyUp);
 	glutPassiveMotionFunc(onMousePassiveMotion);
 
-	Math::vec3d pos = { 0, 50, -30 };
-	Math::vec3d rot = { 90.0f, 0.0f, 0.0f };
+	Math::vec3d pos = { 2, 0, -2 };
+	Math::vec3d rot = { 0.0f, 0.0f, 0.0f };
 	Math::vec3d scale = { 1.0f, 1.0f, 1.0f };
 
 	GameObject obj1(ObjLoader::loadObj("Resources/Toot_Braustein/Toot_Braustein.obj"),
@@ -89,7 +89,7 @@ void onIdle()
 	float deltaTime = currentTime - lastFrameTime;
 	lastFrameTime = currentTime;
 
-	fTheta += 0.05f * deltaTime;
+	fTheta += 30.0f * deltaTime;
 
 	const float speed = 6;
 	if (keys[int('a')]) moveCamera(0, deltaTime * speed);
