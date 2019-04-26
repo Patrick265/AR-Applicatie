@@ -86,12 +86,12 @@ public:
 
 
 	/*
-	Obtains the normal vector
+		Obtains the normal vector of the two vectors
 
-	@param v1 - The first vector
-	@param v2 - The second vector
+		@param v1 - The first vector
+		@param v2 - The second vector
 
-	Returns the normal vector
-*/
+		Returns the normal vector
+	*/
 	static vec3d crossProduct(vec3d v1, vec3d v2);
 };

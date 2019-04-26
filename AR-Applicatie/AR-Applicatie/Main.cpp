@@ -41,17 +41,17 @@ int main(int argc, char** argv) {
 	glutIdleFunc(idle);
 
 	Math::vec3d pos = { 0, 50, -30 };
-	Math::vec3d rot = { 0.0f, 0.0f, 1.0f, 0.0f };
+	Math::vec3d rot = { 90.0f, 0.0f, 0.0f };
 	Math::vec3d scale = { 1.0f, 1.0f, 1.0f };
 
 	GameObject obj1(ObjLoader::LoadObj("Resources/Toot_Braustein/Toot_Braustein.obj"),
-		TextureHandler::addTexture("Resources/Toot_Braustein/Toot_Braustein.jpg"));
+		    TextureHandler::addTexture("Resources/Toot_Braustein/Toot_Braustein.jpg"));
 	obj1.setPosition(pos);
 	obj1.setRotation(rot);
 	obj1.setScale(scale);
 
 	GameObject obj2(ObjLoader::LoadObj("Resources/Hammer/hammer.obj"),
-		TextureHandler::addTexture("Resources/Hammer/hammer.png"));
+			TextureHandler::addTexture("Resources/Hammer/hammer.png"));
 	obj2.setPosition(Math::vector_add(pos, pos));
 	obj2.setRotation(rot);
 	obj2.setScale(scale);
@@ -105,14 +105,20 @@ void render(void)
 
 	for (GameObject game_obj : game_objects) {
 
+		//To rotate the object
+		//Move to an update function for the gameobjects, which will be called in the idle function
 		Math::vec3d rot = game_obj.getRotation();
-		rot.w = fTheta * game_obj.getTextureId();
+		rot.y = fTheta * game_obj.getTextureId();
 		game_obj.setRotation(rot);
 
 		glPushMatrix();
 
 		glTranslatef(game_obj.getPosition().x, game_obj.getPosition().y, game_obj.getPosition().z);
-		glRotatef(game_obj.getRotation().w, game_obj.getRotation().x, game_obj.getRotation().y, game_obj.getRotation().z);
+
+		glRotatef(game_obj.getRotation().x, 1,0,0);
+		glRotatef(game_obj.getRotation().y, 0,1,0);
+		glRotatef(game_obj.getRotation().z, 0,0,1);
+
 		glScalef(game_obj.getScale().x, game_obj.getScale().y, game_obj.getScale().z);
 
 		drawMesh(game_obj.getMesh(), game_obj.getTextureId());
@@ -131,6 +137,8 @@ void standardRenderOperations()
 	glMatrixMode(GL_PROJECTION);
 
 	glLoadIdentity();
+
+	//Swapping between perspective and orthographic mode
 	if (currentRenderMode == PERSP)
 		gluPerspective(70.0f, WIDTH / HEIGHT, 1.0f, 10000.0f);
 	else if (currentRenderMode == ORTHO)
@@ -156,7 +164,6 @@ void drawMesh(Graphics::mesh mesh, uint16_t texture_id)
 {
 	glBindTexture(GL_TEXTURE_2D, texture_id);
 	glEnable(GL_TEXTURE_2D);
-
 	glBegin(GL_TRIANGLES);
 
 	for (Graphics::triangle tri : mesh.tris) {
@@ -164,13 +171,11 @@ void drawMesh(Graphics::mesh mesh, uint16_t texture_id)
 		glColor3f(1.0f, 1.0f, 1.0f);
 
 		Math::vec3d normal = Graphics::triangle_getNormal(tri);
-
 		glNormal3f(normal.x, normal.y, normal.z);
 		for (int i = 0; i < 3; i++)
 		{
 			glTexCoord2f(tri.vt[i].x, tri.vt[i].y);
 			glVertex3f(tri.p[i].x, tri.p[i].y, tri.p[i].z);
-
 		}
 	}
 	glEnd();

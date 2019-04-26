@@ -15,8 +15,7 @@ uint16_t TextureHandler::addTexture(const std::string image_path)
 	glGenTextures(1, &texture_id);
 	glBindTexture(GL_TEXTURE_2D, texture_id);
 	texture_ids.push_back(texture_id);
-
-
+	
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* data = stbi_load(image_path.c_str(), &width, &height, &nrChannels, 4);
