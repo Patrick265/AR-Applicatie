@@ -14,7 +14,7 @@ xcopy "C:\opencv\build\x64\vc14\lib\opencv_world410d.lib" "$(OutputPath)" /Y</Co
     </PostBuildEvent>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)\freeglut\lib\x64;C:\opencv\build\x64\vc14\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world410d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opencv_world410d.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
