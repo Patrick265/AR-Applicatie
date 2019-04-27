@@ -138,7 +138,7 @@ void onDisplay()
 	//Testing purposes for the npc
 	for(int i = 0; i < game_objects.size(); i++)
 	{
-		auto game_obj = game_objects[i];
+		GameObject game_obj = game_objects[i];
 		//To rotate the object
 		//Move to an update function for the gameobjects, which will be called in the idle function
 		Math::vec3d rot = game_obj.getRotation();
