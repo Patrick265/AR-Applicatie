@@ -75,15 +75,22 @@ Graphics::mesh ObjLoader::loadObj(std::string filename)
 				if (i >= 2) {
 					Graphics::triangle tri;
 
+					if (texture_coords.size() > 0) {
+						tri.vt[0] = texture_coords[atoi(verticesdata[0][1].c_str()) - 1];
+						tri.vt[1] = texture_coords[atoi(verticesdata[i - 1][1].c_str()) - 1];
+						tri.vt[2] = texture_coords[atoi(verticesdata[i][1].c_str()) - 1];
+					}
+
+					if (normals.size() > 0) {
+						tri.vn[0] = normals[atoi(verticesdata[0][2].c_str()) - 1];
+						tri.vn[1] = normals[atoi(verticesdata[i - 1][2].c_str()) - 1];
+						tri.vn[2] = normals[atoi(verticesdata[i][2].c_str()) - 1];
+					}
+					
 					tri.p[0] = verts[atoi(verticesdata[0][0].c_str()) - 1];
-					tri.vt[0] = texture_coords[atoi(verticesdata[0][1].c_str()) - 1];
-
-					tri.p[1] = verts[atoi(verticesdata[i - 1][0].c_str()) - 1];
-					tri.vt[1] = texture_coords[atoi(verticesdata[i - 1][1].c_str()) - 1];
-
+					tri.p[1] = verts[atoi(verticesdata[i - 1][0].c_str()) - 1];					
 					tri.p[2] = verts[atoi(verticesdata[i][0].c_str()) - 1];
-					tri.vt[2] = texture_coords[atoi(verticesdata[i][1].c_str()) - 1];
-
+					
 					mesh.tris.push_back(tri);
 				}
 			}
