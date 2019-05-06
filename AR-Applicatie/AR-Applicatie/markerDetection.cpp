@@ -8,7 +8,6 @@
 //	Author: Tim de Booij, Max van Noordennen, Tom Martens
 */
 
-
 //Local defines
 #define SCREEN_DIVIDER_RATIO 5
 #define SCREEN_RIGHT_SIDE_BOUND_START 4
@@ -19,6 +18,7 @@ struct Points {
 };
 
 //Global variables
+cv::VideoCapture cap(0);
 cv::Mat frame, frame_HSV, frame_threshold;
 cv::Point markerPosition;
 cv::Ptr<cv::SimpleBlobDetector> detector;
@@ -72,10 +72,6 @@ void terminateDetection() {
 	cv::destroyAllWindows();
 }
 
-void autoSlider() {
-
-}
-
 void resetBlobDetector() {
 	params.minDistBetweenBlobs = 1.0;    //Minimum 1 pixel between blobs
 	params.filterByArea = true;            //Checking for area
@@ -97,86 +93,6 @@ void resetBlobDetector() {
 void areaBar(int, void*) {
 	resetBlobDetector();
 
-}
-
-/*
-//  This function is a callback and used for changing the low_H
-//
-//	@param void* is for the callback
-//	@param int is for callback
-//
-*/
-static void onLowHThreshTrackbar(int, void *)
-{
-	lowH = cv::min(highH - 1, lowH);
-	cv::setTrackbarPos("Low H", windowDetectionName, lowH);
-}
-
-/*
-//  This function is a callback and used for changing the high_H
-//
-//	@param void* is for the callback
-//	@param int is for callback
-//
-*/
-
-static void onHighHThreshTrackbar(int, void *)
-{
-	highH = cv::max(highH, lowH + 1);
-	cv::setTrackbarPos("High H", windowDetectionName, highH);
-}
-
-/*
-//
-//	This function is a callback and used for changing the low_S
-//
-//	@param int is for callback
-//	@param void* is for the callback
-//
-*/
-static void onLowSThreshTrackbar(int, void *)
-{
-	lowS = cv::min(highS - 1, lowS);
-	cv::setTrackbarPos("Low S", windowDetectionName, lowS);
-}
-
-/*
-//	This function is a callback and used for changing the high_S
-//
-//	@param int is for callback
-//	@param void* is for the callback
-//
-*/
-static void onHighSThreshTrackbar(int, void *)
-{
-	highS = cv::max(highS, lowS + 1);
-	cv::setTrackbarPos("High S", windowDetectionName, highS);
-}
-
-/*
-//	This function is a callback and used for changing the low_V
-//
-//	@param int is for callback
-//	@param void* is for the callback
-//
-*/
-static void onLowVThreshTrackbar(int, void *)
-{
-	lowV = cv::min(highV - 1, lowV);
-	cv::setTrackbarPos("Low V", windowDetectionName, lowV);
-}
-
-/*
-//	This function is a callback and used for changing the high_V
-//
-//	@param int is for callback
-//	@param void* is for the callback
-//
-*/
-static void onHighVThreshTrackbar(int, void *)
-{
-	highV = cv::max(highV, lowV + 1);
-	cv::setTrackbarPos("High V", windowDetectionName, highV);
 }
 
 /*
@@ -258,7 +174,128 @@ void checkAllBounds(cv::Mat drawImg) {
 }
 
 void calibrate() {
-	
+	int counterUp = 0;
+	int counterDown = 0;
+	while ((lowerS == -1 || upperS == -1) && lowS >= 0) {
+		cap >> frame;
+		if (frame.empty()) {
+			std::cerr << "Frame invalid and skipped!" << std::endl;
+			continue;
+		}
+		flip(frame, frame, 1);
+
+
+		// Convert from BGR to HSV colorspace
+		cvtColor(frame, frame_HSV, cv::COLOR_BGR2HSV);
+		// Detect the object based on HSV Range Values
+		inRange(frame_HSV, cv::Scalar(lowH, lowS, lowV), cv::Scalar(highH, highS, highV), frame_threshold);
+
+		//Detecting the blobs
+		detector->detect(frame_threshold, myBlobs);
+		std::cout << "amount of blobs: " << myBlobs.size() << std::endl;
+		if (myBlobs.size() == 1 && upperS == -1) {
+			counterUp++;
+			if (counterUp == 3) {
+				upperS = lowS;
+				std::cout << "set upper" << upperS << std::endl;
+				counterUp = 0;
+			}
+		}
+		else {
+			counterUp = 0;
+		}
+		if ((myBlobs.size() == 0 || myBlobs.size() > 1) && upperS != -1) {
+			counterDown++;
+			if (counterDown == 3) {
+				lowerS = lowS;
+				std::cout << "set lower" << lowerS << std::endl;
+			}
+		}
+		else {
+			counterDown = 0;
+		}
+		lowS -= 2;
+	}
+	lowS = (upperS + lowerS) / 2;
+	std::cout << "average" << lowS << std::endl;
+}
+
+void excecuteMouseDetection() {
+
+	originalBlobImg = cv::imread("Black_Picture.jpg");
+
+	blobImg = originalBlobImg;
+
+	cv::imshow("binair beeld", blobImg);
+
+	cv::setMouseCallback("binair beeld", mouseCallback);
+
+	width = 640;
+	height = 480;
+
+	while (isRunning == 1) {
+		blobImg = originalBlobImg.clone();
+		drawBounds(blobImg);
+
+		checkAllBounds(blobImg);
+
+		//Showing the text
+		cv::imshow("binair beeld", blobImg);
+		cv::resizeWindow("binair beeld", 640, 480);
+
+		if (cv::waitKey(5) == 32) {
+			terminateDetection();
+			changeDetectionMode();
+			runMarkerDetection(getDetectionMode());
+		}
+	}
+}
+
+void excecuteOpenCVDetection() {
+
+	while (isRunning == 1) {
+		cap >> frame;
+		if (frame.empty()) {
+			std::cerr << "Frame invalid and skipped!" << std::endl;
+			continue;
+		}
+		flip(frame, frame, 1);
+
+		// Convert from BGR to HSV colorspace
+		cvtColor(frame, frame_HSV, cv::COLOR_BGR2HSV);
+		// Detect the object based on HSV Range Values
+		inRange(frame_HSV, cv::Scalar(lowH, lowS, lowV), cv::Scalar(highH, highS, highV), frame_threshold);
+
+		cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5), cv::Point(-1, -1));
+		cv::erode(frame, frame, element);
+
+		//Detecting the blobs
+		detector->detect(frame_threshold, myBlobs);
+
+		//Drawing keypoints (red circles)
+		drawKeypoints(frame_threshold, myBlobs, blobImg, cv::Scalar(0, 0, 255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+
+		detectMarker();
+
+		//For text drawing purposes
+		for (cv::KeyPoint k : myBlobs)
+		{
+			putText(blobImg, std::to_string(k.size), cv::Point(k.pt.x, k.pt.y), cv::FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0, 255, 0), 2.0);
+		}
+
+		drawBounds(blobImg);
+
+		checkAllBounds(blobImg);
+
+		//Showing the text
+		cv::imshow("binair beeld", blobImg);
+
+		if (cv::waitKey(5) == 32) {
+			terminateDetection();
+			changeDetectionMode();
+			runMarkerDetection(getDetectionMode());
+		}
+	}
 }
 
 int runMarkerDetection(int input)
@@ -268,21 +305,6 @@ int runMarkerDetection(int input)
 		
 		resetBlobDetector();
 
-		cv::namedWindow(windowCaptureName);
-		cv::namedWindow(windowDetectionName);
-
-		// Trackbars to set thresholds for HSV values
-		//cv::createTrackbar("Low H", windowDetectionName, &lowH, maxValueH, onLowHThreshTrackbar);
-		//cv::createTrackbar("High H", windowDetectionName, &highH, maxValueH, onHighHThreshTrackbar);
-		//cv::createTrackbar("Low S", windowDetectionName, &lowS, maxValue, onLowSThreshTrackbar);
-		//cv::createTrackbar("High S", windowDetectionName, &highS, maxValue, onHighSThreshTrackbar);
-		//cv::createTrackbar("Low V", windowDetectionName, &lowV, maxValue, onLowVThreshTrackbar);
-		//cv::createTrackbar("High V", windowDetectionName, &highV, maxValue, onHighVThreshTrackbar);
-
-		cv::createTrackbar("area", windowDetectionName, &areaSliderMin, areaSliderMax, areaBar);
-
-
-		cv::VideoCapture cap(0);
 		if (!cap.isOpened()) {
 			std::cerr << "No camera detected on this system" << std::endl;
 			return -1;
@@ -291,138 +313,13 @@ int runMarkerDetection(int input)
 		width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
 		height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
 
-		int counterUp = 0;
-		int counterDown = 0;
-		while ((lowerS == -1 || upperS == -1) && lowS >= 0) {
-			cap >> frame;
-			if (frame.empty()) {
-				std::cerr << "Frame invalid and skipped!" << std::endl;
-				continue;
-			}
-			flip(frame, frame, 1);
-
-
-			// Convert from BGR to HSV colorspace
-			cvtColor(frame, frame_HSV, cv::COLOR_BGR2HSV);
-			// Detect the object based on HSV Range Values
-			inRange(frame_HSV, cv::Scalar(lowH, lowS, lowV), cv::Scalar(highH, highS, highV), frame_threshold);
-
-			//Detecting the blobs
-			detector->detect(frame_threshold, myBlobs);
-			std::cout << "amount of blobs: " << myBlobs.size() << std::endl;
-			if (myBlobs.size() == 1 && upperS == -1) {
-				counterUp++;
-				if (counterUp == 4) {
-					upperS = lowS;
-					std::cout << "set upper" << upperS << std::endl;
-					counterUp = 0;
-				}
-			}
-			else {
-				counterUp = 0;
-			}
-			if ((myBlobs.size() == 0 || myBlobs.size() > 1) && upperS != -1) {
-				counterDown++;
-				if (counterDown == 4) {
-					lowerS = lowS;
-					std::cout << "set lower" << lowerS << std::endl;
-				}
-			}
-			else {
-				counterDown = 0;
-			}
-			lowS--;
-		}
-		lowS = (upperS + lowerS) / 2;
-		std::cout << "average" << lowS << std::endl;
-
 		calibrate();
 
-		while (isRunning == 1) {
-			cap >> frame;
-			if (frame.empty()) {
-				std::cerr << "Frame invalid and skipped!" << std::endl;
-				continue;
-			}
-			flip(frame, frame, 1);
-
-
-			// Convert from BGR to HSV colorspace
-			cvtColor(frame, frame_HSV, cv::COLOR_BGR2HSV);
-			// Detect the object based on HSV Range Values
-			inRange(frame_HSV, cv::Scalar(lowH, lowS, lowV), cv::Scalar(highH, highS, highV), frame_threshold);
-
-
-			// Show the frames
-			imshow(windowCaptureName, frame);
-			imshow(windowDetectionName, frame_threshold);
-
-			cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5), cv::Point(-1, -1));
-			cv::erode(frame, frame, element);
-
-			//Detecting the blobs
-			detector->detect(frame_threshold, myBlobs);
-
-			//Drawing keypoints (red circles)
-			drawKeypoints(frame_threshold, myBlobs, blobImg, cv::Scalar(0, 0, 255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-
-			detectMarker();
-
-			//For text drawing purposes
-			for (cv::KeyPoint k : myBlobs)
-			{
-				putText(blobImg, std::to_string(k.size), cv::Point(k.pt.x, k.pt.y), cv::FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0, 255, 0), 2.0);
-			}
-
-			drawBounds(blobImg);
-			
-			checkAllBounds(blobImg);
-			
-			//Showing the text
-			cv::imshow("binair beeld", blobImg);
-
-			if (cv::waitKey(5) == 32) {
-				terminateDetection();
-				changeDetectionMode();
-				runMarkerDetection(getDetectionMode());
-			}
-
-			//imshow("test", frame);
-			//cv::waitKey(5);
-		}
+		excecuteOpenCVDetection();
 	}
 	if (input == MARKERDETECTION_WITH_MOUSE) {
-		std::cout << "reached mouse" << std::endl;
 
-		originalBlobImg = cv::imread("Black_Picture.jpg");
-		
-		blobImg = originalBlobImg;
-
-		cv::imshow("binair beeld", blobImg);
-
-		cv::setMouseCallback("binair beeld", mouseCallback);
-
-		width = 640;
-		height = 480;
-
-		while (isRunning == 1) {
-			blobImg = originalBlobImg.clone();
-			drawBounds(blobImg);
-
-			checkAllBounds(blobImg);
-
-			//Showing the text
-			cv::imshow("binair beeld", blobImg);
-			cv::resizeWindow("binair beeld", 640, 480);
-			
-			if (cv::waitKey(5) == 32) {
-				terminateDetection();
-				changeDetectionMode();
-				runMarkerDetection(getDetectionMode());
-			}
-
-			//cv::waitKey(5);
-		}
+		excecuteMouseDetection();
 	}
 	return 0;
 }
