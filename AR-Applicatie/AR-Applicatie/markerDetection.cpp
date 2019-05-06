@@ -36,8 +36,8 @@ const int maxValueH = 360 / 2;
 const int maxValue = 255;
 const std::string windowCaptureName = "Video Capture";
 const std::string windowDetectionName = "Object Detection";
-int lowH = 0, lowS = 255, lowV = 115;
-int highH = 180, highS = maxValue, highV = maxValue;
+int lowH = 0, lowS = 200, lowV = 115;
+int highH = 7, highS = maxValue, highV = maxValue;
 
 //Variables for camera
 int width;
@@ -272,12 +272,12 @@ int runMarkerDetection(int input)
 		cv::namedWindow(windowDetectionName);
 
 		// Trackbars to set thresholds for HSV values
-		cv::createTrackbar("Low H", windowDetectionName, &lowH, maxValueH, onLowHThreshTrackbar);
-		cv::createTrackbar("High H", windowDetectionName, &highH, maxValueH, onHighHThreshTrackbar);
-		cv::createTrackbar("Low S", windowDetectionName, &lowS, maxValue, onLowSThreshTrackbar);
-		cv::createTrackbar("High S", windowDetectionName, &highS, maxValue, onHighSThreshTrackbar);
-		cv::createTrackbar("Low V", windowDetectionName, &lowV, maxValue, onLowVThreshTrackbar);
-		cv::createTrackbar("High V", windowDetectionName, &highV, maxValue, onHighVThreshTrackbar);
+		//cv::createTrackbar("Low H", windowDetectionName, &lowH, maxValueH, onLowHThreshTrackbar);
+		//cv::createTrackbar("High H", windowDetectionName, &highH, maxValueH, onHighHThreshTrackbar);
+		//cv::createTrackbar("Low S", windowDetectionName, &lowS, maxValue, onLowSThreshTrackbar);
+		//cv::createTrackbar("High S", windowDetectionName, &highS, maxValue, onHighSThreshTrackbar);
+		//cv::createTrackbar("Low V", windowDetectionName, &lowV, maxValue, onLowVThreshTrackbar);
+		//cv::createTrackbar("High V", windowDetectionName, &highV, maxValue, onHighVThreshTrackbar);
 
 		cv::createTrackbar("area", windowDetectionName, &areaSliderMin, areaSliderMax, areaBar);
 
@@ -293,7 +293,7 @@ int runMarkerDetection(int input)
 
 		int counterUp = 0;
 		int counterDown = 0;
-		while (lowerS == -1 || upperS == -1) {
+		while ((lowerS == -1 || upperS == -1) && lowS >= 0) {
 			cap >> frame;
 			if (frame.empty()) {
 				std::cerr << "Frame invalid and skipped!" << std::endl;
@@ -312,7 +312,7 @@ int runMarkerDetection(int input)
 			std::cout << "amount of blobs: " << myBlobs.size() << std::endl;
 			if (myBlobs.size() == 1 && upperS == -1) {
 				counterUp++;
-				if (counterUp == 6) {
+				if (counterUp == 4) {
 					upperS = lowS;
 					std::cout << "set upper" << upperS << std::endl;
 					counterUp = 0;
@@ -323,7 +323,7 @@ int runMarkerDetection(int input)
 			}
 			if ((myBlobs.size() == 0 || myBlobs.size() > 1) && upperS != -1) {
 				counterDown++;
-				if (counterDown == 6) {
+				if (counterDown == 4) {
 					lowerS = lowS;
 					std::cout << "set lower" << lowerS << std::endl;
 				}
@@ -357,15 +357,8 @@ int runMarkerDetection(int input)
 			imshow(windowCaptureName, frame);
 			imshow(windowDetectionName, frame_threshold);
 
-			cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(27, 27), cv::Point(-1, -1));
-
-			for (int i = 0; i < 1; i++)
-			{
-				cv::erode(frame, frame, element);
-			}
-
-			
-
+			cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5), cv::Point(-1, -1));
+			cv::erode(frame, frame, element);
 
 			//Detecting the blobs
 			detector->detect(frame_threshold, myBlobs);
