@@ -28,13 +28,15 @@ std::vector<cv::KeyPoint> myBlobs;
 cv::Mat originalBlobImg;
 int isRunning = 1;
 int detectionMode = 1;
+int lowerS = -1;
+int upperS = -1;
 
 //Variables for HSV
 const int maxValueH = 360 / 2;
 const int maxValue = 255;
 const std::string windowCaptureName = "Video Capture";
 const std::string windowDetectionName = "Object Detection";
-int lowH = 0, lowS = 200, lowV = 115;
+int lowH = 0, lowS = 255, lowV = 115;
 int highH = 180, highS = maxValue, highV = maxValue;
 
 //Variables for camera
@@ -68,6 +70,10 @@ void changeDetectionMode() {
 void terminateDetection() {
 	isRunning = 0;
 	cv::destroyAllWindows();
+}
+
+void autoSlider() {
+
 }
 
 void resetBlobDetector() {
@@ -251,6 +257,10 @@ void checkAllBounds(cv::Mat drawImg) {
 	}
 }
 
+void calibrate() {
+	
+}
+
 int runMarkerDetection(int input)
 {
 	isRunning = 1;
@@ -281,6 +291,53 @@ int runMarkerDetection(int input)
 		width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
 		height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
 
+		int counterUp = 0;
+		int counterDown = 0;
+		while (lowerS == -1 || upperS == -1) {
+			cap >> frame;
+			if (frame.empty()) {
+				std::cerr << "Frame invalid and skipped!" << std::endl;
+				continue;
+			}
+			flip(frame, frame, 1);
+
+
+			// Convert from BGR to HSV colorspace
+			cvtColor(frame, frame_HSV, cv::COLOR_BGR2HSV);
+			// Detect the object based on HSV Range Values
+			inRange(frame_HSV, cv::Scalar(lowH, lowS, lowV), cv::Scalar(highH, highS, highV), frame_threshold);
+
+			//Detecting the blobs
+			detector->detect(frame_threshold, myBlobs);
+			std::cout << "amount of blobs: " << myBlobs.size() << std::endl;
+			if (myBlobs.size() == 1 && upperS == -1) {
+				counterUp++;
+				if (counterUp == 6) {
+					upperS = lowS;
+					std::cout << "set upper" << upperS << std::endl;
+					counterUp = 0;
+				}
+			}
+			else {
+				counterUp = 0;
+			}
+			if ((myBlobs.size() == 0 || myBlobs.size() > 1) && upperS != -1) {
+				counterDown++;
+				if (counterDown == 4) {
+					lowerS = lowS;
+					std::cout << "set lower" << lowerS << std::endl;
+				}
+			}
+			else {
+				counterDown = 0;
+			}
+			lowS--;
+		}
+		lowS = (upperS + lowerS) / 2;
+		std::cout << "average" << lowS << std::endl;
+
+		calibrate();
+
 		while (isRunning == 1) {
 			cap >> frame;
 			if (frame.empty()) {
@@ -294,6 +351,8 @@ int runMarkerDetection(int input)
 			cvtColor(frame, frame_HSV, cv::COLOR_BGR2HSV);
 			// Detect the object based on HSV Range Values
 			inRange(frame_HSV, cv::Scalar(lowH, lowS, lowV), cv::Scalar(highH, highS, highV), frame_threshold);
+
+
 			// Show the frames
 			imshow(windowCaptureName, frame);
 			imshow(windowDetectionName, frame_threshold);
