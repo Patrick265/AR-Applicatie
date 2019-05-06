@@ -323,7 +323,7 @@ int runMarkerDetection(int input)
 			}
 			if ((myBlobs.size() == 0 || myBlobs.size() > 1) && upperS != -1) {
 				counterDown++;
-				if (counterDown == 4) {
+				if (counterDown == 6) {
 					lowerS = lowS;
 					std::cout << "set lower" << lowerS << std::endl;
 				}
@@ -356,6 +356,15 @@ int runMarkerDetection(int input)
 			// Show the frames
 			imshow(windowCaptureName, frame);
 			imshow(windowDetectionName, frame_threshold);
+
+			cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(27, 27), cv::Point(-1, -1));
+
+			for (int i = 0; i < 1; i++)
+			{
+				cv::erode(frame, frame, element);
+			}
+
+			
 
 
 			//Detecting the blobs
