@@ -208,7 +208,12 @@ void detectMarker() {
 	}
 }
 
-void drawBounds() {
+void mouseCallback(int  event, int  x, int  y, int  flag, void *param) {
+	markerPosition.x = x;
+	markerPosition.y = y;
+}
+
+void drawBounds(cv::Mat drawImg) {
 	//Draw Horizontal raster
 	cv::line(drawImg, cv::Point(0, height / SCREEN_DIVIDER_RATIO), cv::Point(width, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 255, 255), 2);
 	cv::line(drawImg, cv::Point(0, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 255, 255), 2);
@@ -219,7 +224,7 @@ void drawBounds() {
 
 }
 
-void checkBounds() {
+void checkAllBounds(cv::Mat drawImg) {
 	//Check left bound
 	if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO)) == 1) {
 		cv::rectangle(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 0, 0), 5, 1, 0);
@@ -328,7 +333,7 @@ int runMarkerDetection(int input)
 	if (input == MARKERDETECTION_WITH_MOUSE) {
 		std::cout << "reached mouse" << std::endl;
 
-		originalBlobImg = cv::imread("C:\\Users\\timde\\Periode 2.4\\3D\\OpenGLWeek2\\OpenGLWeek2\\chrome-black-screen.png");
+		originalBlobImg = cv::imread("Black_Picture.jpg");
 		
 		blobImg = originalBlobImg;
 

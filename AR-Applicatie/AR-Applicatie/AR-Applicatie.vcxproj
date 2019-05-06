@@ -133,6 +133,9 @@
   <ItemGroup>
     <ClInclude Include="markerDetection.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Black_Picture.jpg" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
