@@ -19,14 +19,20 @@ int main(int argc, char** argv) {
 	glutKeyboardFunc(keyboard);
 	glutMouseFunc(mouse);
 
-	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
+	runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
 
 	glutMainLoop();
 }
 
 void keyboard(unsigned char c, int x, int y) {
+	std::cout << "clicked " << c << std::endl;
 	if (c == 27) {
 		exit(0);
+	}
+	// When button is pressed the markerdetection is changed
+	if (c == 32) {
+		
+		
 	}
 }
 

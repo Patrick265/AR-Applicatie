@@ -1,4 +1,5 @@
 #include <opencv2/opencv.hpp>
+#include <iostream>
 #include <string>
 #include "markerDetection.h"
 
@@ -24,6 +25,9 @@ cv::Ptr<cv::SimpleBlobDetector> detector;
 cv::Mat blobImg;
 cv::SimpleBlobDetector::Params params;
 std::vector<cv::KeyPoint> myBlobs;
+cv::Mat originalBlobImg;
+int isRunning = 1;
+int detectionMode = 1;
 
 //Variables for HSV
 const int maxValueH = 360 / 2;
@@ -41,7 +45,18 @@ int height;
 int areaSliderMin = 1000;
 int areaSliderMax = 70000;
 
+int getDetectionMode() {
+	return detectionMode;
+}
 
+void changeDetectionMode() {
+	if (detectionMode == 0) {
+		detectionMode = 1;
+	}
+	else {
+		detectionMode = 0;
+	}
+}
 
 /*
 //	This function is a callback and used for setting the params and changing the params.
@@ -50,7 +65,12 @@ int areaSliderMax = 70000;
 //	@param void* is for the callback
 //	
 */
-void areaBar(int, void*) {
+void terminateDetection() {
+	isRunning = 0;
+	cv::destroyAllWindows();
+}
+
+void resetBlobDetector() {
 	params.minDistBetweenBlobs = 1.0;    //Minimum 1 pixel between blobs
 	params.filterByArea = true;            //Checking for area
 	params.filterByColor = false;        //We're doing a binary detection, we don't want color
@@ -65,7 +85,11 @@ void areaBar(int, void*) {
 	params.minCircularity = 0.15;
 
 	//Creating a detector with the settings above
-	 detector = cv::SimpleBlobDetector::create(params);
+	detector = cv::SimpleBlobDetector::create(params);
+}
+
+void areaBar(int, void*) {
+	resetBlobDetector();
 
 }
 
@@ -161,7 +185,7 @@ static void onHighVThreshTrackbar(int, void *)
 int checkBounds(cv::Point point1, cv::Point point2) {
 	int returnValue = 0;
 	if (markerPosition.x >= point1.x && markerPosition.x <= point2.x && markerPosition.y >= point1.y && markerPosition.y <= point2.y) {
-		std::cout << "point is in bounds" << std::endl;
+		//std::cout << "point is in bounds" << std::endl;
 		returnValue = 1;
 	}
 
@@ -184,75 +208,50 @@ void detectMarker() {
 	}
 }
 
-/*
-//	this function is used for drawing the bounds of the debug screen
-*/
 void drawBounds() {
 	//Draw Horizontal raster
-	cv::line(blobImg, cv::Point(0, height / SCREEN_DIVIDER_RATIO), cv::Point(width, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 255, 255), 2);
-	cv::line(blobImg, cv::Point(0, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 255, 255), 2);
+	cv::line(drawImg, cv::Point(0, height / SCREEN_DIVIDER_RATIO), cv::Point(width, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 255, 255), 2);
+	cv::line(drawImg, cv::Point(0, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 255, 255), 2);
 
 	//Draw Vertical raster
-	cv::line(blobImg, cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO, height), CV_RGB(255, 255, 255), 2);
-	cv::line(blobImg, cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height), CV_RGB(255, 255, 255), 2);
+	cv::line(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO, height), CV_RGB(255, 255, 255), 2);
+	cv::line(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height), CV_RGB(255, 255, 255), 2);
 
 }
 
-/*
-// this function is used for checking the bounds of the debug screen
-*/
 void checkBounds() {
 	//Check left bound
 	if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO)) == 1) {
-		cv::rectangle(blobImg, cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 0, 0), 5, 1, 0);
+		cv::rectangle(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 0, 0), 5, 1, 0);
 	}
 
 	//Check Upper bound
 	if (checkBounds(cv::Point(0, height / SCREEN_DIVIDER_RATIO), cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START)) == 1) {
-		cv::rectangle(blobImg, cv::Point(0, height / 5), cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
+		cv::rectangle(drawImg, cv::Point(0, height / 5), cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
 	}
 
 	//Check right bound
 	if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO), cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START)) == 1) {
-		cv::rectangle(blobImg, cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO), cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
+		cv::rectangle(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO), cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
 	}
 
 	//Check lower bound
 	if (checkBounds(cv::Point(width / 5, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height)) == 1) {
-		cv::rectangle(blobImg, cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height), CV_RGB(255, 0, 0), 5, 1, 0);
+		cv::rectangle(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height), CV_RGB(255, 0, 0), 5, 1, 0);
 	}
 
 	//Check middle bound
 	if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START)) == 1) {
-		cv::rectangle(blobImg, cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
+		cv::rectangle(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
 	}
 }
 
-/*
-// this function is used for starting the markerdetection
-//
-// @param input this is the input for what modus you want to be in, 0 for Webcam and 1 for mouse and keyboard
-*/
 int runMarkerDetection(int input)
 {
+	isRunning = 1;
 	if (input == MARKERDETECTION_WITH_OPENCV) {
-		std::cout << "reached" << std::endl;
-		params.minDistBetweenBlobs = 1.0;    //Minimum 1 pixel between blobs
-		params.filterByArea = true;            //Checking for area
-		params.filterByColor = false;        //We're doing a binary detection, we don't want color
-		params.minArea = areaSliderMin;        //Minimum value of the area
-		params.maxArea = areaSliderMax;        //Maximum value of the area
-		params.thresholdStep = 100;            //Slider steps
-		params.blobColor = 0;                //Color we're checking for
-		params.filterByCircularity = true;    //We dont check for circularity
-		params.filterByInertia = false;        //We dont check for Intertia
-		params.filterByConvexity = true;    //We dont check for convexity
-		params.minConvexity = 0.5;
-		params.minCircularity = 0.15;
-
-		//Creating a detector with the settings above
-		detector = cv::SimpleBlobDetector::create(params);
-
+		
+		resetBlobDetector();
 
 		cv::namedWindow(windowCaptureName);
 		cv::namedWindow(windowDetectionName);
@@ -277,7 +276,7 @@ int runMarkerDetection(int input)
 		width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
 		height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
 
-		while (true) {
+		while (isRunning == 1) {
 			cap >> frame;
 			if (frame.empty()) {
 				std::cerr << "Frame invalid and skipped!" << std::endl;
@@ -309,19 +308,55 @@ int runMarkerDetection(int input)
 				putText(blobImg, std::to_string(k.size), cv::Point(k.pt.x, k.pt.y), cv::FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0, 255, 0), 2.0);
 			}
 
-			drawBounds();
+			drawBounds(blobImg);
 			
-			checkBounds();
+			checkAllBounds(blobImg);
 			
 			//Showing the text
 			cv::imshow("binair beeld", blobImg);
 
+			if (cv::waitKey(5) == 32) {
+				terminateDetection();
+				changeDetectionMode();
+				runMarkerDetection(getDetectionMode());
+			}
+
 			//imshow("test", frame);
-			cv::waitKey(5);
+			//cv::waitKey(5);
 		}
 	}
 	if (input == MARKERDETECTION_WITH_MOUSE) {
+		std::cout << "reached mouse" << std::endl;
 
+		originalBlobImg = cv::imread("C:\\Users\\timde\\Periode 2.4\\3D\\OpenGLWeek2\\OpenGLWeek2\\chrome-black-screen.png");
+		
+		blobImg = originalBlobImg;
+
+		cv::imshow("binair beeld", blobImg);
+
+		cv::setMouseCallback("binair beeld", mouseCallback);
+
+		width = 640;
+		height = 480;
+
+		while (isRunning == 1) {
+			blobImg = originalBlobImg.clone();
+			drawBounds(blobImg);
+
+			checkAllBounds(blobImg);
+
+			//Showing the text
+			cv::imshow("binair beeld", blobImg);
+			cv::resizeWindow("binair beeld", 640, 480);
+			
+			if (cv::waitKey(5) == 32) {
+				terminateDetection();
+				changeDetectionMode();
+				runMarkerDetection(getDetectionMode());
+			}
+
+			//cv::waitKey(5);
+		}
 	}
 	return 0;
 }
