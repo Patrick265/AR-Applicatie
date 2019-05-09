@@ -12,11 +12,6 @@
 #define SCREEN_DIVIDER_RATIO 5
 #define SCREEN_RIGHT_SIDE_BOUND_START 4
 
-
-struct Points {
-	float x, y;
-};
-
 //Global variables
 cv::VideoCapture cap(0);
 cv::Mat frame, frame_HSV, frame_threshold;
@@ -95,6 +90,12 @@ void areaBar(int, void*) {
 
 }
 
+Point getCoordinates()
+{
+	Point point = { markerPosition.x,markerPosition.y };
+	return point;
+}
+
 /*
 //	This function is used for checking the bounds of the debug screen
 //
@@ -122,7 +123,7 @@ void detectMarker() {
 	for (cv::KeyPoint k : myBlobs)
 	{
 		if (k.size > size) {
-			Points points{ k.pt.x, k.pt.y };
+			Point points{ k.pt.x, k.pt.y };
 			markerPosition.x = k.pt.x;
 			markerPosition.y = k.pt.y;
 			size = k.size;
@@ -243,6 +244,10 @@ void excecuteMouseDetection() {
 		cv::imshow("binair beeld", blobImg);
 		cv::resizeWindow("binair beeld", 640, 480);
 
+		Point point = getCoordinates();
+		std::cout << point.x << std::endl;
+		std::cout << point.y << std::endl;
+
 		if (cv::waitKey(5) == 32) {
 			terminateDetection();
 			changeDetectionMode();
@@ -289,6 +294,10 @@ void excecuteOpenCVDetection() {
 
 		//Showing the text
 		cv::imshow("binair beeld", blobImg);
+
+		Point point = getCoordinates();
+		std::cout << point.x << std::endl;
+		std::cout << point.y << std::endl;
 
 		if (cv::waitKey(5) == 32) {
 			terminateDetection();
