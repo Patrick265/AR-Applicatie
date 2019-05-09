@@ -58,6 +58,8 @@ int main(int argc, char** argv) {
 	Math::vec3d pos = { -5, 0, 0 };
 	Math::vec3d rot = { 0.0f, 0.0f, 0.0f };
 	Math::vec3d scale = { 1.0f, 1.0f, 1.0f };
+	Math::vec3d scaleWall = { 0.10f, 0.15f, 0.25f };
+
 
 	 GameObject obj1(ObjLoader::loadObj("Resources/Rune/NPC_arms.obj"),
 	 	    TextureHandler::addTexture("Resources/Rune/npc_arms.png"));
@@ -83,6 +85,19 @@ int main(int argc, char** argv) {
 	 obj4.setRotation(rot);
 	 obj4.setScale(scale);
 
+	 GameObject Wall(ObjLoader::loadObj("Resources/Wall/Wall.obj"),
+			 TextureHandler::addTexture("Resources/Wall/Rock Snow.jpg"));
+	 Wall.setPosition(pos);
+	 Wall.setRotation(rot);
+	 Wall.setScale(scaleWall);
+
+	 GameObject Plane(ObjLoader::loadObj("Resources/Wall/Plane.obj"),
+			 TextureHandler::addTexture("Resources/Wall/Snow.jpg"));
+	 Plane.setPosition(pos);
+	 Plane.setRotation(rot);
+	 Plane.setScale(scale);
+
+
 
 	// pos = {5, 0, 0 };
  //
@@ -96,6 +111,8 @@ int main(int argc, char** argv) {
 	game_objects.push_back(obj2);
 	game_objects.push_back(obj3);
 	game_objects.push_back(obj4);
+	game_objects.push_back(Wall);
+	game_objects.push_back(Plane);
 
 
 	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
