@@ -4,7 +4,7 @@
 
 class GameObject {
 
-private:
+protected:
 
 	//x, y, z are the coordinates of the object
 	Math::vec3d position;

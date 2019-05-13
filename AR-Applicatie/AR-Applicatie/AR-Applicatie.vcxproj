@@ -68,6 +68,7 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="OpenGL-OpenCV-PropertySheet.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
@@ -113,6 +114,10 @@
   <ItemGroup>
     <ClCompile Include="calculations\Graphics.cpp" />
     <ClCompile Include="calculations\Math.cpp" />
+    <ClCompile Include="game\GameLogic.cpp" />
+    <ClCompile Include="objects\Player.cpp" />
+    <ClCompile Include="objects\Projectile.cpp" />
+    <ClCompile Include="objects\Wildling.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="objects\GameObject.cpp" />
     <ClCompile Include="util\ObjLoader.cpp" />
@@ -122,6 +127,10 @@
   <ItemGroup>
     <ClInclude Include="calculations\Graphics.h" />
     <ClInclude Include="calculations\Math.h" />
+    <ClInclude Include="game\GameLogic.h" />
+    <ClInclude Include="objects\Player.h" />
+    <ClInclude Include="objects\Projectile.h" />
+    <ClInclude Include="objects\Wildling.h" />
     <ClInclude Include="objects\GameObject.h" />
     <ClInclude Include="util\ObjLoader.h" />
     <ClInclude Include="util\stb_image.h" />

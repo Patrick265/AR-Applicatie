@@ -7,16 +7,20 @@
 #include "util/ObjLoader.h"
 #include "util/TextureHandler.h"
 #include "objects/GameObject.h"
+#include "game/GameLogic.h"
 #include "vision/markerdetection.h"
 
-const float WIDTH = 1600;
-const float HEIGHT = 800;
+float width = 1600;
+float height = 800;
 
+float deltaTime;
 float lastFrameTime;
 
 float fTheta;
 
 std::vector<GameObject> game_objects;
+
+GameLogic gameLogic;
 
 struct Camera
 {
@@ -34,6 +38,7 @@ bool mouseControl = true;
 
 void onIdle();
 void onDisplay();
+void onReshape(int width, int height);
 void onKey(unsigned char c, int x, int y);
 void onKeyUp(unsigned char c, int x, int y);
 void onMousePassiveMotion(int x, int y);
@@ -41,13 +46,14 @@ void moveCamera(float angle, float fac);
 
 void standardRenderOperations();
 void drawMesh(Graphics::mesh mesh, uint16_t texture_id);
+void drawGameObject(GameObject game_obj);
 void displayText();
 
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - WIDTH) / 2, (glutGet(GLUT_SCREEN_HEIGHT) - HEIGHT) / 2);
-	glutInitWindowSize(WIDTH, HEIGHT);
+	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - width) / 2, (glutGet(GLUT_SCREEN_HEIGHT) - height) / 2);
+	glutInitWindowSize(width, height);
 	glutCreateWindow("Game Of Thrones: AR");
 
 	glutIdleFunc(onIdle);
@@ -55,13 +61,13 @@ int main(int argc, char** argv) {
 	glutKeyboardFunc(onKey);
 	glutKeyboardUpFunc(onKeyUp);
 	glutPassiveMotionFunc(onMousePassiveMotion);
+	glutReshapeFunc(onReshape);
 
-	runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
-	
+	// runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
 
 	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
 	
-	glutWarpPointer(WIDTH / 2, HEIGHT / 2);
+	glutWarpPointer(width / 2, height / 2);
 
 	glutMainLoop();
 }
@@ -70,7 +76,7 @@ void onIdle()
 {
 	//Calculate delta time
 	float currentTime = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
-	float deltaTime = currentTime - lastFrameTime;
+	deltaTime = currentTime - lastFrameTime;
 	lastFrameTime = currentTime;
 
 	fTheta += 30.0f * deltaTime;
@@ -83,6 +89,8 @@ void onIdle()
 	if (keys[int('e')]) camera.posZ += deltaTime * speed;
 	if (keys[int('q')]) camera.posZ -= deltaTime * speed;
 
+	gameLogic.update(deltaTime);
+
 	glutPostRedisplay();
 }
 
@@ -90,7 +98,7 @@ void onDisplay()
 {
 	standardRenderOperations();
 
-	// Test cube in the center of the world
+	/*// Test cube in the center of the world
 	glPushMatrix();
 	glTranslatef(-0.5, -0.5, -0.5);
 	glutSolidCube(1);
@@ -116,7 +124,10 @@ void onDisplay()
 		drawMesh(game_obj.getMesh(), game_obj.getTextureId());
 
 		glPopMatrix();
-	}
+	}*/
+
+	for (GameObject* gameObject : gameLogic.getGameObjects())
+		drawGameObject(*gameObject);
 
 	displayText();
 
@@ -134,7 +145,7 @@ void standardRenderOperations()
 
 	//Swapping between perspective and orthographic mode (disabled)
 	// if (currentRenderMode == PERSP)
-	gluPerspective(70.0f, WIDTH / HEIGHT, 0.1f, 1000.0f);
+	gluPerspective(70.0f, float(width) / float(height), 0.1f, 1000.0f);
 	// else if (currentRenderMode == ORTHO)
 	// 	glOrtho(-20, 20, -20, 20, 1.0, 10000.0f);
 
@@ -177,19 +188,45 @@ void drawMesh(Graphics::mesh mesh, uint16_t texture_id)
 
 }
 
+void drawGameObject(GameObject game_obj)
+{
+	glPushMatrix();
+
+	glTranslatef(game_obj.getPosition().x, game_obj.getPosition().y, game_obj.getPosition().z);
+	glRotatef(game_obj.getRotation().x, 1, 0, 0);
+	glRotatef(game_obj.getRotation().y, 0, 1, 0);
+	glRotatef(game_obj.getRotation().z, 0, 0, 1);
+	glScalef(game_obj.getScale().x, game_obj.getScale().y, game_obj.getScale().z);
+
+	drawMesh(game_obj.getMesh(), game_obj.getTextureId());
+
+	glPopMatrix();
+}
+
 void displayText()
 {
-	// Create a string that displays the current camera location and rotation
-	std::string text = "x " + std::to_string(camera.posX) + "\ny " + std::to_string(camera.posY) + "\nz " +
-		std::to_string(camera.posZ) + "\nX " + std::to_string(camera.rotX) + "\nY " + std::to_string(camera.rotY);
+	// Create a string that displays the fps, current camera location and rotation
+	std::string text =
+		"fps " + std::to_string(int(1 / deltaTime)) +
+		"\nx " + std::to_string(camera.posX) +
+		"\ny " + std::to_string(camera.posY) +
+		"\nz " + std::to_string(camera.posZ) +
+		"\nX " + std::to_string(camera.rotX) +
+		"\nY " + std::to_string(camera.rotY);
 
-	int xpos = -15;
-	int ypos = 20;
+	int xpos = 20;
+	int ypos = 30;
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_COLOR_MATERIAL);
+	glClearDepth(GL_DEPTH_BUFFER_BIT);
+
+	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0.0, 100.0, 100.0, 0.0, 0.0, 1.0);
+	glOrtho(0.0, width, height, 0.0, 0.0, 1.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
 	glRasterPos2f(xpos, ypos);
 	glColor3f(1, 1, 1);
 	int len = text.length();
@@ -197,13 +234,12 @@ void displayText()
 	{
 		if (text[i] == '\n')
 		{
-			ypos += 2;
+			ypos += 20;
 			glRasterPos2f(xpos, ypos);
 			continue;
 		}
 		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
 	}
-	glColor3f(1, 1, 1);
 }
 
 void onKey(unsigned char keyId, int x, int y)
@@ -211,7 +247,9 @@ void onKey(unsigned char keyId, int x, int y)
 	if (keyId == VK_ESCAPE)
 		exit(1);
 	if (keyId == 'c')
-		mouseControl = !mouseControl;	keys[keyId] = true;
+		mouseControl = !mouseControl;
+	if (keyId == 't')
+		gameLogic.throwProjectile();	keys[keyId] = true;
 }
 
 void onKeyUp(unsigned char keyId, int, int)
@@ -224,8 +262,8 @@ void onMousePassiveMotion(int x, int y)
 	if (!mouseControl)
 		return;
 
-	int dx = x - WIDTH / 2;
-	int dy = y - HEIGHT / 2;
+	int dx = x - width / 2;
+	int dy = y - height / 2;
 	if ((dx != 0 || dy != 0) && abs(dx) < 400 && abs(dy) < 400 && !justMovedMouse)
 	{
 		camera.rotY += dx / 10.0f;
@@ -234,14 +272,24 @@ void onMousePassiveMotion(int x, int y)
 			camera.rotX = -90;
 		if (camera.rotX > 90)
 			camera.rotX = 90;
+		if (camera.rotY > 360)
+			camera.rotY -= 360;
+		if (camera.rotY <= 0)
+			camera.rotY += 360;
 	}
 	if (!justMovedMouse)
 	{
-		glutWarpPointer(WIDTH / 2, HEIGHT / 2);
+		glutWarpPointer(width / 2, height / 2);
 		justMovedMouse = true;
 	}
 	else
 		justMovedMouse = false;
+}
+
+void onReshape(int w, int h)
+{
+	width = w;
+	height = h;
 }
 
 void moveCamera(float angle, float fac)
