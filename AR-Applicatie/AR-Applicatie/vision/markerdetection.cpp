@@ -271,6 +271,9 @@ void excecuteOpenCVDetection() {
 		//Detecting the blobs
 		detector->detect(frame_threshold, myBlobs);
 
+		//Drawing keypoints (red circles)
+		drawKeypoints(frame_threshold, myBlobs, blobImg, cv::Scalar(0, 0, 255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+
 		detectMarker();
 
 		//Showing the text

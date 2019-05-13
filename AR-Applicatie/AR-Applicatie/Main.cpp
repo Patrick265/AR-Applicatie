@@ -144,7 +144,7 @@ void onIdle()
 	gameLogic.update(deltaTime);
 	if (countert >= 10)
 	{
-		runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
+		runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 		countert = 0;
 	}
 	countert++;
