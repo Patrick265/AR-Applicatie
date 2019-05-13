@@ -9,6 +9,7 @@
 #include "objects/GameObject.h"
 #include "game/GameLogic.h"
 #include "vision/markerdetection.h"
+#include "animation/Rig.h"
 
 float width = 1600;
 float height = 800;
@@ -16,9 +17,17 @@ float height = 800;
 float deltaTime;
 float lastFrameTime;
 
+//Rotation for the showcasing of the rigging
+float current_rotation = 0.0f;
+//Showcasing rigging through simple hardcoded animation
+bool arm_up = false;
+
+Rig *rig;
+
+
 float fTheta;
 
-std::vector<GameObject> game_objects;
+//std::vector<GameObject> game_objects;
 
 GameLogic gameLogic;
 
@@ -63,6 +72,16 @@ int main(int argc, char** argv) {
 	glutPassiveMotionFunc(onMousePassiveMotion);
 	glutReshapeFunc(onReshape);
 
+	current_rotation = 0.0f;
+
+	Math::vec3d pos = { -5, 0, 0 };
+	Math::vec3d rot = { 0.0f, 0.0f, 0.0f };
+	Math::vec3d scale = { 1.0f, 1.0f, 1.0f };
+
+	rig = new Rig(pos, rot, scale);
+	rig->rigFemaleElf();
+
+
 	// runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
 
 	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
@@ -79,8 +98,44 @@ void onIdle()
 	deltaTime = currentTime - lastFrameTime;
 	lastFrameTime = currentTime;
 
+	if (deltaTime < 0)
+		return;
+
 	fTheta += 30.0f * deltaTime;
 
+	rig->setRotation({ 0,fTheta * 2,0 });
+
+
+	//Hardcoded animation to showcase rig
+	if (arm_up)
+		current_rotation += 150.0f * deltaTime;
+	else
+		current_rotation -= 150.0f * deltaTime;
+
+	if (current_rotation <= 0.0f)
+		arm_up = true;
+	else if (current_rotation >= 90.0f)
+		arm_up = false;
+
+	Node* la_u = rig->getNode("la_u");
+	la_u->setRotation({ -current_rotation + 45, 0, 0 });
+	Node* la_l = rig->getNode("la_l");
+	la_l->setRotation({ -current_rotation,0, 0 });
+	Node* ra_u = rig->getNode("ra_u");
+	ra_u->setRotation({ -90 + current_rotation + 45,0, 0 });
+	Node* ra_l = rig->getNode("ra_l");
+	ra_l->setRotation({ -90 + current_rotation,0, 0 });
+
+	Node* ll_u = rig->getNode("ll_u");
+	ll_u->setRotation({ current_rotation - 45, 0, 0 });
+	Node* ll_l = rig->getNode("ll_l");
+	ll_l->setRotation({ current_rotation,0, 0 });
+	Node* rl_u = rig->getNode("rl_u");
+	rl_u->setRotation({ 90 - current_rotation - 45,0, 0 });
+	Node* rl_l = rig->getNode("rl_l");
+	rl_l->setRotation({ 90 - current_rotation,0, 0 });
+
+	
 	const float speed = 6;
 	if (keys[int('a')]) moveCamera(0, deltaTime * speed);
 	if (keys[int('d')]) moveCamera(180, deltaTime * speed);
@@ -97,6 +152,11 @@ void onIdle()
 void onDisplay() 
 {
 	standardRenderOperations();
+
+
+	glPushMatrix();
+	rig->drawRig();
+	glPopMatrix();
 
 	/*// Test cube in the center of the world
 	glPushMatrix();
@@ -165,7 +225,7 @@ void standardRenderOperations()
 	glEnable(GL_COLOR_MATERIAL);
 }
 
-void drawMesh(Graphics::mesh mesh, uint16_t texture_id)
+void drawMesh2(Graphics::mesh mesh, uint16_t texture_id)
 {
 	glBindTexture(GL_TEXTURE_2D, texture_id);
 	glEnable(GL_TEXTURE_2D);
@@ -198,7 +258,7 @@ void drawGameObject(GameObject game_obj)
 	glRotatef(game_obj.getRotation().z, 0, 0, 1);
 	glScalef(game_obj.getScale().x, game_obj.getScale().y, game_obj.getScale().z);
 
-	drawMesh(game_obj.getMesh(), game_obj.getTextureId());
+	drawMesh2(game_obj.getMesh(), game_obj.getTextureId());
 
 	glPopMatrix();
 }

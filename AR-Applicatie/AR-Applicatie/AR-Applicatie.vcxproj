@@ -112,6 +112,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="animation\Node.cpp" />
+    <ClCompile Include="animation\Rig.cpp" />
     <ClCompile Include="calculations\Graphics.cpp" />
     <ClCompile Include="calculations\Math.cpp" />
     <ClCompile Include="game\GameLogic.cpp" />
@@ -125,6 +127,8 @@
     <ClCompile Include="vision\markerdetection.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="animation\Node.h" />
+    <ClInclude Include="animation\Rig.h" />
     <ClInclude Include="calculations\Graphics.h" />
     <ClInclude Include="calculations\Math.h" />
     <ClInclude Include="game\GameLogic.h" />
