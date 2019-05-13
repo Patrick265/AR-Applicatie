@@ -7,6 +7,7 @@
 #include "util/ObjLoader.h"
 #include "util/TextureHandler.h"
 #include "objects/GameObject.h"
+#include "vision/markerdetection.h"
 
 const float WIDTH = 1600;
 const float HEIGHT = 800;
@@ -54,6 +55,9 @@ int main(int argc, char** argv) {
 	glutKeyboardFunc(onKey);
 	glutKeyboardUpFunc(onKeyUp);
 	glutPassiveMotionFunc(onMousePassiveMotion);
+
+	runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
+	
 
 	Math::vec3d pos = { -5, 0, 0 };
 	Math::vec3d rot = { 0.0f, 0.0f, 0.0f };
