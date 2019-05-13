@@ -59,49 +59,6 @@ int main(int argc, char** argv) {
 	runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
 	
 
-	Math::vec3d pos = { -5, 0, 0 };
-	Math::vec3d rot = { 0.0f, 0.0f, 0.0f };
-	Math::vec3d scale = { 1.0f, 1.0f, 1.0f };
-
-	 GameObject obj1(ObjLoader::loadObj("Resources/Rune/NPC_arms.obj"),
-	 	    TextureHandler::addTexture("Resources/Rune/npc_arms.png"));
-	 obj1.setPosition(pos);
-	 obj1.setRotation(rot);
-	 obj1.setScale(scale);
- 
-	 GameObject obj2(ObjLoader::loadObj("Resources/Rune/NPC_head.obj"),
-	 	    TextureHandler::addTexture("Resources/Rune/npc_head.png"));
-	 obj2.setPosition(pos);
-	 obj2.setRotation(rot);
-	 obj2.setScale(scale);
- 
-	 GameObject obj3(ObjLoader::loadObj("Resources/Rune/NPC_legs.obj"),
-	 		TextureHandler::addTexture("Resources/Rune/npc_legs.png"));
-	 obj3.setPosition(pos);
-	 obj3.setRotation(rot);
-	 obj3.setScale(scale);
- 
-	 GameObject obj4(ObjLoader::loadObj("Resources/Rune/NPC_torso.obj"),
-	 	    TextureHandler::addTexture("Resources/Rune/npc_torso.png"));
-	 obj4.setPosition(pos);
-	 obj4.setRotation(rot);
-	 obj4.setScale(scale);
-
-
-	// pos = {5, 0, 0 };
- //
-	// GameObject obj2(ObjLoader::loadObj("Resources/Hammer/hammer.obj"),
-	// 		TextureHandler::addTexture("Resources/Hammer/hammer.png"));
-	// obj2.setPosition(Math::vector_add(pos, pos));
-	// obj2.setRotation(rot);
-	// obj2.setScale(scale);
-
-	game_objects.push_back(obj1);
-	game_objects.push_back(obj2);
-	game_objects.push_back(obj3);
-	game_objects.push_back(obj4);
-
-
 	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
 	
 	glutWarpPointer(WIDTH / 2, HEIGHT / 2);
@@ -151,22 +108,7 @@ void onDisplay()
 
 		glPushMatrix();
 
-		int armsId = 0;
-		if(i == armsId)
-		{
-			glTranslatef(game_obj.getPosition().x, game_obj.getPosition().y + 4.1, game_obj.getPosition().z - 0.1);
-		}
-		else
-		{
-			glTranslatef(game_obj.getPosition().x, game_obj.getPosition().y, game_obj.getPosition().z);
-		}
-
-		if(i == armsId)
-		{
-			glRotatef(game_obj.getRotation().x, 1,0,0);
-			glRotatef(game_obj.getRotation().y, 0,1,0);
-			glRotatef(game_obj.getRotation().z, 0,0,1);
-		}
+		
 
 
 		glScalef(game_obj.getScale().x, game_obj.getScale().y, game_obj.getScale().z);
@@ -175,31 +117,6 @@ void onDisplay()
 
 		glPopMatrix();
 	}
-
-	/// old rendering code, obv a bit more clean, but for testing purposes we use the NPC.
-
-	// for (GameObject game_obj : game_objects) {
- //
-	// 	//To rotate the object
-	// 	//Move to an update function for the gameobjects, which will be called in the idle function
-	// 	Math::vec3d rot = game_obj.getRotation();
-	// 	rot.y = fTheta * game_obj.getTextureId();
-	// 	game_obj.setRotation(rot);
- //
-	// 	glPushMatrix();
- //
-	// 	glTranslatef(game_obj.getPosition().x, game_obj.getPosition().y, game_obj.getPosition().z);
- //
-	// 	glRotatef(game_obj.getRotation().x, 1,0,0);
-	// 	glRotatef(game_obj.getRotation().y, 0,1,0);
-	// 	glRotatef(game_obj.getRotation().z, 0,0,1);
- //
-	// 	glScalef(game_obj.getScale().x, game_obj.getScale().y, game_obj.getScale().z);
- //
-	// 	drawMesh(game_obj.getMesh(), game_obj.getTextureId());
- //
-	// 	glPopMatrix();
-	// }
 
 	displayText();
 
