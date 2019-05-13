@@ -11,8 +11,8 @@
 #include "vision/markerdetection.h"
 #include "animation/Rig.h"
 
-float width = 1600;
-float height = 800;
+float width = 1920;
+float height = 1080;
 
 float deltaTime;
 float lastFrameTime;
@@ -22,7 +22,7 @@ float current_rotation = 0.0f;
 //Showcasing rigging through simple hardcoded animation
 bool arm_up = false;
 
-Rig *rig;
+Rig* rig;
 
 
 float fTheta;
@@ -34,11 +34,11 @@ GameLogic gameLogic;
 struct Camera
 {
 	float
-	posX = 2,
-	posY = 2,
-	posZ = 2,
-	rotX = 45,
-	rotY = -45;
+		posX = 2,
+		posY = 2,
+		posZ = 2,
+		rotX = 45,
+		rotY = -45;
 } camera;
 
 bool keys[255];
@@ -82,16 +82,16 @@ int main(int argc, char** argv) {
 	rig->rigFemaleElf();
 
 
-	// runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
+	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 
 	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
-	
+
 	glutWarpPointer(width / 2, height / 2);
 
 	glutMainLoop();
 }
 
-void onIdle() 
+void onIdle()
 {
 	//Calculate delta time
 	float currentTime = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
@@ -117,25 +117,25 @@ void onIdle()
 	else if (current_rotation >= 90.0f)
 		arm_up = false;
 
-	Node* la_u = rig->getNode("la_u");
+	Node * la_u = rig->getNode("la_u");
 	la_u->setRotation({ -current_rotation + 45, 0, 0 });
-	Node* la_l = rig->getNode("la_l");
+	Node * la_l = rig->getNode("la_l");
 	la_l->setRotation({ -current_rotation,0, 0 });
-	Node* ra_u = rig->getNode("ra_u");
+	Node * ra_u = rig->getNode("ra_u");
 	ra_u->setRotation({ -90 + current_rotation + 45,0, 0 });
-	Node* ra_l = rig->getNode("ra_l");
+	Node * ra_l = rig->getNode("ra_l");
 	ra_l->setRotation({ -90 + current_rotation,0, 0 });
 
-	Node* ll_u = rig->getNode("ll_u");
+	Node * ll_u = rig->getNode("ll_u");
 	ll_u->setRotation({ current_rotation - 45, 0, 0 });
-	Node* ll_l = rig->getNode("ll_l");
+	Node * ll_l = rig->getNode("ll_l");
 	ll_l->setRotation({ current_rotation,0, 0 });
-	Node* rl_u = rig->getNode("rl_u");
+	Node * rl_u = rig->getNode("rl_u");
 	rl_u->setRotation({ 90 - current_rotation - 45,0, 0 });
-	Node* rl_l = rig->getNode("rl_l");
+	Node * rl_l = rig->getNode("rl_l");
 	rl_l->setRotation({ 90 - current_rotation,0, 0 });
 
-	
+
 	const float speed = 6;
 	if (keys[int('a')]) moveCamera(0, deltaTime * speed);
 	if (keys[int('d')]) moveCamera(180, deltaTime * speed);
@@ -149,7 +149,7 @@ void onIdle()
 	glutPostRedisplay();
 }
 
-void onDisplay() 
+void onDisplay()
 {
 	standardRenderOperations();
 
@@ -176,7 +176,7 @@ void onDisplay()
 
 		glPushMatrix();
 
-		
+
 
 
 		glScalef(game_obj.getScale().x, game_obj.getScale().y, game_obj.getScale().z);
@@ -319,31 +319,27 @@ void onKeyUp(unsigned char keyId, int, int)
 
 void onMousePassiveMotion(int x, int y)
 {
-	if (!mouseControl)
-		return;
+	if (!mouseControl) {
+		Point2D mousePos = getCoordinates();
 
-	int dx = x - width / 2;
-	int dy = y - height / 2;
-	if ((dx != 0 || dy != 0) && abs(dx) < 400 && abs(dy) < 400 && !justMovedMouse)
-	{
-		camera.rotY += dx / 10.0f;
-		camera.rotX += dy / 10.0f;
-		if (camera.rotX < -90)
-			camera.rotX = -90;
-		if (camera.rotX > 90)
-			camera.rotX = 90;
-		if (camera.rotY > 360)
-			camera.rotY -= 360;
-		if (camera.rotY <= 0)
-			camera.rotY += 360;
+		double x = mousePos.x * 3;
+		double y = (double) mousePos.y * 2.25;
+		if (x >= 0 && x <= width && y >= 0 && y <= height) {
+
+			glutWarpPointer(x, y);
+		}
+		else {
+			SetCursorPos(width/ 2, height/ 2);
+		}
 	}
+
 	if (!justMovedMouse)
 	{
-		glutWarpPointer(width / 2, height / 2);
 		justMovedMouse = true;
 	}
 	else
 		justMovedMouse = false;
+
 }
 
 void onReshape(int w, int h)
