@@ -23,7 +23,7 @@ float current_rotation = 0.0f;
 //Showcasing rigging through simple hardcoded animation
 bool arm_up = false;
 
-Rig *rig;
+Rig* rig;
 
 
 float fTheta;
@@ -35,11 +35,11 @@ GameLogic gameLogic;
 struct Camera
 {
 	float
-	posX = 2,
-	posY = 2,
-	posZ = 2,
-	rotX = 45,
-	rotY = -45;
+		posX = 2,
+		posY = 2,
+		posZ = 2,
+		rotX = 45,
+		rotY = -45;
 } camera;
 
 bool keys[255];
@@ -58,6 +58,10 @@ void standardRenderOperations();
 void drawMesh(Graphics::mesh mesh, uint16_t texture_id);
 void drawGameObject(GameObject game_obj);
 void displayText();
+
+int cursorID;
+int cursorX = 0;
+int cursorY = 0;
 
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);
@@ -82,14 +86,18 @@ int main(int argc, char** argv) {
 	rig = new Rig(pos, rot, scale);
 	rig->rigFemaleElf();
 
+	//Cursor image
+	cursorID = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png");
+	glutSetCursor(GLUT_CURSOR_NONE);
+
 	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
-	
+
 	glutWarpPointer(width / 2, height / 2);
 
 	glutMainLoop();
 }
 
-void onIdle() 
+void onIdle()
 {
 	//Calculate delta time
 	float currentTime = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
@@ -114,25 +122,25 @@ void onIdle()
 	else if (current_rotation >= 90.0f)
 		arm_up = false;
 
-	Node* la_u = rig->getNode("la_u");
+	Node * la_u = rig->getNode("la_u");
 	la_u->setRotation({ -current_rotation + 45, 0, 0 });
-	Node* la_l = rig->getNode("la_l");
+	Node * la_l = rig->getNode("la_l");
 	la_l->setRotation({ -current_rotation,0, 0 });
-	Node* ra_u = rig->getNode("ra_u");
+	Node * ra_u = rig->getNode("ra_u");
 	ra_u->setRotation({ -90 + current_rotation + 45,0, 0 });
-	Node* ra_l = rig->getNode("ra_l");
+	Node * ra_l = rig->getNode("ra_l");
 	ra_l->setRotation({ -90 + current_rotation,0, 0 });
 
-	Node* ll_u = rig->getNode("ll_u");
+	Node * ll_u = rig->getNode("ll_u");
 	ll_u->setRotation({ current_rotation - 45, 0, 0 });
-	Node* ll_l = rig->getNode("ll_l");
+	Node * ll_l = rig->getNode("ll_l");
 	ll_l->setRotation({ current_rotation,0, 0 });
-	Node* rl_u = rig->getNode("rl_u");
+	Node * rl_u = rig->getNode("rl_u");
 	rl_u->setRotation({ 90 - current_rotation - 45,0, 0 });
-	Node* rl_l = rig->getNode("rl_l");
+	Node * rl_l = rig->getNode("rl_l");
 	rl_l->setRotation({ 90 - current_rotation,0, 0 });
 
-	
+
 	const float speed = 6;
 	if (keys[int('a')]) moveCamera(0, deltaTime * speed);
 	if (keys[int('d')]) moveCamera(180, deltaTime * speed);
@@ -142,7 +150,7 @@ void onIdle()
 	if (keys[int('q')]) camera.posZ -= deltaTime * speed;
 
 	gameLogic.update(deltaTime);
-	if (countert >= 10)
+	if (countert >= 0)
 	{
 		runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 		countert = 0;
@@ -152,7 +160,7 @@ void onIdle()
 	glutPostRedisplay();
 }
 
-void onDisplay() 
+void onDisplay()
 {
 	standardRenderOperations();
 
@@ -179,7 +187,7 @@ void onDisplay()
 
 		glPushMatrix();
 
-		
+
 
 
 		glScalef(game_obj.getScale().x, game_obj.getScale().y, game_obj.getScale().z);
@@ -303,6 +311,20 @@ void displayText()
 		}
 		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
 	}
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, cursorID);
+	glEnable(GL_TEXTURE_2D);
+	glBegin(GL_QUADS);
+	std::cout << cursorX << "\t" << cursorY << "\n";
+	glTexCoord2f(0, 0); glVertex2f(cursorX - 25, cursorY - 25);
+	glTexCoord2f(0, 1); glVertex2f(cursorX - 25, cursorY + 25);
+	glTexCoord2f(1, 1); glVertex2f(cursorX + 25, cursorY + 25);
+	glTexCoord2f(1, 0); glVertex2f(cursorX + 25, cursorY - 25);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
 }
 
 void onKey(unsigned char keyId, int x, int y)
@@ -322,27 +344,43 @@ void onKeyUp(unsigned char keyId, int, int)
 
 void onMousePassiveMotion(int x, int y)
 {
-	if (!mouseControl)
-		return;
+	if (!mouseControl) {
+		Point2D mousePos = getCoordinates();
 
-	int dx = x - width / 2;
-	int dy = y - height / 2;
-	if ((dx != 0 || dy != 0) && abs(dx) < 400 && abs(dy) < 400 && !justMovedMouse)
-	{
-		camera.rotY += dx / 10.0f;
-		camera.rotX += dy / 10.0f;
-		if (camera.rotX < -90)
-			camera.rotX = -90;
-		if (camera.rotX > 90)
-			camera.rotX = 90;
-		if (camera.rotY > 360)
-			camera.rotY -= 360;
-		if (camera.rotY <= 0)
-			camera.rotY += 360;
+		double xScreen = mousePos.x * 3;
+		double yScreen = (double)mousePos.y * 2.25;
+
+		if (xScreen >= 0 && xScreen <= width && yScreen >= 0 && yScreen <= height) {
+			cursorX = xScreen;
+			cursorY = yScreen;
+			glutWarpPointer(xScreen, yScreen);
+
+		}
+		else {
+			SetCursorPos(width / 2, height / 2);
+		}
 	}
+	cursorX = x;
+	cursorY = y;
+	//int dx = x - width / 2;
+	//int dy = y - height / 2;
+	//if ((dx != 0 || dy != 0) && abs(dx) < 400 && abs(dy) < 400 && !justMovedMouse)
+	//{
+	//	camera.rotY += dx / 10.0f;
+	//	camera.rotX += dy / 10.0f;
+	//	if (camera.rotX < -90)
+	//		camera.rotX = -90;
+	//	if (camera.rotX > 90)
+	//		camera.rotX = 90;
+	//	if (camera.rotY > 360)
+	//		camera.rotY -= 360;
+	//	if (camera.rotY <= 0)
+	//		camera.rotY += 360;
+	//}
+
 	if (!justMovedMouse)
 	{
-		glutWarpPointer(width / 2, height / 2);
+		//glutWarpPointer(width / 2, height / 2);
 		justMovedMouse = true;
 	}
 	else
