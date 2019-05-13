@@ -141,6 +141,13 @@
     <ClInclude Include="util\TextureHandler.h" />
     <ClInclude Include="vision\markerdetection.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Cursor\16x16_cursor_icon.jpg" />
+    <Image Include="Resources\Cursor\16x16_cursor_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="OpenGL-OpenCV-PropertySheet.props" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
