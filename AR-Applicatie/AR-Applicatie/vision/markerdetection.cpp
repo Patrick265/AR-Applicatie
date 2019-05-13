@@ -235,35 +235,31 @@ void excecuteMouseDetection() {
 	width = 640;
 	height = 480;
 
-	while (isRunning == 1) {
-		blobImg = originalBlobImg.clone();
-		drawBounds(blobImg);
+	blobImg = originalBlobImg.clone();
+	drawBounds(blobImg);
 
-		checkAllBounds(blobImg);
+	checkAllBounds(blobImg);
 
-		//Showing the text
-		cv::imshow("binair beeld", blobImg);
-		cv::resizeWindow("binair beeld", 640, 480);
+	//Showing the text
+	cv::imshow("binair beeld", blobImg);
+	cv::resizeWindow("binair beeld", 640, 480);
 
-		Point2D point = getCoordinates();
-		std::cout << point.x << std::endl;
-		std::cout << point.y << std::endl;
 
 		if (cv::waitKey(5) == 32) {
 			terminateDetection();
 			changeDetectionMode();
 			runMarkerDetection(getDetectionMode());
 		}
-	}
+	
 }
 
 void excecuteOpenCVDetection() {
 
-	while (isRunning == 1) {
+	 
 		cap >> frame;
 		if (frame.empty()) {
 			std::cerr << "Frame invalid and skipped!" << std::endl;
-			continue;
+			return;
 		}
 		flip(frame, frame, 1);
 
@@ -272,40 +268,21 @@ void excecuteOpenCVDetection() {
 		// Detect the object based on HSV Range Values
 		inRange(frame_HSV, cv::Scalar(lowH, lowS, lowV), cv::Scalar(highH, highS, highV), frame_threshold);
 
-		cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5), cv::Point(-1, -1));
-		cv::erode(frame, frame, element);
-
 		//Detecting the blobs
 		detector->detect(frame_threshold, myBlobs);
 
-		//Drawing keypoints (red circles)
-		drawKeypoints(frame_threshold, myBlobs, blobImg, cv::Scalar(0, 0, 255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-
 		detectMarker();
-
-		//For text drawing purposes
-		for (cv::KeyPoint k : myBlobs)
-		{
-			putText(blobImg, std::to_string(k.size), cv::Point(k.pt.x, k.pt.y), cv::FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0, 255, 0), 2.0);
-		}
-
-		drawBounds(blobImg);
-
-		checkAllBounds(blobImg);
 
 		//Showing the text
 		cv::imshow("binair beeld", blobImg);
 
-		Point2D point = getCoordinates();
-		std::cout << point.x << std::endl;
-		std::cout << point.y << std::endl;
 
 		if (cv::waitKey(5) == 32) {
 			terminateDetection();
 			changeDetectionMode();
 			runMarkerDetection(getDetectionMode());
 		}
-	}
+	
 }
 
 int runMarkerDetection(int input)

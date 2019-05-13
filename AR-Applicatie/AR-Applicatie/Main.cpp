@@ -13,6 +13,7 @@
 
 float width = 1600;
 float height = 800;
+int countert = 0;
 
 float deltaTime;
 float lastFrameTime;
@@ -81,9 +82,6 @@ int main(int argc, char** argv) {
 	rig = new Rig(pos, rot, scale);
 	rig->rigFemaleElf();
 
-
-	// runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
-
 	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
 	
 	glutWarpPointer(width / 2, height / 2);
@@ -104,7 +102,6 @@ void onIdle()
 	fTheta += 30.0f * deltaTime;
 
 	rig->setRotation({ 0,fTheta * 2,0 });
-
 
 	//Hardcoded animation to showcase rig
 	if (arm_up)
@@ -145,6 +142,12 @@ void onIdle()
 	if (keys[int('q')]) camera.posZ -= deltaTime * speed;
 
 	gameLogic.update(deltaTime);
+	if (countert >= 10)
+	{
+		runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
+		countert = 0;
+	}
+	countert++;
 
 	glutPostRedisplay();
 }
