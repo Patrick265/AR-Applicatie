@@ -112,6 +112,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="animation\AnimationHandler.cpp" />
     <ClCompile Include="animation\Node.cpp" />
     <ClCompile Include="animation\Rig.cpp" />
     <ClCompile Include="calculations\Graphics.cpp" />
@@ -127,6 +128,7 @@
     <ClCompile Include="vision\markerdetection.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="animation\AnimationHandler.h" />
     <ClInclude Include="animation\Node.h" />
     <ClInclude Include="animation\Rig.h" />
     <ClInclude Include="calculations\Graphics.h" />

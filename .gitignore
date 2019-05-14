@@ -11,6 +11,7 @@
 *.lo
 *.o
 *.obj
+!/AR-Applicatie/AR-Applicatie/Resources/**/*.obj
 
 # Precompiled Headers
 *.gch
