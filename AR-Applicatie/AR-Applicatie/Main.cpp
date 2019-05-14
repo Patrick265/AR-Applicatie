@@ -79,7 +79,8 @@ int main(int argc, char** argv) {
 	Math::vec3d scale = { 1.0f, 1.0f, 1.0f };
 
 	rig = new Rig(pos, rot, scale);
-	rig->rigFemaleElf();
+	rig->rigGoblin();
+	//rig->rigFemaleElf();
 
 
 	// runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
@@ -117,22 +118,22 @@ void onIdle()
 	else if (current_rotation >= 90.0f)
 		arm_up = false;
 
-	Node* la_u = rig->getNode("la_u");
+	Node* la_u = rig->getNode("goblin_arm_left_top");
 	la_u->setRotation({ -current_rotation + 45, 0, 0 });
-	Node* la_l = rig->getNode("la_l");
+	Node* la_l = rig->getNode("goblin_arm_left_bottom");
 	la_l->setRotation({ -current_rotation,0, 0 });
-	Node* ra_u = rig->getNode("ra_u");
+	Node* ra_u = rig->getNode("goblin_arm_right_top");
 	ra_u->setRotation({ -90 + current_rotation + 45,0, 0 });
-	Node* ra_l = rig->getNode("ra_l");
+	Node* ra_l = rig->getNode("goblin_arm_right_bottom");
 	ra_l->setRotation({ -90 + current_rotation,0, 0 });
 
-	Node* ll_u = rig->getNode("ll_u");
+	Node* ll_u = rig->getNode("goblin_leg_left_top");
 	ll_u->setRotation({ current_rotation - 45, 0, 0 });
-	Node* ll_l = rig->getNode("ll_l");
+	Node* ll_l = rig->getNode("goblin_leg_left_bottom");
 	ll_l->setRotation({ current_rotation,0, 0 });
-	Node* rl_u = rig->getNode("rl_u");
+	Node* rl_u = rig->getNode("goblin_leg_right_top");
 	rl_u->setRotation({ 90 - current_rotation - 45,0, 0 });
-	Node* rl_l = rig->getNode("rl_l");
+	Node* rl_l = rig->getNode("goblin_leg_right_bottom");
 	rl_l->setRotation({ 90 - current_rotation,0, 0 });
 
 	

@@ -111,7 +111,7 @@ void Rig::rigFemaleElf()
 		_pos, _rot);
 		
 	_pos = { -0.03f, -0.88f, 0 };
-	Node* rightleg_lower = new Node("rl_l", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_bottom_right.obj"),
+	Node* rightleg_lower = new Node("rl_l", ObjLoader::loadObj("Resources/Enemy/NPC_leg_bottom_right.obj"),
 		TextureHandler::addTexture("Resources/Rune/npc_legs.png"),
 		_pos, _rot);
 
@@ -152,6 +152,124 @@ void Rig::rigFemaleElf()
 	nodes.push_back(leftleg_lower);
 	nodes.push_back(rightleg_lower);
 
+}
+
+void Rig::rigGoblin()
+{
+	clearNodes();
+
+	Math::vec3d _pos = { 0.0f, 0.0f, 0.0f };
+	Math::vec3d _rot = { 0.0f, 0.0f, 0.0f };
+	Math::vec3d parentPos;
+	centre = new Node(_pos, _rot);
+
+	Math::vec3d torso = { 0.0f, 0.0f, 5.50018f };
+		Math::vec3d arm_left_top = { 1.42841f , -0.220004f ,8.22543f };
+			Math::vec3d arm_left_bottom = { 2.05847f ,-0.30099f ,6.33814f };
+		Math::vec3d arm_right_top = { -1.43497f,-0.222508f , 8.26748f };
+			Math::vec3d arm_right_bottom = { -2.16087f, -0.321007f, 6.32603f };
+		Math::vec3d leg_left_top = { 0.466519f, 0.368012f, 5.4683f};
+			Math::vec3d leg_left_bottom = { 0.5619f, 0.169499f, 3.51627f};
+		Math::vec3d leg_right_top = { -0.562285f, 0.449695f, 5.47866f};
+			Math::vec3d leg_right_bottom = { -0.582013f, 0.280366f, 3.42471f};
+
+	//Torso
+	_pos = convertCoordinates(torso);
+	Node* goblin_torso = new Node("goblin_torso", ObjLoader::loadObj("Resources/Enemy/Goblin_torso.obj"),
+		TextureHandler::addTexture("Resources/Enemy/goblin_torso.png"),
+		_pos, _rot);
+
+	//goblin arm left top
+	_pos = convertCoordinates(arm_left_top, torso);
+	Node* goblin_arm_left_top = new Node("goblin_arm_left_top", ObjLoader::loadObj("Resources/Enemy/Goblin_arm_left_top.obj"),
+		TextureHandler::addTexture("Resources/Enemy/goblin_arm_left_top.png"),
+		_pos, _rot);
+
+	//goblin arm right top
+	_pos = convertCoordinates(arm_right_top, torso);
+	Node* goblin_arm_right_top = new Node("goblin_arm_right_top", ObjLoader::loadObj("Resources/Enemy/Goblin_arm_right_top.obj"),
+		TextureHandler::addTexture("Resources/Enemy/goblin_arm_top_right.png"),
+		_pos, _rot);
+
+	//goblin leg left top
+	_pos = convertCoordinates(leg_left_top, torso);
+	Node* goblin_leg_left_top = new Node("goblin_leg_left_top", ObjLoader::loadObj("Resources/Enemy/Goblin_leg_left_top.obj"),
+		TextureHandler::addTexture("Resources/Enemy/goblin_leg_left_top.png"),
+		_pos, _rot);
+
+	//goblin leg right top
+	_pos = convertCoordinates(leg_right_top, torso);
+	Node* goblin_leg_right_top = new Node("goblin_leg_right_top", ObjLoader::loadObj("Resources/Enemy/Goblin_leg_right_top.obj"),
+		TextureHandler::addTexture("Resources/Enemy/goblin_leg_left_top.png"),
+		_pos, _rot);
+
+	//goblin arm left bottom
+	_pos = convertCoordinates(arm_left_bottom, arm_left_top);
+	Node* goblin_arm_left_bottom = new Node("goblin_arm_left_bottom", ObjLoader::loadObj("Resources/Enemy/Goblin_arm_left_bottom.obj"),
+		TextureHandler::addTexture("Resources/Enemy/goblin_arm_left_bottom.png"),
+		_pos, _rot);
+
+	//goblin arm right bottom
+	_pos = convertCoordinates(arm_right_bottom, arm_right_top);
+	Node* goblin_arm_right_bottom = new Node("goblin_arm_right_bottom", ObjLoader::loadObj("Resources/Enemy/Goblin_arm_right_bottom.obj"),
+		TextureHandler::addTexture("Resources/Enemy/goblin_arm_right_bottom.png"),
+		_pos, _rot);
+
+	//goblin leg left bottom
+	_pos = convertCoordinates(leg_left_bottom, leg_left_top);
+	Node* goblin_leg_left_bottom = new Node("goblin_leg_left_bottom", ObjLoader::loadObj("Resources/Enemy/Goblin_leg_left_bottom.obj"),
+		TextureHandler::addTexture("Resources/Enemy/goblin_leg_left_bottom.png"),
+		_pos, _rot);
+
+	//goblin leg right bottom
+	_pos = convertCoordinates(leg_right_bottom, leg_right_top);
+	Node* goblin_leg_right_bottom = new Node("goblin_leg_right_bottom", ObjLoader::loadObj("Resources/Enemy/Goblin_leg_right_bottom.obj"),
+		TextureHandler::addTexture("Resources/Enemy/goblin_leg_right_bottom.png"),
+		_pos, _rot);
+
+
+	goblin_arm_left_top->addChild(goblin_arm_left_bottom);
+	goblin_arm_right_top->addChild(goblin_arm_right_bottom);
+	goblin_leg_left_top->addChild(goblin_leg_left_bottom);
+	goblin_leg_right_top->addChild(goblin_leg_right_bottom);
+
+	goblin_torso->addChild(goblin_arm_left_top);
+	goblin_torso->addChild(goblin_arm_right_top);
+	goblin_torso->addChild(goblin_leg_left_top);
+	goblin_torso->addChild(goblin_leg_right_top);
+
+	centre->addChild(goblin_torso);
+
+	nodes.push_back(goblin_torso);
+
+	nodes.push_back(goblin_arm_right_top);
+	nodes.push_back(goblin_arm_right_bottom);
+	nodes.push_back(goblin_arm_left_top);
+	nodes.push_back(goblin_arm_left_bottom);
+
+	nodes.push_back(goblin_leg_left_bottom);
+	nodes.push_back(goblin_leg_right_bottom);
+	nodes.push_back(goblin_leg_left_top);
+	nodes.push_back(goblin_leg_right_top);
+}
+
+Math::vec3d Rig::convertCoordinates(Math::vec3d posCords)
+{
+	Math::vec3d convertedCords;
+	convertedCords.x = posCords.x;
+	convertedCords.y = posCords.z;
+	convertedCords.z = -posCords.y;
+	return convertedCords;
+}
+
+Math::vec3d Rig::convertCoordinates(Math::vec3d posCords, Math::vec3d parent)
+{
+	Math::vec3d convertedCords;
+	convertedCords.x = posCords.x - parent.x;
+	convertedCords.y = posCords.z - parent.z;
+	convertedCords.z = -posCords.y - (-parent.y);
+
+	return convertedCords;
 }
 
 void Rig::drawRig()
