@@ -17,6 +17,8 @@ float height = 800;
 float deltaTime;
 float lastFrameTime;
 
+Point2D mousePos;
+
 //Rotation for the showcasing of the rigging
 float current_rotation = 0.0f;
 //Showcasing rigging through simple hardcoded animation
@@ -50,6 +52,8 @@ void onDisplay();
 void onReshape(int width, int height);
 void onKey(unsigned char c, int x, int y);
 void onKeyUp(unsigned char c, int x, int y);
+void onMouse();
+void onMotion(int x, int y);
 void onMousePassiveMotion(int x, int y);
 void moveCamera(float angle, float fac);
 
@@ -75,6 +79,7 @@ int main(int argc, char** argv) {
 	glutKeyboardFunc(onKey);
 	glutKeyboardUpFunc(onKeyUp);
 	glutPassiveMotionFunc(onMousePassiveMotion);
+	glutMotionFunc(onMotion);
 	glutReshapeFunc(onReshape);
 
 	current_rotation = 0.0f;
@@ -112,6 +117,10 @@ void onIdle()
 		return;
 
 	fTheta += 30.0f * deltaTime;
+
+	// Check for vision mouse updates
+	if (hasNewMousePosition())
+		onMouse();
 
 	rig->setRotation({ 0,fTheta * 2,0 });
 
@@ -155,7 +164,7 @@ void onIdle()
 
 	gameLogic.update(deltaTime);
 	
-	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
+	runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
 	
 	glutPostRedisplay();
 }
@@ -323,10 +332,10 @@ void displayText()
 	glEnable(GL_TEXTURE_2D);
 	glBegin(GL_QUADS);
 	
-	glTexCoord2f(0, 0); glVertex2f(cursorX - 25, cursorY - 25);
-	glTexCoord2f(0, 1); glVertex2f(cursorX - 25, cursorY + 25);
-	glTexCoord2f(1, 1); glVertex2f(cursorX + 25, cursorY + 25);
-	glTexCoord2f(1, 0); glVertex2f(cursorX + 25, cursorY - 25);
+	glTexCoord2f(0, 0); glVertex2f(mousePos.x - 25, mousePos.y - 25);
+	glTexCoord2f(0, 1); glVertex2f(mousePos.x - 25, mousePos.y + 25);
+	glTexCoord2f(1, 1); glVertex2f(mousePos.x + 25, mousePos.y + 25);
+	glTexCoord2f(1, 0); glVertex2f(mousePos.x + 25, mousePos.y - 25);
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
@@ -347,26 +356,42 @@ void onKeyUp(unsigned char keyId, int, int)
 	keys[keyId] = false;
 }
 
-void onMousePassiveMotion(int x, int y)
+void onMouse()
 {
-	if (!mouseControl) {
-		Point2D mousePos = getCoordinates();
+	// If controls with OpenCV
+	if (!mouseControl)
+	{
+		Point2D normalized = getCoordinates();
+		mousePos = {normalized.x * width, normalized.y * height};
 
-		double xScreen = mousePos.x * 3;
-		double yScreen = (double)mousePos.y * 2.25;
+		/*double xScreen = mousePos.x * width;
+		double yScreen = mousePos.y * height;
 
-		if (xScreen >= 0 && xScreen <= width && yScreen >= 0 && yScreen <= height) {
+		if (xScreen >= 0 && xScreen <= width && yScreen >= 0 && yScreen <= height)
+		{
 			cursorX = xScreen;
 			cursorY = yScreen;
 			glutWarpPointer(xScreen, yScreen);
 
 		}
-		else {
+		else
+		{
 			SetCursorPos(width / 2, height / 2);
-		}
+		}*/
 	}
-	cursorX = x;
-	cursorY = y;
+}
+
+void onMotion(int x, int y)
+{
+	onMousePassiveMotion(x, y);
+}
+
+void onMousePassiveMotion(int x, int y)
+{
+	if (mouseControl)
+		mousePos = { float(x), float(y) };
+	/*// cursorX = x;
+	// cursorY = y;
 	//int dx = x - width / 2;
 	//int dy = y - height / 2;
 	//if ((dx != 0 || dy != 0) && abs(dx) < 400 && abs(dy) < 400 && !justMovedMouse)
@@ -389,13 +414,14 @@ void onMousePassiveMotion(int x, int y)
 		justMovedMouse = true;
 	}
 	else
-		justMovedMouse = false;
+		justMovedMouse = false;*/
 }
 
 void onReshape(int w, int h)
 {
 	width = w;
 	height = h;
+	glViewport(0, 0, w, h);
 }
 
 void moveCamera(float angle, float fac)

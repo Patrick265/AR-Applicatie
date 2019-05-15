@@ -38,6 +38,9 @@ int highH = 7, highS = maxValue, highV = maxValue;
 int width;
 int height;
 
+// Mouse
+bool newMousePosition = false;
+
 /*
 //	This function is used for getting the detection mode.
 //
@@ -98,7 +101,7 @@ void resetBlobDetector() {
 */
 Point2D getCoordinates()
 {
-	Point2D point = { markerPosition.x,markerPosition.y };
+	Point2D point = { markerPosition.x / float(width), markerPosition.y / float(height)};
 	return point;
 }
 
@@ -144,6 +147,17 @@ void detectMarker() {
 void mouseCallback(int  event, int  x, int  y, int  flag, void *param) {
 	markerPosition.x = x;
 	markerPosition.y = y;
+	newMousePosition = true;
+}
+
+bool hasNewMousePosition()
+{
+	if (newMousePosition)
+	{
+		newMousePosition = false;
+		return true;
+	}
+	return false;
 }
 
 /*

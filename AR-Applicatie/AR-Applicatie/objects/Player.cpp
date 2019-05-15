@@ -2,7 +2,8 @@
 #include "../util/ObjLoader.h"
 #include <string>
 
-bool moveRight = true;
+extern int cursorOffsetX, cursorOffsetY;
+bool moveRight;
 
 Player::Player(std::string objectName, int textureId)
 	: GameObject(ObjLoader::loadObj(objectName), textureId)
