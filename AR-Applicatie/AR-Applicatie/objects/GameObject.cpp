@@ -6,9 +6,9 @@ GameObject::GameObject(Graphics::mesh mesh, uint16_t texture_id)
 	this->mesh = mesh;
 	this->texture_id = texture_id;
 
-	this->position = { 0.0f, 0.0f, 0.0f, 0.0f };
-	this->rotation = { 0.0f, 0.0f, 0.0f, 0.0f };
-	this->scale = { 1.0f, 1.0f, 1.0f, 0.0f };
+	this->position = { 0.0f, 0.0f, 0.0f};
+	this->rotation = { 0.0f, 0.0f, 0.0f};
+	this->scale = { 1.0f, 1.0f, 1.0f };
 }
 
 void GameObject::setPosition(Math::vec3d pos)

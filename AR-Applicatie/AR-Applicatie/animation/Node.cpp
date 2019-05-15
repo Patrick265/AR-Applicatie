@@ -81,6 +81,11 @@ void Node::setRotation(Math::vec3d rot)
 	this->rot = rot;
 }
 
+void Node::setPosition(Math::vec3d pos)
+{
+	this->pos = pos;
+}
+
 std::vector<Node*> Node::getChildren()
 {
 	return children;

@@ -62,6 +62,15 @@ public:
 
 	/*
 		Sets the rotation of the Node
+
+		@param rot - The given rotation
 	*/
 	void setRotation(Math::vec3d rot);
+
+	/*
+		Sets the position of the Node
+
+		@param pos - The given position
+	*/
+	void setPosition(Math::vec3d pos);
 };

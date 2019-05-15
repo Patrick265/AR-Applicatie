@@ -9,7 +9,7 @@
 #include "objects/GameObject.h"
 #include "game/GameLogic.h"
 #include "vision/markerdetection.h"
-#include "animation/Rig.h"
+#include "animation/AnimationHandler.h"
 
 float width = 1600;
 float height = 800;
@@ -17,12 +17,8 @@ float height = 800;
 float deltaTime;
 float lastFrameTime;
 
-//Rotation for the showcasing of the rigging
-float current_rotation = 0.0f;
-//Showcasing rigging through simple hardcoded animation
-bool arm_up = false;
-
-Rig *rig;
+Rig* rig;
+AnimationHandler ani;
 
 
 float fTheta;
@@ -72,15 +68,18 @@ int main(int argc, char** argv) {
 	glutPassiveMotionFunc(onMousePassiveMotion);
 	glutReshapeFunc(onReshape);
 
-	current_rotation = 0.0f;
 
-	Math::vec3d pos = { -5, 0, 0 };
+	Math::vec3d pos = { -2, -5, 0 };
 	Math::vec3d rot = { 0.0f, 0.0f, 0.0f };
 	Math::vec3d scale = { 1.0f, 1.0f, 1.0f };
 
-	rig = new Rig(pos, rot, scale);
-	rig->rigGoblin();
-	//rig->rigFemaleElf();
+	rig = new Rig();
+	rig->initRig(pos, rot, scale);
+//	rig->rigGoblin();
+	rig->rigFemaleElf();
+
+	ani.setRig(rig);
+	ani.setAnimation(ATTACK);
 
 
 	// runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
@@ -90,6 +89,7 @@ int main(int argc, char** argv) {
 	glutWarpPointer(width / 2, height / 2);
 
 	glutMainLoop();
+
 }
 
 void onIdle() 
@@ -104,37 +104,10 @@ void onIdle()
 
 	fTheta += 30.0f * deltaTime;
 
-	rig->setRotation({ 0,fTheta * 2,0 });
+	//rig->setRotation({ 0,fTheta * 2,0 });
 
-
-	//Hardcoded animation to showcase rig
-	if (arm_up)
-		current_rotation += 150.0f * deltaTime;
-	else
-		current_rotation -= 150.0f * deltaTime;
-
-	if (current_rotation <= 0.0f)
-		arm_up = true;
-	else if (current_rotation >= 90.0f)
-		arm_up = false;
-
-	Node* la_u = rig->getNode("goblin_arm_left_top");
-	la_u->setRotation({ -current_rotation + 45, 0, 0 });
-	Node* la_l = rig->getNode("goblin_arm_left_bottom");
-	la_l->setRotation({ -current_rotation,0, 0 });
-	Node* ra_u = rig->getNode("goblin_arm_right_top");
-	ra_u->setRotation({ -90 + current_rotation + 45,0, 0 });
-	Node* ra_l = rig->getNode("goblin_arm_right_bottom");
-	ra_l->setRotation({ -90 + current_rotation,0, 0 });
-
-	Node* ll_u = rig->getNode("goblin_leg_left_top");
-	ll_u->setRotation({ current_rotation - 45, 0, 0 });
-	Node* ll_l = rig->getNode("goblin_leg_left_bottom");
-	ll_l->setRotation({ current_rotation,0, 0 });
-	Node* rl_u = rig->getNode("goblin_leg_right_top");
-	rl_u->setRotation({ 90 - current_rotation - 45,0, 0 });
-	Node* rl_l = rig->getNode("goblin_leg_right_bottom");
-	rl_l->setRotation({ 90 - current_rotation,0, 0 });
+	//AnimationHandler::attack(deltaTime,rig);
+	ani.animate(deltaTime);
 
 	
 	const float speed = 6;
@@ -145,7 +118,7 @@ void onIdle()
 	if (keys[int('e')]) camera.posZ += deltaTime * speed;
 	if (keys[int('q')]) camera.posZ -= deltaTime * speed;
 
-	gameLogic.update(deltaTime);
+	//gameLogic.update(deltaTime);
 
 	glutPostRedisplay();
 }
@@ -156,7 +129,9 @@ void onDisplay()
 
 
 	glPushMatrix();
-	rig->drawRig();
+	//rig->drawRig();
+	ani.draw();
+
 	glPopMatrix();
 
 	/*// Test cube in the center of the world
@@ -186,10 +161,10 @@ void onDisplay()
 
 		glPopMatrix();
 	}*/
-
+	/*
 	for (GameObject* gameObject : gameLogic.getGameObjects())
 		drawGameObject(*gameObject);
-
+	*/
 	displayText();
 
 	glutSwapBuffers();
@@ -323,6 +298,9 @@ void onMousePassiveMotion(int x, int y)
 	if (!mouseControl)
 		return;
 
+
+	ani.setCursorPos(y - height / 2);
+	/*
 	int dx = x - width / 2;
 	int dy = y - height / 2;
 	if ((dx != 0 || dy != 0) && abs(dx) < 400 && abs(dy) < 400 && !justMovedMouse)
@@ -345,6 +323,7 @@ void onMousePassiveMotion(int x, int y)
 	}
 	else
 		justMovedMouse = false;
+	*/
 }
 
 void onReshape(int w, int h)

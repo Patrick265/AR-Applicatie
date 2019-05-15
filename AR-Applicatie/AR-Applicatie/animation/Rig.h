@@ -18,13 +18,11 @@ public:
 	/*
 		Constructs a rig with a position, rotation and scale
 	*/
-	Rig(Math::vec3d pos, Math::vec3d rot, Math::vec3d scale);
+	Rig();
 	~Rig();
+	
+	void initRig(Math::vec3d pos, Math::vec3d rot, Math::vec3d scale);
 
-	/*
-		Frees all the pointers and then clears the vector
-	*/
-	void clearNodes();
 
 	/*
 		Rigs the model of a female elf
@@ -36,23 +34,6 @@ public:
 	*/
 	void rigGoblin();
 
-	/*
-		Transforms Blender coordinates into OpenGL coordinates
-		@param posCords - The position coordinates from blender
-
-		Returns the position coordinates in OpenGL
-		*/
-	Math::vec3d convertCoordinates(Math::vec3d posCords);
-
-
-	/*
-		Transforms Blender coordinates into OpenGL coordinates with a parent
-		@param posCords - The position coordinates from blender
-		@param parent - the position coordinates from the parent
-
-		Returns the position coordinates in OpenGL
-		*/
-	Math::vec3d convertCoordinates(Math::vec3d posCords, Math::vec3d parent);
 
 	/*
 		Draws all the components of the rig
@@ -68,7 +49,37 @@ public:
 	*/
 	Node* getNode(std::string node_name);
 
+
 	void setRotation(Math::vec3d rot);
 	void setPosition(Math::vec3d pos);
 	void setScale(Math::vec3d scale);
+
+	
+
+private:
+
+	/*
+	Frees all the pointers and then clears the vector
+*/
+	void clearNodes();
+
+	/*
+		Transforms Blender coordinates into OpenGL coordinates
+
+		@param posCords - The position coordinates from blender
+
+		Returns the position coordinates in OpenGL
+		*/
+	Math::vec3d convertCoordinates(Math::vec3d posCords);
+
+
+	/*
+		Transforms Blender coordinates into OpenGL coordinates with a parent
+
+		@param posCords - The position coordinates from blender
+		@param parent - the position coordinates from the parent
+
+		Returns the position coordinates in OpenGL
+		*/
+	Math::vec3d convertCoordinates(Math::vec3d posCords, Math::vec3d parent);
 };
