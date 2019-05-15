@@ -36,11 +36,11 @@ GameLogic gameLogic;
 struct Camera
 {
 	float
-		posX = 2,
-		posY = 2,
-		posZ = 2,
-		rotX = 45,
-		rotY = -45;
+		posX = 0,
+		posY = 15,
+		posZ = 20,
+		rotX = 20,
+		rotY = 0;
 } camera;
 
 bool keys[255];

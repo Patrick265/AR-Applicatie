@@ -2,6 +2,10 @@
 #include "../util/ObjLoader.h"
 #include <iostream>
 #include "../util/TextureHandler.h"
+#include "../vision/markerdetection.h"
+
+extern Point2D mousePos;
+extern float width;
 
 int counter = 0;
 
@@ -26,6 +30,9 @@ void GameLogic::start()
 
 void GameLogic::update(float deltaTime)
 {
+	// Mouse logic
+	handleMouse();
+
 	// Destroy all objects that need to be destroyed
 	for (int i = 0; i < int(projectiles.size()); i++)
 		if (projectiles[i]->canBeDestroyed())
@@ -80,4 +87,10 @@ std::vector<GameObject *> GameLogic::getGameObjects()
 	for (Projectile* projectile : projectiles)
 		gameObjects.push_back(projectile);
 	return gameObjects;
+}
+
+// Move player to mouse X position
+void GameLogic::handleMouse()
+{
+	player->targetX = ((mousePos.x / float(width)) * 20.0f) - 10.0f;
 }

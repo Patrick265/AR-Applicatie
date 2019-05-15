@@ -13,6 +13,8 @@ private:
 	std::vector<Projectile *> projectiles;
 	std::vector<Wildling *> wildlings;
 
+	void handleMouse();
+
 public:
 	GameLogic();
 	~GameLogic();

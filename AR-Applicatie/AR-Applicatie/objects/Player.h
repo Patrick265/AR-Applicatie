@@ -10,6 +10,7 @@ private:
 
 public:
 	bool isDead;
+	float targetX;
 
 	Player(std::string objectName, int textureId);
 
