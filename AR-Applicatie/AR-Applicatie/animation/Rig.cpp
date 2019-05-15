@@ -6,13 +6,19 @@
 #include "../util/ObjLoader.h"
 #include "../util/TextureHandler.h"
 
-Rig::Rig(Math::vec3d pos, Math::vec3d rot, Math::vec3d scale)
+Rig::Rig(std::string rig_type, Math::vec3d pos, Math::vec3d rot, Math::vec3d scale)
 {
 	this->pos = pos;
 	this->rot = rot;
 	this->scale = scale;
 
 	this->centre = nullptr;
+
+	if (rig_type == "elf")
+		rigFemaleElf();
+	else if (rig_type == "goblin")
+		rigGoblin();
+	
 }
 
 Rig::~Rig()

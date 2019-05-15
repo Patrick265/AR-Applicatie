@@ -73,9 +73,7 @@ int main(int argc, char** argv) {
 	Math::vec3d rot = { 0.0f, 0.0f, 0.0f };
 	Math::vec3d scale = { 1.0f, 1.0f, 1.0f };
 
-	rig = new Rig(pos, rot, scale);
-	rig->rigGoblin();
-//	rig->rigFemaleElf();
+	rig = new Rig("goblin",pos, rot, scale);
 
 	ani.setRig(rig);
 	ani.setAnimation(CLIMB);

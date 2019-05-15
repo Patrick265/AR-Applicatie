@@ -17,8 +17,14 @@ private:
 public:
 	/*
 		Constructs a rig with a position, rotation and scale
+
+		@param rig_type - The rig that wil be constructed (currently elf or goblin)
+		@param pos - The given position
+		@param rot - The current rotation
+		@param scale - The current scale
+
 	*/
-	Rig(Math::vec3d pos, Math::vec3d rot, Math::vec3d scale);
+	Rig(std::string rig_type, Math::vec3d pos, Math::vec3d rot, Math::vec3d scale);
 	~Rig();
 	
 
