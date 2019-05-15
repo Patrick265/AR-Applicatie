@@ -348,7 +348,7 @@ void onKey(unsigned char keyId, int x, int y)
 	if (keyId == 'c')
 		mouseControl = !mouseControl;
 	if (keyId == 't')
-		gameLogic.throwProjectile();	keys[keyId] = true;
+		gameLogic.throwProjectile(rand() % 10 - 5, -1);	keys[keyId] = true;
 }
 
 void onKeyUp(unsigned char keyId, int, int)

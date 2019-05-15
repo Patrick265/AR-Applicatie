@@ -21,6 +21,6 @@ public:
 
 	void start();
 	void update(float deltaTime);
-	void throwProjectile();
+	void throwProjectile(float xVelocity, float yVelocity);
 	std::vector<GameObject *> getGameObjects();
 };
