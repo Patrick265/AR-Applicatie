@@ -53,6 +53,7 @@ void onReshape(int width, int height);
 void onKey(unsigned char c, int x, int y);
 void onKeyUp(unsigned char c, int x, int y);
 void onMousePassiveMotion(int x, int y);
+void mouseClicks(int button, int state, int x, int y);
 void moveCamera(float angle, float fac);
 
 void standardRenderOperations();
@@ -78,6 +79,7 @@ int main(int argc, char** argv) {
 	glutKeyboardFunc(onKey);
 	glutKeyboardUpFunc(onKeyUp);
 	glutPassiveMotionFunc(onMousePassiveMotion);
+	glutMouseFunc(mouseClicks);
 	glutReshapeFunc(onReshape);
 
 	current_rotation = 0.0f;
@@ -401,6 +403,11 @@ void onMousePassiveMotion(int x, int y)
 
 }
 
+void mouseClicks(int button, int state, int x, int y)
+{
+	std::cout << " Button: " << button << " State: " << state << " X: " << x << " y:" << y << "\n";
+}
+
 void onReshape(int w, int h)
 {
 	width = w;
@@ -426,4 +433,14 @@ void initMap()
 	castleBlackIcon->setRotation(Math::vec3d{ 0, 0, 0 });
 	
 
+}
+
+void getObject()
+{
+	glFlush();
+	glFinish();
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	unsigned char data[4];
+	glReadPixels(cursorX / 2, cursorY/ 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }
