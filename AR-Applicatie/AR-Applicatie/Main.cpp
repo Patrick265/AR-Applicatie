@@ -30,15 +30,17 @@ float fTheta;
 //std::vector<GameObject> game_objects;
 
 GameLogic gameLogic;
+GameObject* map;
+GameObject* castleBlackIcon;
 
 struct Camera
 {
 	float
-		posX = 2,
-		posY = 2,
+		posX = 13.63f,
+		posY = 2.73f,
 		posZ = 2,
-		rotX = 45,
-		rotY = -45;
+		rotX = 42,
+		rotY = 91;
 } camera;
 
 bool keys[255];
@@ -58,6 +60,7 @@ void drawMesh(Graphics::mesh mesh, uint16_t texture_id);
 void drawGameObject(GameObject game_obj);
 void displayText();
 void runOpencCVThread();
+void initMap();
 
 int cursorID;
 int cursorX = 0;
@@ -93,10 +96,11 @@ int main(int argc, char** argv) {
 	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
 
 	glutWarpPointer(width / 2, height / 2);
+	initMap();
 
 	//std::thread openCV(runOpencCVThread);
 	//openCV.join();
-	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
+	//runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 
 	glutMainLoop();
 }
@@ -155,7 +159,7 @@ void onIdle()
 
 	gameLogic.update(deltaTime);
 	
-	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
+	//runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 	
 	glutPostRedisplay();
 }
@@ -202,10 +206,14 @@ void onDisplay()
 		glPopMatrix();
 	}*/
 
-	for (GameObject* gameObject : gameLogic.getGameObjects())
-		drawGameObject(*gameObject);
+	// for (GameObject* gameObject : gameLogic.getGameObjects())
+	// 	drawGameObject(*gameObject);
+
+	drawGameObject(*map);
+	drawGameObject(*castleBlackIcon);
 
 	displayText();
+
 
 	glutSwapBuffers();
 }
@@ -367,25 +375,25 @@ void onMousePassiveMotion(int x, int y)
 	}
 	cursorX = x;
 	cursorY = y;
-	//int dx = x - width / 2;
-	//int dy = y - height / 2;
-	//if ((dx != 0 || dy != 0) && abs(dx) < 400 && abs(dy) < 400 && !justMovedMouse)
-	//{
-	//	camera.rotY += dx / 10.0f;
-	//	camera.rotX += dy / 10.0f;
-	//	if (camera.rotX < -90)
-	//		camera.rotX = -90;
-	//	if (camera.rotX > 90)
-	//		camera.rotX = 90;
-	//	if (camera.rotY > 360)
-	//		camera.rotY -= 360;
-	//	if (camera.rotY <= 0)
-	//		camera.rotY += 360;
-	//}
+	int dx = x - width / 2;
+	int dy = y - height / 2;
+	if ((dx != 0 || dy != 0) && abs(dx) < 400 && abs(dy) < 400 && !justMovedMouse)
+	{
+		camera.rotY += dx / 10.0f;
+		camera.rotX += dy / 10.0f;
+		if (camera.rotX < -90)
+			camera.rotX = -90;
+		if (camera.rotX > 90)
+			camera.rotX = 90;
+		if (camera.rotY > 360)
+			camera.rotY -= 360;
+		if (camera.rotY <= 0)
+			camera.rotY += 360;
+	}
 
 	if (!justMovedMouse)
 	{
-		//glutWarpPointer(width / 2, height / 2);
+		glutWarpPointer(width / 2, height / 2);
 		justMovedMouse = true;
 	}
 	else
@@ -403,4 +411,19 @@ void moveCamera(float angle, float fac)
 {
 	camera.posX -= (float)cos((camera.rotY + angle) / 180 * M_PI) * fac;
 	camera.posY -= (float)sin((camera.rotY + angle) / 180 * M_PI) * fac;
+}
+
+void initMap()
+{
+
+	map = new GameObject(ObjLoader::loadObj("Resources/Map/Map.obj"), TextureHandler::addTexture("Resources/Map/Map.jpg"));
+	map->setPosition(Math::vec3d{ 0, 0, 0 });
+	map->setScale(Math::vec3d{ 1, 1, 1 });
+	map->setRotation(Math::vec3d{ 0, 0, 0 });
+	castleBlackIcon = new GameObject(ObjLoader::loadObj("Resources/Map/Castleblack icon.obj"), -1);
+	castleBlackIcon->setPosition(Math::vec3d{ 0, 0, 0});
+	castleBlackIcon->setScale(Math::vec3d{ 1, 1, 1 });
+	castleBlackIcon->setRotation(Math::vec3d{ 0, 0, 0 });
+	
+
 }
