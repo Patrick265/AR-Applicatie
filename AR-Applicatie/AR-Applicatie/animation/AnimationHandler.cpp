@@ -88,8 +88,7 @@ void AnimationHandler::idle()
 	rig->getNode("la_l")->setRotation({ -current_rotation,0, 0 });
 	rig->getNode("ra_u")->setRotation({ -10 +current_rotation*0.5f,0, 0 });
 	rig->getNode("ra_l")->setRotation({ -10 +current_rotation,0, 0 });
-
-	
+		
 	rig->getNode("ll_u")->setRotation({ -current_rotation, 0, 0 });
 	rig->getNode("ll_l")->setRotation({ current_rotation,0, 0 });
 	rig->getNode("rl_u")->setRotation({ -10+current_rotation,0, 0 });
@@ -110,8 +109,7 @@ void AnimationHandler::attack()
 	rig->getNode("la_l")->setRotation({ -current_rotation,0, 0 });
 	rig->getNode("ra_u")->setRotation({ -current_rotation,0, 0 });
 	rig->getNode("ra_l")->setRotation({ -current_rotation,0, 0 });
-
-
+	
 	float leg_rotation = current_rotation / 30.0f;
 	
 	rig->getNode("torso")->setPosition({ 0,leg_rotation*0.01f, 0 });
@@ -125,5 +123,25 @@ void AnimationHandler::attack()
 
 void AnimationHandler::climb()
 {
+	if (ani_forward)
+		current_rotation += 150.0f * deltaTime;
+	else
+		current_rotation -= 150.0f * deltaTime;
 
+	if (current_rotation <= 0.0f)
+		ani_forward = true;
+	else if (current_rotation >= 90.0f)
+		ani_forward = false;
+	
+	rig->getNode("torso")->setRotation({-30,0,0});
+
+	rig->getNode("la_u")->setRotation({ -current_rotation - 30, 0, 0 });
+	rig->getNode("la_l")->setRotation({ current_rotation / 5 - 100 ,0, 0 });
+	rig->getNode("ra_u")->setRotation({ -90 + current_rotation ,0, 0 });
+	rig->getNode("ra_l")->setRotation({ current_rotation / 5 - 100  ,0, 0 });
+
+	rig->getNode("ll_u")->setRotation({ -current_rotation, 0, 0 });
+	rig->getNode("ll_l")->setRotation({ current_rotation, 0, 0 });	
+	rig->getNode("rl_u")->setRotation({ -90  + current_rotation,0, 0 });
+	rig->getNode("rl_l")->setRotation({ 90 - current_rotation,0, 0 });
 }

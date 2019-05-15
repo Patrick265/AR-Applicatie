@@ -74,11 +74,11 @@ int main(int argc, char** argv) {
 	Math::vec3d scale = { 1.0f, 1.0f, 1.0f };
 
 	rig = new Rig(pos, rot, scale);
-//	rig->rigGoblin();
-	rig->rigFemaleElf();
+	rig->rigGoblin();
+//	rig->rigFemaleElf();
 
 	ani.setRig(rig);
-	ani.setAnimation(IDLE);
+	ani.setAnimation(CLIMB);
 
 
 	// runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
