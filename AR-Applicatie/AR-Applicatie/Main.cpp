@@ -30,8 +30,14 @@ float fTheta;
 //std::vector<GameObject> game_objects;
 
 GameLogic gameLogic;
+
+// World map obj 
 GameObject* map;
+// Castle black icon obj
 GameObject* castleBlackIcon;
+// Rotation for Castle black icon obj
+float rotationIcon = 0;
+float rotationInc = 2.0f;
 
 struct Camera
 {
@@ -64,6 +70,7 @@ void displayText();
 void runOpencCVThread();
 void initMap();
 void getObject();
+
 
 int cursorID;
 int cursorX = 0;
@@ -122,6 +129,11 @@ void onIdle()
 	fTheta += 30.0f * deltaTime;
 
 	rig->setRotation({ 0,fTheta * 2,0 });
+
+
+	// Castle black setting the rotation
+	rotationIcon += rotationInc;
+	castleBlackIcon->setRotation(Math::vec3d{ 0, rotationIcon,  0});
 
 	//Hardcoded animation to showcase rig
 	if (arm_up)
@@ -388,23 +400,23 @@ void onMousePassiveMotion(int x, int y)
 	cursorY = y;
 	int dx = x - width / 2;
 	int dy = y - height / 2;
-	if ((dx != 0 || dy != 0) && abs(dx) < 400 && abs(dy) < 400 && !justMovedMouse)
-	{
-		camera.rotY += dx / 10.0f;
-		camera.rotX += dy / 10.0f;
-		if (camera.rotX < -90)
-			camera.rotX = -90;
-		if (camera.rotX > 90)
-			camera.rotX = 90;
-		if (camera.rotY > 360)
-			camera.rotY -= 360;
-		if (camera.rotY <= 0)
-			camera.rotY += 360;
-	}
+	//if ((dx != 0 || dy != 0) && abs(dx) < 400 && abs(dy) < 400 && !justMovedMouse)
+	//{
+	//	camera.rotY += dx / 10.0f;
+	//	camera.rotX += dy / 10.0f;
+	//	if (camera.rotX < -90)
+	//		camera.rotX = -90;
+	//	if (camera.rotX > 90)
+	//		camera.rotX = 90;
+	//	if (camera.rotY > 360)
+	//		camera.rotY -= 360;
+	//	if (camera.rotY <= 0)
+	//		camera.rotY += 360;
+	//}
 
 	if (!justMovedMouse)
 	{
-		glutWarpPointer(width / 2, height / 2);
+		//glutWarpPointer(width / 2, height / 2);
 		justMovedMouse = true;
 	}
 	else
@@ -415,7 +427,12 @@ void onMousePassiveMotion(int x, int y)
 void mouseClicks(int button, int state, int x, int y)
 {
 	std::cout << " Button: " << button << " State: " << state << " X: " << x << " y:" << y << "\n";
-	mouseClicked = true;
+
+	if(button == GLUT_LEFT_BUTTON &&state == GLUT_DOWN)
+	{
+		mouseClicked = true;
+	}
+	
 }
 
 void onReshape(int w, int h)
@@ -438,9 +455,9 @@ void initMap()
 	map->setScale(Math::vec3d{ 1, 1, 1 });
 	map->setRotation(Math::vec3d{ 0, 0, 0 });
 	castleBlackIcon = new GameObject(ObjLoader::loadObj("Resources/Map/Castleblack icon.obj"), -1);
-	castleBlackIcon->setPosition(Math::vec3d{ 0, 0, 0});
+	castleBlackIcon->setPosition(Math::vec3d{ 15.277f, 0.50308f, 2.8563f});
 	castleBlackIcon->setScale(Math::vec3d{ 1, 1, 1 });
-	castleBlackIcon->setRotation(Math::vec3d{ 0, 0, 0 });
+	
 	
 
 }
@@ -478,15 +495,20 @@ void getObject()
 	const double xIcon = castleBlackIcon->getPosition().x;
 	const double yIcon = castleBlackIcon->getPosition().y;
 	const double zIcon = castleBlackIcon->getPosition().z;
-	const double sizeIcon = 1;
+	const double sizeIcon = 0.5f;
 
-	std::cout << "Clicked xyz:\t" << "X: " << x << " Y: " << y << " Z: " << z << "\n";
-	std::cout << "Castle  xyz:\t" << "X: " << xIcon << " Y: " << yIcon << " Z: " << zIcon << "\n";
-
-	if(	(xIcon + sizeIcon) < x && (xIcon - sizeIcon) > x &&
-		(yIcon + sizeIcon) < y && (yIcon - sizeIcon) > y &&
-		(zIcon + sizeIcon) < z && (zIcon - sizeIcon) > z)
+	// std::cout << "Clicked xyz:\t" << " X: " << x << " Y: " << y << " Z: " << z << "\n";
+	// std::cout << "Castle  xyz:\t" << " X: " << xIcon << " Y: " << yIcon << " Z: " << zIcon << "\n";
+	// std::cout << "Margin  xyz:\t" << "+X: " << xIcon + sizeIcon << " +Y: " << yIcon + sizeIcon << " +Z: " << zIcon + sizeIcon << "\n\t\t" << "-X: " << xIcon - sizeIcon << " -Y: " << yIcon + sizeIcon << " -Z: " << zIcon + sizeIcon << std::endl;
+	// std::cout << "Boolean xyz:\t" << "+X: " << (xIcon + sizeIcon < x) << " +Y: " << (yIcon + sizeIcon < y) << " +Z: " << (zIcon + sizeIcon < z) << "\n\t\t" << "-X: " << (xIcon - sizeIcon > x) << " -Y: " << (yIcon - sizeIcon > y) << " -Z: " << (zIcon - sizeIcon > z) << std::endl;
+	if(	(xIcon + sizeIcon) > x && (xIcon - sizeIcon) < x &&
+		(yIcon + sizeIcon) > y && (yIcon - sizeIcon) < y &&
+		(zIcon + sizeIcon) > z && (zIcon - sizeIcon) < z)
 	{
-		std::cout << "Clicked on castleblack" << std::endl;
+		rotationInc = 0.5f;
+		std::cout << "\t\t\t\tClicked on castleblack" << std::endl;
+	}else
+	{
+		rotationInc = 2.0f;
 	}
 }
