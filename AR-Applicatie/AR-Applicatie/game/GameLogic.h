@@ -13,12 +13,14 @@ private:
 	std::vector<Projectile *> projectiles;
 	std::vector<Wildling *> wildlings;
 
+	void handleMouse();
+
 public:
 	GameLogic();
 	~GameLogic();
 
 	void start();
 	void update(float deltaTime);
-	void throwProjectile();
+	void throwProjectile(float xVelocity, float yVelocity);
 	std::vector<GameObject *> getGameObjects();
 };

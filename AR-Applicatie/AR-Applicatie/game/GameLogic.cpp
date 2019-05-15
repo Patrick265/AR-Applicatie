@@ -1,9 +1,17 @@
 #include "GameLogic.h"
 #include "../util/ObjLoader.h"
-#include <iostream>
 #include "../util/TextureHandler.h"
+#include "../vision/markerdetection.h"
+#include <queue>
 
-int counter = 0;
+extern Point2D mousePos;
+extern float width;
+
+float counter = 0;
+
+std::queue<Point2D> mouseHistory;
+const int Y_TRIGGER_DISTANCE = 40;
+bool canThrow = true;
 
 GameLogic::GameLogic()
 {
@@ -26,6 +34,9 @@ void GameLogic::start()
 
 void GameLogic::update(float deltaTime)
 {
+	// Mouse logic
+	handleMouse();
+
 	// Destroy all objects that need to be destroyed
 	for (int i = 0; i < int(projectiles.size()); i++)
 		if (projectiles[i]->canBeDestroyed())
@@ -36,7 +47,8 @@ void GameLogic::update(float deltaTime)
 			wildlings.erase(wildlings.begin() + i--);
 
 	// Add wildling if there are too few
-	if (counter++ > 100 && wildlings.size() < 5)
+	counter += deltaTime;
+	if (counter > 0.5 && wildlings.size() < 5)
 	{
 		Wildling *wildling = new Wildling("Resources/Rune/giant.obj",
 			TextureHandler::addTexture("Resources/Rune/giant.png"), rand() % 20 - 10);
@@ -62,11 +74,11 @@ void GameLogic::update(float deltaTime)
 				projectile->hasHit();
 }
 
-void GameLogic::throwProjectile()
+void GameLogic::throwProjectile(float xVelocity, float yVelocity)
 {
 	projectiles.push_back(new Projectile("Resources/Pakketje/Pakketje.obj", 
 		TextureHandler::addTexture("Resources/Pakketje/Pakketje.png"),
-		player->getPosition().x, rand() % 10 - 5, -1));
+		player->getPosition().x, xVelocity, yVelocity));
 }
 
 std::vector<GameObject *> GameLogic::getGameObjects()
@@ -80,4 +92,31 @@ std::vector<GameObject *> GameLogic::getGameObjects()
 	for (Projectile* projectile : projectiles)
 		gameObjects.push_back(projectile);
 	return gameObjects;
+}
+
+void GameLogic::handleMouse()
+{
+	// Move player to mouse X position
+	player->targetX = mousePos.x / float(width) * 20.0f - 10.0f;
+
+	// Throw the projectiles
+	mouseHistory.push(mousePos);
+	if (mouseHistory.size() < 5)
+		return;
+	if (mouseHistory.size() > 5)
+		mouseHistory.pop();
+
+	Point2D first = mouseHistory.front();
+	Point2D last = mouseHistory.back();
+
+	// If downwards movement is large enough, throw a projectiles
+	if (canThrow && first.y - last.y < -Y_TRIGGER_DISTANCE)
+	{
+		canThrow = false;
+		throwProjectile((last.x - first.x) * 0.1, (first.y - last.y) * 0.1);
+	}
+	else if (first.y - last.y > Y_TRIGGER_DISTANCE)
+	{
+		canThrow = true;
+	}
 }

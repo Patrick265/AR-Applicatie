@@ -42,3 +42,5 @@ void changeDetectionMode();
 //  @return Struct of Point2D with x and y coordinates
 */
 Point2D getCoordinates();
+
+bool hasNewMousePosition();

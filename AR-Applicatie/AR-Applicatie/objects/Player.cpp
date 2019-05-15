@@ -2,13 +2,12 @@
 #include "../util/ObjLoader.h"
 #include <string>
 
-bool moveRight = true;
-
 Player::Player(std::string objectName, int textureId)
 	: GameObject(ObjLoader::loadObj(objectName), textureId)
 {
 	position = {0, 21, -0.5};
 	maxSpeed = 10;
+	targetX = 0;
 	isDead = false;
 }
 
@@ -22,12 +21,21 @@ void Player::update(float deltaTime)
 	if (isDead)
 		return;
 
-	if (!moveRight && position.x > 10 || moveRight && position.x < -10)
+	float travel = deltaTime * maxSpeed;
+
+	if (abs(position.x - targetX) < travel)
+		position.x = targetX;
+	else if (position.x < targetX)
+		position.x += travel;
+	else
+		position.x -= travel;
+
+	/*if (!moveRight && position.x > 10 || moveRight && position.x < -10)
 		moveRight = !moveRight;
 	if (moveRight)
 		position.x -= deltaTime * maxSpeed;
 	else
-		position.x += deltaTime * maxSpeed;
+		position.x += deltaTime * maxSpeed;*/
 }
 
 void Player::kill()
