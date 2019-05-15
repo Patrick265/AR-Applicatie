@@ -46,6 +46,7 @@ struct Camera
 bool keys[255];
 bool justMovedMouse = false;
 bool mouseControl = true;
+bool mouseClicked = false;
 
 void onIdle();
 void onDisplay();
@@ -62,6 +63,7 @@ void drawGameObject(GameObject game_obj);
 void displayText();
 void runOpencCVThread();
 void initMap();
+void getObject();
 
 int cursorID;
 int cursorX = 0;
@@ -213,7 +215,12 @@ void onDisplay()
 
 	drawGameObject(*map);
 	drawGameObject(*castleBlackIcon);
-
+	if(mouseClicked)
+	{
+		std::cout << "Entered mouseClicked if statement" << "\n";
+		getObject();
+		mouseClicked = !mouseClicked;
+	}
 	displayText();
 
 
@@ -298,7 +305,9 @@ void displayText()
 		"\ny " + std::to_string(camera.posY) +
 		"\nz " + std::to_string(camera.posZ) +
 		"\nX " + std::to_string(camera.rotX) +
-		"\nY " + std::to_string(camera.rotY);
+		"\nY " + std::to_string(camera.rotY) + 
+		"\nCursorX " + std::to_string(cursorX) + 
+		"\nCursorY " + std::to_string(cursorY);
 
 	int xpos = 20;
 	int ypos = 30;
@@ -360,10 +369,10 @@ void onKeyUp(unsigned char keyId, int, int)
 void onMousePassiveMotion(int x, int y)
 {
 	if (!mouseControl) {
-		Point2D mousePos = getCoordinates();
+		const Point2D mousePos = getCoordinates();
 
-		double xScreen = mousePos.x * 3;
-		double yScreen = (double)mousePos.y * 2.25;
+		const double xScreen = mousePos.x * 3;
+		const double yScreen = (double)mousePos.y * 2.25;
 
 		if (xScreen >= 0 && xScreen <= width && yScreen >= 0 && yScreen <= height) {
 			cursorX = xScreen;
@@ -406,6 +415,7 @@ void onMousePassiveMotion(int x, int y)
 void mouseClicks(int button, int state, int x, int y)
 {
 	std::cout << " Button: " << button << " State: " << state << " X: " << x << " y:" << y << "\n";
+	mouseClicked = true;
 }
 
 void onReshape(int w, int h)
@@ -437,10 +447,46 @@ void initMap()
 
 void getObject()
 {
-	glFlush();
-	glFinish();
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	float winZ;
+	glReadPixels(cursorX, height - cursorY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ);
+	
 
-	unsigned char data[4];
-	glReadPixels(cursorX / 2, cursorY/ 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+	double modelMatrix[16];
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
+	double projMatrix[16];
+	glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
+	int viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+
+	double x, y, z;
+	gluUnProject
+	(
+		cursorX,
+		height - cursorY,
+		winZ,
+		modelMatrix,
+		projMatrix,
+		viewport,
+		&x,
+		&y,
+		&z
+	);
+
+
+
+	const double xIcon = castleBlackIcon->getPosition().x;
+	const double yIcon = castleBlackIcon->getPosition().y;
+	const double zIcon = castleBlackIcon->getPosition().z;
+	const double sizeIcon = 1;
+
+	std::cout << "Clicked xyz:\t" << "X: " << x << " Y: " << y << " Z: " << z << "\n";
+	std::cout << "Castle  xyz:\t" << "X: " << xIcon << " Y: " << yIcon << " Z: " << zIcon << "\n";
+
+	if(	(xIcon + sizeIcon) < x && (xIcon - sizeIcon) > x &&
+		(yIcon + sizeIcon) < y && (yIcon - sizeIcon) > y &&
+		(zIcon + sizeIcon) < z && (zIcon - sizeIcon) > z)
+	{
+		std::cout << "Clicked on castleblack" << std::endl;
+	}
 }
