@@ -13,7 +13,6 @@
 
 float width = 1600;
 float height = 800;
-int countert = 0;
 
 float deltaTime;
 float lastFrameTime;
@@ -58,6 +57,7 @@ void standardRenderOperations();
 void drawMesh(Graphics::mesh mesh, uint16_t texture_id);
 void drawGameObject(GameObject game_obj);
 void displayText();
+void runOpencCVThread();
 
 int cursorID;
 int cursorX = 0;
@@ -93,6 +93,10 @@ int main(int argc, char** argv) {
 	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
 
 	glutWarpPointer(width / 2, height / 2);
+
+	//std::thread openCV(runOpencCVThread);
+	//openCV.join();
+	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 
 	glutMainLoop();
 }
@@ -150,14 +154,15 @@ void onIdle()
 	if (keys[int('q')]) camera.posZ -= deltaTime * speed;
 
 	gameLogic.update(deltaTime);
-	if (countert >= 0)
-	{
-		runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
-		countert = 0;
-	}
-	countert++;
-
+	
+	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
+	
 	glutPostRedisplay();
+}
+
+void runOpencCVThread() 
+{
+	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 }
 
 void onDisplay()
@@ -317,7 +322,7 @@ void displayText()
 	glBindTexture(GL_TEXTURE_2D, cursorID);
 	glEnable(GL_TEXTURE_2D);
 	glBegin(GL_QUADS);
-	std::cout << cursorX << "\t" << cursorY << "\n";
+	
 	glTexCoord2f(0, 0); glVertex2f(cursorX - 25, cursorY - 25);
 	glTexCoord2f(0, 1); glVertex2f(cursorX - 25, cursorY + 25);
 	glTexCoord2f(1, 1); glVertex2f(cursorX + 25, cursorY + 25);

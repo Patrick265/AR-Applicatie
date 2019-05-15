@@ -22,7 +22,6 @@ cv::Mat blobImg;
 cv::SimpleBlobDetector::Params params;
 std::vector<cv::KeyPoint> myBlobs;
 cv::Mat originalBlobImg;
-int isRunning = 1;
 int detectionMode = 1;
 int lowerS = -1;
 int upperS = -1;
@@ -39,14 +38,19 @@ int highH = 7, highS = maxValue, highV = maxValue;
 int width;
 int height;
 
-//Variables for areabar
-int areaSliderMin = 1000;
-int areaSliderMax = 70000;
-
+/*
+//	This function is used for getting the detection mode.
+//
+//  @return returns the Markerdetection mode. 0 for OpenCV and 1 for Mouse detection
+*/
 int getDetectionMode() {
 	return detectionMode;
 }
 
+/*
+//	This function is used for changing the detection mode of the OpenCV module.
+//
+*/
 void changeDetectionMode() {
 	if (detectionMode == 0) {
 		detectionMode = 1;
@@ -57,28 +61,28 @@ void changeDetectionMode() {
 }
 
 /*
-//	This function is a callback and used for setting the params and changing the params.
-//
-//	@param int is for callback
-//	@param void* is for the callback
+//	This function is used for terminating the OpenCV windows.
 //
 */
 void terminateDetection() {
-	isRunning = 0;
 	cv::destroyAllWindows();
 }
 
+/*
+// This method is used for setting the parameters of the blobdetector.
+//
+*/
 void resetBlobDetector() {
-	params.minDistBetweenBlobs = 1.0;    //Minimum 1 pixel between blobs
-	params.filterByArea = true;            //Checking for area
-	params.filterByColor = false;        //We're doing a binary detection, we don't want color
-	params.minArea = areaSliderMin;        //Minimum value of the area
-	params.maxArea = areaSliderMax;        //Maximum value of the area
-	params.thresholdStep = 100;            //Slider steps
-	params.blobColor = 0;                //Color we're checking for
-	params.filterByCircularity = true;    //We dont check for circularity
-	params.filterByInertia = false;        //We dont check for Intertia
-	params.filterByConvexity = true;    //We dont check for convexity
+	params.minDistBetweenBlobs = 1.0;   
+	params.filterByArea = true;           
+	params.filterByColor = false;        
+	params.minArea = 1000;        
+	params.maxArea = 70000;      
+	params.thresholdStep = 100;            
+	params.blobColor = 0;              
+	params.filterByCircularity = true;  
+	params.filterByInertia = false;       
+	params.filterByConvexity = true;    
 	params.minConvexity = 0.5;
 	params.minCircularity = 0.15;
 
@@ -86,11 +90,12 @@ void resetBlobDetector() {
 	detector = cv::SimpleBlobDetector::create(params);
 }
 
-void areaBar(int, void*) {
-	resetBlobDetector();
 
-}
-
+/*
+//	This function is used for getting the coordinates of the OpenCV application..
+//
+//  @return Struct of Point2D with x and y coordinates
+*/
 Point2D getCoordinates()
 {
 	Point2D point = { markerPosition.x,markerPosition.y };
@@ -132,11 +137,19 @@ void detectMarker() {
 	}
 }
 
+/*
+//	This function is a callback used for using the mouse on the openCV screen.
+//
+*/
 void mouseCallback(int  event, int  x, int  y, int  flag, void *param) {
 	markerPosition.x = x;
 	markerPosition.y = y;
 }
 
+/*
+//	This function is used for drawing the borders on the openCV screen.
+//
+*/
 void drawBounds(cv::Mat drawImg) {
 	//Draw Horizontal raster
 	cv::line(drawImg, cv::Point(0, height / SCREEN_DIVIDER_RATIO), cv::Point(width, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 255, 255), 2);
@@ -148,6 +161,10 @@ void drawBounds(cv::Mat drawImg) {
 
 }
 
+/*
+//	This function is used for checking if the x and the y values of the object are in the bounds.
+//
+*/
 void checkAllBounds(cv::Mat drawImg) {
 	//Check left bound
 	if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO)) == 1) {
@@ -175,6 +192,10 @@ void checkAllBounds(cv::Mat drawImg) {
 	}
 }
 
+/*
+//	This function is used for calibrating the tracked object.
+//
+*/
 void calibrate() {
 	int counterUp = 0;
 	int counterDown = 0;
@@ -194,12 +215,12 @@ void calibrate() {
 
 		//Detecting the blobs
 		detector->detect(frame_threshold, myBlobs);
-		std::cout << "amount of blobs: " << myBlobs.size() << std::endl;
+		
 		if (myBlobs.size() == 1 && upperS == -1) {
 			counterUp++;
 			if (counterUp == 3) {
 				upperS = lowS;
-				std::cout << "set upper" << upperS << std::endl;
+				
 				counterUp = 0;
 			}
 		}
@@ -210,7 +231,7 @@ void calibrate() {
 			counterDown++;
 			if (counterDown == 3) {
 				lowerS = lowS;
-				std::cout << "set lower" << lowerS << std::endl;
+				
 			}
 		}
 		else {
@@ -219,9 +240,13 @@ void calibrate() {
 		lowS -= 2;
 	}
 	lowS = (upperS + lowerS) / 2;
-	std::cout << "average" << lowS << std::endl;
+	
 }
 
+/*
+//	This function starts the mouse detection modus.
+//
+*/
 void excecuteMouseDetection() {
 
 	originalBlobImg = cv::imread("Resources/Vision/Black_Picture.jpg");
@@ -253,9 +278,12 @@ void excecuteMouseDetection() {
 	
 }
 
+/*
+//	This function starts the OpenCV detection modus.
+//
+*/
 void excecuteOpenCVDetection() {
 
-	 
 		cap >> frame;
 		if (frame.empty()) {
 			std::cerr << "Frame invalid and skipped!" << std::endl;
@@ -288,9 +316,14 @@ void excecuteOpenCVDetection() {
 	
 }
 
+/*
+//	This function starts the openCV module.
+//
+//	@param int input is for switching the mode between mouse and openCV
+//
+*/
 int runMarkerDetection(int input)
 {
-	isRunning = 1;
 	if (input == MARKERDETECTION_WITH_OPENCV) {
 
 		resetBlobDetector();
