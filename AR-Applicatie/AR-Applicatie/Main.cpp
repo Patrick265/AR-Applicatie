@@ -31,6 +31,8 @@ float fTheta;
 
 GameLogic gameLogic;
 
+// Skybox obj
+GameObject* skybox;
 // World map obj 
 GameObject* map;
 // Castle black icon obj
@@ -226,6 +228,15 @@ void onDisplay()
 	// 	drawGameObject(*gameObject);
 
 	drawGameObject(*map);
+
+	//Skybox
+	///Warning: I don't know if OpenGL appreciates me enabling/disabled GL_LIGHTNING like a fiddle
+	///Might cause spikes? 
+	glDisable(GL_LIGHTING);
+	drawGameObject(*skybox);
+	glEnable(GL_LIGHTING);
+
+
 	drawGameObject(*castleBlackIcon);
 	if(mouseClicked)
 	{
@@ -457,6 +468,11 @@ void initMap()
 	castleBlackIcon = new GameObject(ObjLoader::loadObj("Resources/Map/Castleblack icon.obj"), -1);
 	castleBlackIcon->setPosition(Math::vec3d{ 15.277f, 0.50308f, 2.8563f});
 	castleBlackIcon->setScale(Math::vec3d{ 1, 1, 1 });
+
+	skybox = new GameObject(ObjLoader::loadObj("Resources/Skybox/skybox.obj"), TextureHandler::addTexture("Resources/Skybox/skybox.png"));
+	skybox->setPosition(Math::vec3d{ 0, 0, 0 });
+	skybox->setScale(Math::vec3d{ 1, 1, 1});
+	skybox->setRotation(Math::vec3d{ 0, 0, 0 });
 	
 	
 
