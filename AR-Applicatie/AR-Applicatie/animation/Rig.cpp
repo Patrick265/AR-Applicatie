@@ -6,16 +6,7 @@
 #include "../util/ObjLoader.h"
 #include "../util/TextureHandler.h"
 
-Rig::Rig()
-{
-}
-
-Rig::~Rig()
-{
-	clearNodes();
-}
-
-void Rig::initRig(Math::vec3d pos, Math::vec3d rot, Math::vec3d scale)
+Rig::Rig(Math::vec3d pos, Math::vec3d rot, Math::vec3d scale)
 {
 	this->pos = pos;
 	this->rot = rot;
@@ -23,6 +14,12 @@ void Rig::initRig(Math::vec3d pos, Math::vec3d rot, Math::vec3d scale)
 
 	this->centre = nullptr;
 }
+
+Rig::~Rig()
+{
+	clearNodes();
+}
+
 
 void Rig::clearNodes()
 {

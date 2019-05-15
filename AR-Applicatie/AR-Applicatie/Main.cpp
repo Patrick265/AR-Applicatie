@@ -73,13 +73,12 @@ int main(int argc, char** argv) {
 	Math::vec3d rot = { 0.0f, 0.0f, 0.0f };
 	Math::vec3d scale = { 1.0f, 1.0f, 1.0f };
 
-	rig = new Rig();
-	rig->initRig(pos, rot, scale);
+	rig = new Rig(pos, rot, scale);
 //	rig->rigGoblin();
 	rig->rigFemaleElf();
 
 	ani.setRig(rig);
-	ani.setAnimation(ATTACK);
+	ani.setAnimation(IDLE);
 
 
 	// runMarkerDetection(MARKERDETECTION_WITH_MOUSE);

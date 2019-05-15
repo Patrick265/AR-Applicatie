@@ -18,10 +18,9 @@ public:
 	/*
 		Constructs a rig with a position, rotation and scale
 	*/
-	Rig();
+	Rig(Math::vec3d pos, Math::vec3d rot, Math::vec3d scale);
 	~Rig();
 	
-	void initRig(Math::vec3d pos, Math::vec3d rot, Math::vec3d scale);
 
 
 	/*

@@ -71,24 +71,30 @@ void AnimationHandler::run()
 void AnimationHandler::idle()
 {
 	if (ani_forward)
-		current_rotation += 150.0f * deltaTime;
+		current_rotation += 5.0f * deltaTime;
 	else
-		current_rotation -= 150.0f * deltaTime;
+		current_rotation -= 5.0f * deltaTime;
 
 	if (current_rotation <= 0.0f)
 		ani_forward = true;
-	else if (current_rotation >= 90.0f)
+	else if (current_rotation >= 5.0f)
 		ani_forward = false;
 
-	rig->getNode("la_u")->setRotation({ -current_rotation + 45, 0, 0 });
-	rig->getNode("la_l")->setRotation({ -current_rotation,0, 0 });
-	rig->getNode("ra_u")->setRotation({ -90 + current_rotation + 45,0, 0 });
-	rig->getNode("ra_l")->setRotation({ -90 + current_rotation,0, 0 });
+	float idle_rotation = current_rotation * 0.003f;
 
-	rig->getNode("ll_u")->setRotation({ current_rotation - 45, 0, 0 });
+	rig->getNode("torso")->setPosition({ 0,-idle_rotation, 0 });
+
+	rig->getNode("la_u")->setRotation({ -current_rotation*0.5f, 0, 0 });
+	rig->getNode("la_l")->setRotation({ -current_rotation,0, 0 });
+	rig->getNode("ra_u")->setRotation({ -10 +current_rotation*0.5f,0, 0 });
+	rig->getNode("ra_l")->setRotation({ -10 +current_rotation,0, 0 });
+
+	
+	rig->getNode("ll_u")->setRotation({ -current_rotation, 0, 0 });
 	rig->getNode("ll_l")->setRotation({ current_rotation,0, 0 });
-	rig->getNode("rl_u")->setRotation({ 90 - current_rotation - 45,0, 0 });
-	rig->getNode("rl_l")->setRotation({ 90 - current_rotation,0, 0 });
+	rig->getNode("rl_u")->setRotation({ -10+current_rotation,0, 0 });
+	rig->getNode("rl_l")->setRotation({ 10 -current_rotation,0, 0 });
+	
 }
 
 void AnimationHandler::attack()
@@ -100,7 +106,7 @@ void AnimationHandler::attack()
 	else if (current_rotation >= 180.0f)
 		current_rotation = 180.0f;
 
-	rig->getNode("la_u")->setRotation({ -current_rotation, 0, 0 });
+	rig->getNode("la_u")->setRotation({ -current_rotation,0, 0 });
 	rig->getNode("la_l")->setRotation({ -current_rotation,0, 0 });
 	rig->getNode("ra_u")->setRotation({ -current_rotation,0, 0 });
 	rig->getNode("ra_l")->setRotation({ -current_rotation,0, 0 });
