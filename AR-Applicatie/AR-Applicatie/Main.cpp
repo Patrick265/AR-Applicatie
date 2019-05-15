@@ -57,6 +57,11 @@ void standardRenderOperations();
 void drawMesh(Graphics::mesh mesh, uint16_t texture_id);
 void drawGameObject(GameObject game_obj);
 void displayText();
+void runOpencCVThread();
+
+int cursorID;
+int cursorX = 0;
+int cursorY = 0;
 
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);
@@ -81,12 +86,17 @@ int main(int argc, char** argv) {
 	rig = new Rig(pos, rot, scale);
 	rig->rigFemaleElf();
 
-
-	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
+	//Cursor image
+	cursorID = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png");
+	glutSetCursor(GLUT_CURSOR_NONE);
 
 	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
 
 	glutWarpPointer(width / 2, height / 2);
+
+	//std::thread openCV(runOpencCVThread);
+	//openCV.join();
+	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 
 	glutMainLoop();
 }
@@ -104,7 +114,6 @@ void onIdle()
 	fTheta += 30.0f * deltaTime;
 
 	rig->setRotation({ 0,fTheta * 2,0 });
-
 
 	//Hardcoded animation to showcase rig
 	if (arm_up)
@@ -145,8 +154,15 @@ void onIdle()
 	if (keys[int('q')]) camera.posZ -= deltaTime * speed;
 
 	gameLogic.update(deltaTime);
-
+	
+	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
+	
 	glutPostRedisplay();
+}
+
+void runOpencCVThread() 
+{
+	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 }
 
 void onDisplay()
@@ -300,6 +316,20 @@ void displayText()
 		}
 		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
 	}
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, cursorID);
+	glEnable(GL_TEXTURE_2D);
+	glBegin(GL_QUADS);
+	
+	glTexCoord2f(0, 0); glVertex2f(cursorX - 25, cursorY - 25);
+	glTexCoord2f(0, 1); glVertex2f(cursorX - 25, cursorY + 25);
+	glTexCoord2f(1, 1); glVertex2f(cursorX + 25, cursorY + 25);
+	glTexCoord2f(1, 0); glVertex2f(cursorX + 25, cursorY - 25);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
 }
 
 void onKey(unsigned char keyId, int x, int y)
@@ -322,19 +352,40 @@ void onMousePassiveMotion(int x, int y)
 	if (!mouseControl) {
 		Point2D mousePos = getCoordinates();
 
-		double x = mousePos.x * 3;
-		double y = (double) mousePos.y * 2.25;
-		if (x >= 0 && x <= width && y >= 0 && y <= height) {
+		double xScreen = mousePos.x * 3;
+		double yScreen = (double)mousePos.y * 2.25;
 
-			glutWarpPointer(x, y);
+		if (xScreen >= 0 && xScreen <= width && yScreen >= 0 && yScreen <= height) {
+			cursorX = xScreen;
+			cursorY = yScreen;
+			glutWarpPointer(xScreen, yScreen);
+
 		}
 		else {
-			SetCursorPos(width/ 2, height/ 2);
+			SetCursorPos(width / 2, height / 2);
 		}
 	}
+	cursorX = x;
+	cursorY = y;
+	//int dx = x - width / 2;
+	//int dy = y - height / 2;
+	//if ((dx != 0 || dy != 0) && abs(dx) < 400 && abs(dy) < 400 && !justMovedMouse)
+	//{
+	//	camera.rotY += dx / 10.0f;
+	//	camera.rotX += dy / 10.0f;
+	//	if (camera.rotX < -90)
+	//		camera.rotX = -90;
+	//	if (camera.rotX > 90)
+	//		camera.rotX = 90;
+	//	if (camera.rotY > 360)
+	//		camera.rotY -= 360;
+	//	if (camera.rotY <= 0)
+	//		camera.rotY += 360;
+	//}
 
 	if (!justMovedMouse)
 	{
+		//glutWarpPointer(width / 2, height / 2);
 		justMovedMouse = true;
 	}
 	else

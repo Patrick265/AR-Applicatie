@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\freeglut\include;C:\opencv\build\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)\freeglut\bin\x64\*.dll" "$(OutputPath)" /Y
+xcopy "C:\opencv\build\x64\vc14\lib\opencv_world410d.lib" "$(OutputPath)" /Y</Command>
+      <Message>Copy the freeglut.dll and opencv.dll into the debug folder</Message>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalLibraryDirectories>$(SolutionDir)\freeglut\lib\x64;C:\opencv\build\x64\vc14\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world410d.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>
