@@ -45,116 +45,138 @@ void Rig::rigFemaleElf()
 	Math::vec3d _pos = { 0.0f, 0.0f, 0.0f };
 	Math::vec3d _rot = { 0.0f, 0.0f, 0.0f };
 	centre = new Node(_pos, _rot);
+
+	Math::vec3d torso = { 0.0f, 0.0f, 0.952426f };
+		Math::vec3d arm_left_top = { 0.404859f , 0.120226f ,2.16489f };
+			Math::vec3d arm_left_bottom = { 0.61229f , 0.068894f ,1.45316f };
+		Math::vec3d arm_right_top = { -0.38416f, 0.119478f , 2.16327f };
+			Math::vec3d arm_right_bottom = { -0.605497f, 0.112396f, 1.48285f };
+		Math::vec3d leg_left_top = { 0.194586f, 0.0f, 0.735892f };
+			Math::vec3d leg_left_bottom = { 0.272154f, 0.0f, -0.104308f};
+		Math::vec3d leg_right_top = { -0.226518f, 0.0, 0.742508f };
+			Math::vec3d leg_right_bottom = { -0.257862f, 0.0f, -0.13729f};
+		Math::vec3d neck = { 0.015737f,0.0f, 2.3002f };
+			Math::vec3d head = { 0.0f,0.0f,2.48477f };
+		Math::vec3d skirt = { -0.002984f, 0.08143f,1.03797f };
+		Math::vec3d big_sack = {0.0f,0.0f, 0.32386f };
+
 		
 	/* HEAD
 	*/
-	_pos = { -0.01437f, 1.34524f, 0 };
-	Node* neck = new Node("neck", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_head_neck.obj"),
+	_pos = convertCoordinates(neck, torso);
+	Node* elf_neck = new Node("neck", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_head_neck.obj"),
 		TextureHandler::addTexture("Resources/Rune/npc_head.png"),
 		_pos, _rot);
 
-	_pos = { 0, 0.17864f, 0 };
-	Node* head = new Node("head", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_head.obj"),
+	_pos = convertCoordinates(head, neck);
+	Node* elf_head = new Node("head", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_head.obj"),
 		TextureHandler::addTexture("Resources/Rune/npc_head.png"),
 		_pos, _rot);
 	
 
 	/* BODY
 	*/	
-	_pos = { -0.01437f, 1.77437f, 0 };
-	Node* torso = new Node("torso",ObjLoader::loadObj("Resources/Rigid_NPC/NPC_torso.obj"),
+
+	_pos = convertCoordinates(torso);
+	Node* elf_torso = new Node("torso",ObjLoader::loadObj("Resources/Rigid_NPC/NPC_torso.obj"),
 		TextureHandler::addTexture("Resources/Rune/npc_torso.png"),
 		_pos, _rot);
 	
-	_pos = { 0.001553,0.03752, -0.073612 };
-	Node* lower_body = new Node("lower_bod", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_skirt.obj"),
+	_pos = convertCoordinates(skirt, torso);
+	Node* elf_lower_body = new Node("lower_bod", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_skirt.obj"),
 		TextureHandler::addTexture("Resources/Rune/npc_legs.png"),
 		_pos, _rot);
 
 	
 	/* ARMS	
 	*/
-	_pos = { 0.380106f, 1.20884f, -0.099151 };
-	Node* leftarm_upper = new Node("la_u",ObjLoader::loadObj("Resources/Rigid_NPC/NPC_arm_left_top.obj"),
+	_pos = convertCoordinates(arm_left_top, torso);
+	Node* elf_leftarm_upper = new Node("la_u",ObjLoader::loadObj("Resources/Rigid_NPC/NPC_arm_left_top.obj"),
 		TextureHandler::addTexture("Resources/Rune/npc_arms.png"),
 		_pos, _rot);
 	
-	_pos = { 0.2, -0.67096, 0.05 };
-	Node* leftarm_lower = new Node("la_l",ObjLoader::loadObj("Resources/Rigid_NPC/NPC_arm_left_bottom.obj"),
+	_pos = convertCoordinates(arm_left_bottom, arm_left_top);
+	Node* elf_leftarm_lower = new Node("la_l",ObjLoader::loadObj("Resources/Rigid_NPC/NPC_arm_left_bottom.obj"),
 		TextureHandler::addTexture("Resources/Rune/npc_arms.png"),
 		_pos, _rot);
 	
 
-	_pos = { -0.379216f, 1.21166f,  -0.097682f };	
-	Node* rightarm_upper = new Node("ra_u",ObjLoader::loadObj("Resources/Rigid_NPC/NPC_arm_right_top.obj"),
+	_pos = convertCoordinates(arm_right_top, torso);
+	Node* elf_rightarm_upper = new Node("ra_u",ObjLoader::loadObj("Resources/Rigid_NPC/NPC_arm_right_top.obj"),
 		TextureHandler::addTexture("Resources/Rune/npc_arms.png"),
 		_pos, _rot);
 	
-	_pos = { -0.21f, -0.67096f, 0.0};
-	Node* rightarm_lower = new Node("ra_l", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_arm_right_bottom.obj"),
+	_pos = convertCoordinates(arm_right_bottom, arm_right_top);
+	Node* elf_rightarm_lower = new Node("ra_l", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_arm_right_bottom.obj"),
 		TextureHandler::addTexture("Resources/Rune/npc_arms.png"), 
 		_pos, _rot);
 
 	
 	/* LEGS	
 	*/	
-	_pos = { 0.277095, -0.55379f, 0 };
-	Node* leftleg_upper = new Node("ll_u", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_top_left.obj"),
+	_pos = convertCoordinates(leg_left_top, torso);
+	Node* elf_leftleg_upper = new Node("ll_u", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_top_left.obj"),
 		TextureHandler::addTexture("Resources/Rune/npc_legs.png"),
 		_pos, _rot);
 		
-	_pos = { 0.08f, -0.84f, 0 };
-	Node* leftleg_lower = new Node("ll_l", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_bottom_left.obj"),
+	_pos = convertCoordinates(leg_left_bottom, leg_left_top);
+	Node* elf_leftleg_lower = new Node("ll_l", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_bottom_left.obj"),
 		TextureHandler::addTexture("Resources/Rune/npc_legs.png"),
 		_pos, _rot);
 
-
-	_pos = { -0.184185f, -0.50577f, 0 };
-	Node* rightleg_upper = new Node("rl_u", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_top_right.obj"),
+	_pos = convertCoordinates(leg_right_top, torso);
+	Node* elf_rightleg_upper = new Node("rl_u", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_top_right.obj"),
 		TextureHandler::addTexture("Resources/Rune/npc_legs.png"),
 		_pos, _rot);
 		
-	_pos = { -0.03f, -0.88f, 0 };
-	Node* rightleg_lower = new Node("rl_l", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_bottom_right.obj"),
+	_pos = convertCoordinates(leg_right_bottom, leg_right_top);
+	Node* elf_rightleg_lower = new Node("rl_l", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_bottom_right.obj"),
 		TextureHandler::addTexture("Resources/Rune/npc_legs.png"),
 		_pos, _rot);
+
+	_pos = convertCoordinates(big_sack, torso);
+	Node* elf_big_sack = new Node("sack", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_big_sack.obj"),
+		TextureHandler::addTexture("Resources/Rigid_NPC/NPC_big_sack.png"),
+		_pos, _rot);
+
 
 
 	//Setting the parent/child relations
-	neck->addChild(head);
+	elf_neck->addChild(elf_head);
 
-	leftarm_upper->addChild(leftarm_lower);
-	rightarm_upper->addChild(rightarm_lower);
+	elf_leftarm_upper->addChild(elf_leftarm_lower);
+	elf_rightarm_upper->addChild(elf_rightarm_lower);
+	elf_leftleg_upper->addChild(elf_leftleg_lower);
+	elf_rightleg_upper->addChild(elf_rightleg_lower);
 
-	leftleg_upper->addChild(leftleg_lower);
-	rightleg_upper->addChild(rightleg_lower);
+	elf_torso->addChild(elf_neck);
+	elf_torso->addChild(elf_lower_body);
+	elf_torso->addChild(elf_leftarm_upper);
+	elf_torso->addChild(elf_rightarm_upper);
+	elf_torso->addChild(elf_leftleg_upper);
+	elf_torso->addChild(elf_rightleg_upper);
+	elf_torso->addChild(elf_big_sack);
 
-	torso->addChild(neck);
-	torso->addChild(lower_body);
-	torso->addChild(leftarm_upper);
-	torso->addChild(rightarm_upper);
-	torso->addChild(leftleg_upper);
-	torso->addChild(rightleg_upper);
-
-	centre->addChild(torso);
+	centre->addChild(elf_torso);
 
 
 	//Storing all nodes to simplify the search process for getting nodes
-	nodes.push_back(neck);
-	nodes.push_back(head);
+	nodes.push_back(elf_neck);
+	nodes.push_back(elf_head);
+	nodes.push_back(elf_big_sack);
 
-	nodes.push_back(torso);
-	nodes.push_back(lower_body);
+	nodes.push_back(elf_torso);
+	nodes.push_back(elf_lower_body);
 	
-	nodes.push_back(leftarm_upper);
-	nodes.push_back(leftarm_lower);
-	nodes.push_back(rightarm_upper);
-	nodes.push_back(rightarm_lower);
+	nodes.push_back(elf_leftarm_upper);
+	nodes.push_back(elf_leftarm_lower);
+	nodes.push_back(elf_rightarm_upper);
+	nodes.push_back(elf_rightarm_lower);
 	
-	nodes.push_back(leftleg_upper);
-	nodes.push_back(rightleg_upper);
-	nodes.push_back(leftleg_lower);
-	nodes.push_back(rightleg_lower);
+	nodes.push_back(elf_leftleg_upper);
+	nodes.push_back(elf_rightleg_upper);
+	nodes.push_back(elf_leftleg_lower);
+	nodes.push_back(elf_rightleg_lower);
 
 }
 
