@@ -10,6 +10,7 @@
 #include "game/GameLogic.h"
 #include "vision/markerdetection.h"
 #include "animation/Rig.h"
+#include "Util/MousePicking.h"
 
 float width = 1920;
 float height = 1080;
@@ -37,9 +38,9 @@ GameObject* skybox;
 GameObject* map;
 // Castle black icon obj
 GameObject* castleBlackIcon;
-// Rotation for Castle black icon obj
-float rotationIcon = 0;
-float rotationInc = 2.0f;
+
+// MousePicking object
+MousePicking* mousePicking;
 
 struct Camera
 {
@@ -54,7 +55,6 @@ struct Camera
 bool keys[255];
 bool justMovedMouse = false;
 bool mouseControl = true;
-bool mouseClicked = false;
 
 void onIdle();
 void onDisplay();
@@ -71,7 +71,6 @@ void drawGameObject(GameObject game_obj);
 void displayText();
 void runOpencCVThread();
 void initMap();
-void getObject();
 
 
 int cursorID;
@@ -133,10 +132,6 @@ void onIdle()
 	rig->setRotation({ 0,fTheta * 2,0 });
 
 
-	// Castle black setting the rotation
-	rotationIcon += rotationInc;
-	castleBlackIcon->setRotation(Math::vec3d{ 0, rotationIcon,  0});
-
 	//Hardcoded animation to showcase rig
 	if (arm_up)
 		current_rotation += 150.0f * deltaTime;
@@ -179,6 +174,7 @@ void onIdle()
 	
 	//runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 	
+
 	glutPostRedisplay();
 }
 
@@ -238,12 +234,9 @@ void onDisplay()
 
 
 	drawGameObject(*castleBlackIcon);
-	if(mouseClicked)
-	{
-		std::cout << "Entered mouseClicked if statement" << "\n";
-		getObject();
-		mouseClicked = !mouseClicked;
-	}
+	
+	mousePicking->update(cursorX, cursorY, height, deltaTime);
+
 	displayText();
 
 
@@ -381,7 +374,8 @@ void onKey(unsigned char keyId, int x, int y)
 	if (keyId == 'c')
 		mouseControl = !mouseControl;
 	if (keyId == 't')
-		gameLogic.throwProjectile();	keys[keyId] = true;
+		gameLogic.throwProjectile();
+	keys[keyId] = true;
 }
 
 void onKeyUp(unsigned char keyId, int, int)
@@ -438,12 +432,6 @@ void onMousePassiveMotion(int x, int y)
 void mouseClicks(int button, int state, int x, int y)
 {
 	std::cout << " Button: " << button << " State: " << state << " X: " << x << " y:" << y << "\n";
-
-	if(button == GLUT_LEFT_BUTTON &&state == GLUT_DOWN)
-	{
-		mouseClicked = true;
-	}
-	
 }
 
 void onReshape(int w, int h)
@@ -474,57 +462,6 @@ void initMap()
 	skybox->setScale(Math::vec3d{ 1, 1, 1});
 	skybox->setRotation(Math::vec3d{ 0, 0, 0 });
 	
-	
-
+	mousePicking = new MousePicking(castleBlackIcon, height, cursorX, cursorY);
 }
 
-void getObject()
-{
-	float winZ;
-	glReadPixels(cursorX, height - cursorY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ);
-	
-
-
-	double modelMatrix[16];
-	glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
-	double projMatrix[16];
-	glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
-	int viewport[4];
-	glGetIntegerv(GL_VIEWPORT, viewport);
-
-	double x, y, z;
-	gluUnProject
-	(
-		cursorX,
-		height - cursorY,
-		winZ,
-		modelMatrix,
-		projMatrix,
-		viewport,
-		&x,
-		&y,
-		&z
-	);
-
-
-
-	const double xIcon = castleBlackIcon->getPosition().x;
-	const double yIcon = castleBlackIcon->getPosition().y;
-	const double zIcon = castleBlackIcon->getPosition().z;
-	const double sizeIcon = 0.5f;
-
-	// std::cout << "Clicked xyz:\t" << " X: " << x << " Y: " << y << " Z: " << z << "\n";
-	// std::cout << "Castle  xyz:\t" << " X: " << xIcon << " Y: " << yIcon << " Z: " << zIcon << "\n";
-	// std::cout << "Margin  xyz:\t" << "+X: " << xIcon + sizeIcon << " +Y: " << yIcon + sizeIcon << " +Z: " << zIcon + sizeIcon << "\n\t\t" << "-X: " << xIcon - sizeIcon << " -Y: " << yIcon + sizeIcon << " -Z: " << zIcon + sizeIcon << std::endl;
-	// std::cout << "Boolean xyz:\t" << "+X: " << (xIcon + sizeIcon < x) << " +Y: " << (yIcon + sizeIcon < y) << " +Z: " << (zIcon + sizeIcon < z) << "\n\t\t" << "-X: " << (xIcon - sizeIcon > x) << " -Y: " << (yIcon - sizeIcon > y) << " -Z: " << (zIcon - sizeIcon > z) << std::endl;
-	if(	(xIcon + sizeIcon) > x && (xIcon - sizeIcon) < x &&
-		(yIcon + sizeIcon) > y && (yIcon - sizeIcon) < y &&
-		(zIcon + sizeIcon) > z && (zIcon - sizeIcon) < z)
-	{
-		rotationInc = 0.5f;
-		std::cout << "\t\t\t\tClicked on castleblack" << std::endl;
-	}else
-	{
-		rotationInc = 2.0f;
-	}
-}
