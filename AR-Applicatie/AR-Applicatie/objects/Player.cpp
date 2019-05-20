@@ -2,8 +2,8 @@
 #include "../util/ObjLoader.h"
 #include <string>
 
-Player::Player(std::string objectName, int textureId)
-	: GameObject(ObjLoader::loadObj(objectName), textureId)
+Player::Player(const std::string &objectName, const std::string &texture)
+	: GameObject(objectName, texture)
 {
 	position = {0, 21, -0.5};
 	maxSpeed = 10;

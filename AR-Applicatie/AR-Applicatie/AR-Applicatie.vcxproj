@@ -112,6 +112,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="animation\AnimationHandler.cpp" />
     <ClCompile Include="animation\Node.cpp" />
     <ClCompile Include="animation\Rig.cpp" />
     <ClCompile Include="calculations\Graphics.cpp" />
@@ -122,11 +123,13 @@
     <ClCompile Include="objects\Wildling.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="objects\GameObject.cpp" />
+    <ClCompile Include="opengl\DrawHandler.cpp" />
     <ClCompile Include="util\ObjLoader.cpp" />
     <ClCompile Include="util\TextureHandler.cpp" />
     <ClCompile Include="vision\markerdetection.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="animation\AnimationHandler.h" />
     <ClInclude Include="animation\Node.h" />
     <ClInclude Include="animation\Rig.h" />
     <ClInclude Include="calculations\Graphics.h" />
@@ -136,6 +139,7 @@
     <ClInclude Include="objects\Projectile.h" />
     <ClInclude Include="objects\Wildling.h" />
     <ClInclude Include="objects\GameObject.h" />
+    <ClInclude Include="opengl\DrawHandler.h" />
     <ClInclude Include="util\ObjLoader.h" />
     <ClInclude Include="util\stb_image.h" />
     <ClInclude Include="util\TextureHandler.h" />

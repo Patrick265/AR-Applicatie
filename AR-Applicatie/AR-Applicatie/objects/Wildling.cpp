@@ -2,8 +2,8 @@
 #include "../util/ObjLoader.h"
 #include <string>
 
-Wildling::Wildling(std::string objectName, int textureId, float x)
-: GameObject(ObjLoader::loadObj(objectName), textureId)
+Wildling::Wildling(std::string objectName, std::string texture, float x)
+: GameObject(objectName, texture)
 {
 	position.x = x;
 	speed = 1;

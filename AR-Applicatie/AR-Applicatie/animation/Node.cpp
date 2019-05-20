@@ -1,71 +1,56 @@
 #include "gl/freeglut.h"
 
 #include "Node.h"
+#include "../opengl/DrawHandler.h"
+#include "../calculations/Graphics.h"
+
+Node::Node()
+{
+	this->name = "centre";
+	this->mesh = "none";
+	this->texture = "none";
+
+	this->pos = Math::vec3d{ 0,0,0 };
+	this->rot = Math::vec3d{ 0,0,0 };
+}
 
 Node::Node(Math::vec3d pos, Math::vec3d rot)
 {
 	this->name = "centre";
-	this->mesh = {};
-	this->texture_id = -1;
+	this->mesh = "none";
+	this->texture = "none";
 
 	this->pos = pos;
 	this->rot = rot;
 }
 
-Node::Node(std::string name, Graphics::mesh mesh, uint16_t texture_id, Math::vec3d pos, Math::vec3d rot)
+Node::Node(const std::string &name, const std::string &mesh, const std::string &texture, const Math::vec3d &pos, const Math::vec3d &rot)
+	:name(name), mesh(mesh), texture(texture), pos(pos), rot(rot)
 {
-	this->name = name;
-	this->mesh = mesh;
-	this->texture_id = texture_id;
+}
 
-	this->pos = pos;
-	this->rot = rot;
+Node::Node(const Node & node)
+	: name(node.name), pos(node.pos), rot(node.rot), children(node.children), mesh(node.mesh), texture(node.texture)
+{
 }
 
 Node::~Node() {
-	
-	for (std::vector< Node* >::iterator it = children.begin(); it != children.end(); ++it)
-	{
-		delete (*it);
-	}
 }
 
-void drawMesh(Graphics::mesh mesh, uint16_t texture_id)
+void Node::draw(std::map<std::string, Node>&nodes, const std::map<std::string, Graphics::mesh> &meshes, const std::map<std::string, uint16_t> &textures)
 {
-	glBindTexture(GL_TEXTURE_2D, texture_id);
-	glEnable(GL_TEXTURE_2D);
-	glBegin(GL_TRIANGLES);
+	glPushMatrix();
 
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glTranslatef(pos.x, pos.y, pos.z);
 
-	for (Graphics::triangle tri : mesh.tris) {
-		
-		Math::vec3d normal = Graphics::triangle_getNormal(tri);
-		glNormal3f(normal.x, normal.y, normal.z);
-		for (int i = 0; i < 3; i++)
-		{
-			glTexCoord2f(tri.vt[i].x, tri.vt[i].y);
-			glVertex3f(tri.p[i].x, tri.p[i].y, tri.p[i].z);
-		}
-	}
-	glEnd();
-	glDisable(GL_TEXTURE_2D);
-}
-
-void Node::draw()
-{
-	glPushMatrix();	
-
-	glTranslatef(pos.x, pos.y, pos.z);	
-	
 	glRotatef(rot.x, 1, 0, 0);
 	glRotatef(rot.y, 0, 1, 0);
-	glRotatef(rot.z, 0, 0, 1);	
+	glRotatef(rot.z, 0, 0, 1);
 
-	drawMesh(mesh, texture_id);
-	
-	for (Node* child : children) {
-		child->draw();
+	DrawHandler::drawMesh(meshes.at(mesh), textures.at(texture));
+
+	for (std::string child : children) {
+		nodes.at(child).draw(nodes, meshes, textures);
 	}
 
 	glPopMatrix();
@@ -81,13 +66,17 @@ void Node::setRotation(Math::vec3d rot)
 	this->rot = rot;
 }
 
-std::vector<Node*> Node::getChildren()
+void Node::setPosition(Math::vec3d pos)
+{
+	this->pos = pos;
+}
+
+std::vector<std::string> Node::getChildren()
 {
 	return children;
 }
 
-void Node::addChild(Node* child)
+void Node::addChild(std::string child)
 {
 	children.push_back(child);
-
 }

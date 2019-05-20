@@ -11,7 +11,7 @@ private:
 public:
 	bool isDead;
 
-	Wildling(std::string objectName, int textureId, float x);
+	Wildling(std::string objectName, std::string texture, float x);
 
 	void spawn();
 	void update(float deltaTime);
