@@ -10,7 +10,6 @@
 #include "objects/GameObject.h"
 #include "game/GameLogic.h"
 #include "vision/markerdetection.h"
-#include "opengl/DrawHandler.h"
 #include "animation/AnimationHandler.h"
 
 float width = 1600;
@@ -65,7 +64,6 @@ void onMousePassiveMotion(int x, int y);
 void moveCamera(float angle, float fac);
 
 void standardRenderOperations();
-void drawGameObject(GameObject game_obj);
 void displayText();
 void runOpencCVThread();
 
@@ -171,8 +169,7 @@ void onDisplay()
 	glPopMatrix();
 
 
-	for (GameObject* gameObject : gameLogic.getGameObjects())
-		drawGameObject(*gameObject);
+	gameLogic.draw(meshes, textures);
 
 
 	ani->draw(meshes, textures);
@@ -211,21 +208,6 @@ void standardRenderOperations()
 	glEnable(GL_LIGHT0);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
-}
-
-void drawGameObject(GameObject game_obj)
-{
-	glPushMatrix();
-
-	glTranslatef(game_obj.getPosition().x, game_obj.getPosition().y, game_obj.getPosition().z);
-	glRotatef(game_obj.getRotation().x, 1, 0, 0);
-	glRotatef(game_obj.getRotation().y, 0, 1, 0);
-	glRotatef(game_obj.getRotation().z, 0, 0, 1);
-	glScalef(game_obj.getScale().x, game_obj.getScale().y, game_obj.getScale().z);
-
-	DrawHandler::drawMesh(meshes[game_obj.getMesh()], textures[game_obj.getTexture()]);
-
-	glPopMatrix();
 }
 
 void displayText()

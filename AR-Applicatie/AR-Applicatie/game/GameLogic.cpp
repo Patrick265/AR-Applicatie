@@ -1,6 +1,5 @@
 #include "GameLogic.h"
 #include "../util/ObjLoader.h"
-#include "../util/TextureHandler.h"
 #include "../vision/markerdetection.h"
 #include <queue>
 
@@ -72,6 +71,18 @@ void GameLogic::update(float deltaTime)
 		for (Projectile* projectile : projectiles)
 			if (projectile->isActive && wildling->isHit(projectile->getPosition().x, projectile->getPosition().y))
 				projectile->hasHit();
+	
+	// Update components
+	for (auto o : getGameObjects())
+		for (auto c : o->getComponents())
+			c->update(deltaTime);
+}
+
+void GameLogic::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std::string, uint16_t>& textures)
+{
+	for (auto o : getGameObjects())
+		for (auto c : o->getComponents())
+			c->draw(meshes, textures);
 }
 
 void GameLogic::throwProjectile(float xVelocity, float yVelocity)

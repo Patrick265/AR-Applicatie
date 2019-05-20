@@ -117,6 +117,7 @@
     <ClCompile Include="animation\Rig.cpp" />
     <ClCompile Include="calculations\Graphics.cpp" />
     <ClCompile Include="calculations\Math.cpp" />
+    <ClCompile Include="components\Component.cpp" />
     <ClCompile Include="game\GameLogic.cpp" />
     <ClCompile Include="objects\Player.cpp" />
     <ClCompile Include="objects\Projectile.cpp" />
@@ -124,6 +125,9 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="objects\GameObject.cpp" />
     <ClCompile Include="opengl\DrawHandler.cpp" />
+    <ClCompile Include="components\StaticComponent.cpp" />
+    <ClCompile Include="states\State.cpp" />
+    <ClCompile Include="states\StateHandler.cpp" />
     <ClCompile Include="util\ObjLoader.cpp" />
     <ClCompile Include="util\TextureHandler.cpp" />
     <ClCompile Include="vision\markerdetection.cpp" />
@@ -134,12 +138,16 @@
     <ClInclude Include="animation\Rig.h" />
     <ClInclude Include="calculations\Graphics.h" />
     <ClInclude Include="calculations\Math.h" />
+    <ClInclude Include="components\Component.h" />
     <ClInclude Include="game\GameLogic.h" />
     <ClInclude Include="objects\Player.h" />
     <ClInclude Include="objects\Projectile.h" />
     <ClInclude Include="objects\Wildling.h" />
     <ClInclude Include="objects\GameObject.h" />
     <ClInclude Include="opengl\DrawHandler.h" />
+    <ClInclude Include="components\StaticComponent.h" />
+    <ClInclude Include="states\State.h" />
+    <ClInclude Include="states\StateHandler.h" />
     <ClInclude Include="util\ObjLoader.h" />
     <ClInclude Include="util\stb_image.h" />
     <ClInclude Include="util\TextureHandler.h" />
