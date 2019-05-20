@@ -22,8 +22,22 @@ private:
 	
 
 public:
+	/*
+	ObjectsToCheck: The object the MousePicker has to check for
+	height: The height of the window
+	x: The x position of the mouse for initialization purpose
+	y: The y position of the mouse for initialization purpose
+	*/
 	MousePicking(GameObject *objectsToCheck, int height, int x, int y);
+	/*
+	The method which checks if the cursor position corresponds to the position of the object
+	*/
 	void searchObject(int cursorX, int cursorY);
+	/*
+	The method is called from main to check if the position of the cursor has changed and updates the time which has passed since the last change
+	height: The height of the window
+	time: The time that has passed since the last time update was called
+	*/
 	void update(int cursorX, int cursorY, int height, float time);
 	float getTimePassed();
 };
