@@ -8,28 +8,29 @@ class Graphics {
 private:
 public:
 
-	struct triangle {
-		//vertices
-		Math::vec3d p[3];
-		//texture coordinates
-		Math::vec2d vt[3];
-		//vertex normals
-		Math::vec3d vn[3];
-
+	struct vertex {
+		//vertex position
+		Math::vec3d p;
 		//Face normal
 		Math::vec3d fn;
+		//texture coordinate
+		Math::vec2d vt;
+		//vertex normal
+		Math::vec3d vn;
 	};
 
 	struct mesh {
-		std::vector<triangle> tris;
+		std::vector<vertex> vertices;
 	};
 
 	/*
-		Calculates the normal of the given triangle
+		Calculates the normal of the given three vertices (triangle)
 
-		@param triangle - The given triangle
+		@param vec1 - The first vertex
+		@param vec2 - The second vertex
+		@param vec3 - The third vertex
 
 		Returns the resulting normal
 	*/
-	static Math::vec3d triangle_getNormal(triangle tri);
+	static Math::vec3d getNormal(const Math::vec3d &vec1, const Math::vec3d &vec2, const Math::vec3d &vec3);
 };

@@ -47,7 +47,7 @@ void Node::draw(std::map<std::string, Node>&nodes, const std::map<std::string, G
 	glRotatef(rot.y, 0, 1, 0);
 	glRotatef(rot.z, 0, 0, 1);
 
-	DrawHandler::drawMesh(meshes.at(mesh), textures.at(texture));
+	DrawHandler::drawMesh_array(meshes.at(mesh), textures.at(texture));
 
 	for (std::string child : children) {
 		nodes.at(child).draw(nodes, meshes, textures);
