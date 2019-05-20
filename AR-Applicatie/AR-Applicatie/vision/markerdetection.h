@@ -27,7 +27,7 @@ public:
 	//	@param int input is for switching the mode between mouse and openCV
 	//
 	*/
-	 int runMarkerDetection(DetectionMode mode);
+	 void runMarkerDetection(DetectionMode mode);
 
 	/*
 	//	This function is used for terminating the OpenCV windows.

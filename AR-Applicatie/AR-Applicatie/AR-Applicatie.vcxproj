@@ -124,6 +124,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="objects\GameObject.cpp" />
     <ClCompile Include="opengl\DrawHandler.cpp" />
+    <ClCompile Include="util\Exceptions.cpp" />
     <ClCompile Include="util\ObjLoader.cpp" />
     <ClCompile Include="util\TextureHandler.cpp" />
     <ClCompile Include="vision\markerdetection.cpp" />
@@ -140,6 +141,7 @@
     <ClInclude Include="objects\Wildling.h" />
     <ClInclude Include="objects\GameObject.h" />
     <ClInclude Include="opengl\DrawHandler.h" />
+    <ClInclude Include="util\Exceptions.h" />
     <ClInclude Include="util\ObjLoader.h" />
     <ClInclude Include="util\stb_image.h" />
     <ClInclude Include="util\TextureHandler.h" />

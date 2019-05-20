@@ -1,4 +1,5 @@
 #include "markerdetection.h"
+#include "../util/Exceptions.h"
 #include <iostream>
 #include <string>
 
@@ -17,6 +18,7 @@ cv::VideoCapture cap(0);
 cv::Mat frame, frame_HSV, frame_threshold;
 cv::Point markerPosition;
 cv::Ptr<cv::SimpleBlobDetector> detector;
+Exceptions exception;
 cv::Mat blobImg;
 cv::SimpleBlobDetector::Params params;
 std::vector<cv::KeyPoint> myBlobs;
@@ -226,8 +228,14 @@ void markerdetection::calibrate()
 	while ((lowerS == -1 || upperS == -1) && lowS >= 0) {
 		cap >> frame;
 		if (frame.empty()) {
-			std::cerr << "Frame invalid and skipped!" << std::endl;
-			continue;
+			try
+			{
+				exception.noCameraDetected();
+			}
+			catch (Exceptions e)
+			{
+				std::cout << "Exception: " << e.getExceptionMessage() << std::endl;
+			}
 		}
 		flip(frame, frame, 1);
 
@@ -310,8 +318,15 @@ void markerdetection::excecuteOpenCVDetection()
 {
 		cap >> frame;
 		if (frame.empty()) {
-			std::cerr << "Frame invalid and skipped!" << std::endl;
-			return;
+			try
+			{
+				exception.invalidFrames();
+			}
+			catch (Exceptions e)
+			{
+				std::cout << "Exception: " << e.getExceptionMessage() << std::endl;
+				return;
+			}
 		}
 		flip(frame, frame, 1);
 
@@ -337,7 +352,6 @@ void markerdetection::excecuteOpenCVDetection()
 			changeDetectionMode();
 			runMarkerDetection(getDetectionMode());
 		}
-	
 }
 
 /*
@@ -346,28 +360,32 @@ void markerdetection::excecuteOpenCVDetection()
 //	@param int input is for switching the mode between mouse and openCV
 //
 */
-int markerdetection::runMarkerDetection(markerdetection::DetectionMode mode)
+void markerdetection::runMarkerDetection(markerdetection::DetectionMode mode)
 {
 	if (mode == markerdetection::DetectionMode::opencv) {
 
 		resetBlobDetector();
 
 		if (!cap.isOpened()) {
-			std::cerr << "No camera detected on this system" << std::endl;
-			return -1;
+			try
+			{
+				exception.noCameraDetected();
+			}
+			catch (Exceptions e)
+			{
+				std::cout << "Exception: " << e.getExceptionMessage() << std::endl;
+			}
 		}
 
 		width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
 		height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
 
-		calibrate();
+		//calibrate();
 
 		excecuteOpenCVDetection();
 	}
 	if (mode == markerdetection::DetectionMode::mouse) {
-
 		excecuteMouseDetection();
 	}
-	return 0;
 }
 
