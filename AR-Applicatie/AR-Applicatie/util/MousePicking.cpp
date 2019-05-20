@@ -62,7 +62,7 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 		this->windowHeight = height;
 		if (abs(cursorX - lastX) <= 2 && abs(cursorY - lastY) <= 2) {
 			cursorCounter += time;
-			if (cursorCounter >= 2.0f && timePassed <= 2.1f) {
+			if (cursorCounter >= 1.5f && timePassed <= 1.6f) {
 				searchObject(cursorX, cursorY);
 				cursorCounter = 0;
 			}
@@ -72,7 +72,7 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 		}
 	}
 	else {
-		if (abs(cursorX - lastX) <= 2 && abs(cursorY - lastY) <= 2) {
+		if (abs(cursorX - lastX) <= 5 && abs(cursorY - lastY) <= 5) {
 			timePassed += time;
 			if (timePassed >= 3.0f && timePassed <= 3.1f) {
 				std::cout << "selected the game!!" << std::endl;
