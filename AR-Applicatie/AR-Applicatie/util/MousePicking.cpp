@@ -82,8 +82,13 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 		}
 		else {
 			isCounting = false;
+			this->timePassed = 0;
 		}
 	}
 	lastX = cursorX;
 	lastY = cursorY;
+}
+
+float MousePicking::getTimePassed() {
+	return timePassed;
 }

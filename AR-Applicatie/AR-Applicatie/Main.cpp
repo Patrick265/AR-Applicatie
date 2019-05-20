@@ -76,6 +76,8 @@ void initMap();
 int cursorID;
 int cursorX = 0;
 int cursorY = 0;
+float scaleLoading;
+int loadingID;
 
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);
@@ -104,12 +106,14 @@ int main(int argc, char** argv) {
 	//Cursor image
 	cursorID = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png");
 	glutSetCursor(GLUT_CURSOR_NONE);
+	
 
 	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
 
 	glutWarpPointer(width / 2, height / 2);
 	initMap();
-
+	scaleLoading = mousePicking->getTimePassed();
+	loadingID = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon_loading.png");
 	//std::thread openCV(runOpencCVThread);
 	//openCV.join();
 	//runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
@@ -173,7 +177,7 @@ void onIdle()
 	gameLogic.update(deltaTime);
 	
 	//runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
-	
+	scaleLoading = mousePicking->getTimePassed() * 12;
 
 	glutPostRedisplay();
 }
@@ -352,6 +356,21 @@ void displayText()
 		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
 	}
 
+	std::cout << "\t\t\t\t" << scaleLoading << std::endl;
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, loadingID);
+	glEnable(GL_TEXTURE_2D);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0, 0); glVertex2f(cursorX - scaleLoading, cursorY - scaleLoading);
+	glTexCoord2f(0, 1); glVertex2f(cursorX - scaleLoading, cursorY + scaleLoading);
+	glTexCoord2f(1, 1); glVertex2f(cursorX + scaleLoading, cursorY + scaleLoading);
+	glTexCoord2f(1, 0); glVertex2f(cursorX + scaleLoading, cursorY - scaleLoading);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, cursorID);
@@ -365,6 +384,8 @@ void displayText()
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
+
+
 }
 
 void onKey(unsigned char keyId, int x, int y)
@@ -461,6 +482,8 @@ void initMap()
 	skybox->setPosition(Math::vec3d{ 0, 0, 0 });
 	skybox->setScale(Math::vec3d{ 1, 1, 1});
 	skybox->setRotation(Math::vec3d{ 0, 0, 0 });
+
+
 	
 	mousePicking = new MousePicking(castleBlackIcon, height, cursorX, cursorY);
 }
