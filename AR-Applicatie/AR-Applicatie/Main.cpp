@@ -97,8 +97,8 @@ int main(int argc, char** argv) {
 	initResources();
 
 	ani = new AnimationHandler();
-	ani->setRig(Rig("elf", Math::vec3d{ 6,0,8 }, Math::vec3d{ 0,0,0 }, Math::vec3d{ 0.5,0.5,0.5 }));
-	ani->setAnimation(CLIMB);
+	ani->setRig(Rig("elf", Math::vec3d{ 10,20,0 }, Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 }));
+	ani->setAnimation(ATTACK);
 
 	//Cursor image
 	cursorID = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png", textures.size());
@@ -110,7 +110,7 @@ int main(int argc, char** argv) {
 
 	//std::thread openCV(runOpencCVThread);
 	//openCV.join();
-	//runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
+	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 
 	glutMainLoop();
 
@@ -129,6 +129,9 @@ void onIdle()
 
 	if (deltaTime > 1)
 		deltaTime = 0.0f;
+
+
+	ani->animate(deltaTime,mousePos.y- height / 2);
 
 	fTheta += 30.0f * deltaTime;
 
@@ -155,7 +158,7 @@ void onIdle()
 
 void runOpencCVThread()
 {
-	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
+	//runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 }
 
 void onDisplay()
@@ -168,8 +171,8 @@ void onDisplay()
 	glPopMatrix();
 
 
-	//for (GameObject* gameObject : gameLogic.getGameObjects())
-	//	drawGameObject(*gameObject);
+	for (GameObject* gameObject : gameLogic.getGameObjects())
+		drawGameObject(*gameObject);
 
 
 	ani->draw(meshes, textures);
@@ -327,6 +330,7 @@ void onMousePassiveMotion(int x, int y)
 {
 	if (mouseControl)
 		mousePos = { float(x), float(y) };
+	/*
 	 cursorX = x;
 	 cursorY = y;
 	int dx = x - width / 2;
@@ -347,11 +351,12 @@ void onMousePassiveMotion(int x, int y)
 
 	if (!justMovedMouse)
 	{
-		glutWarpPointer(width / 2, height / 2);
+		//glutWarpPointer(width / 2, height / 2);
 		justMovedMouse = true;
 	}
 	else
 		justMovedMouse = false;
+	*/
 }
 
 void onReshape(int w, int h)
@@ -396,6 +401,34 @@ void initRigParts()
 	textures["elf_sack"] = TextureHandler::addTexture("Resources/Rigid_NPC/NPC_big_sack.png", textures.size());
 	meshes["elf_sack"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_big_sack.obj");
 
+
+	/*
+	GOBLIN
+	*/
+	textures["goblin_torso"] = TextureHandler::addTexture("Resources/Enemy/goblin_torso.png", textures.size());
+	meshes["goblin_torso"] = ObjLoader::loadObj("Resources/Enemy/Goblin_torso.obj");
+
+	textures["goblin_la_u"] = TextureHandler::addTexture("Resources/Enemy/goblin_arm_left_top.png", textures.size());
+	meshes["goblin_la_u"] = ObjLoader::loadObj("Resources/Enemy/Goblin_arm_left_top.obj");
+
+	textures["goblin_ra_u"] = TextureHandler::addTexture("Resources/Enemy/goblin_arm_top_right.png", textures.size());
+	meshes["goblin_ra_u"] = ObjLoader::loadObj("Resources/Enemy/Goblin_arm_right_top.obj");
+
+	textures["goblin_ll_u"] = TextureHandler::addTexture("Resources/Enemy/goblin_leg_left_top.png", textures.size());
+	meshes["goblin_ll_u"] = ObjLoader::loadObj("Resources/Enemy/Goblin_leg_left_top.obj");
+	meshes["goblin_rl_u"] = ObjLoader::loadObj("Resources/Enemy/Goblin_leg_right_top.obj");
+
+	textures["goblin_la_l"] = TextureHandler::addTexture("Resources/Enemy/goblin_arm_left_bottom.png", textures.size());
+	meshes["goblin_la_l"] = ObjLoader::loadObj("Resources/Enemy/Goblin_arm_left_bottom.obj");
+
+	textures["goblin_ra_l"] = TextureHandler::addTexture("Resources/Enemy/goblin_arm_right_bottom.png", textures.size());
+	meshes["goblin_ra_l"] = ObjLoader::loadObj("Resources/Enemy/Goblin_arm_right_bottom.obj");
+
+	textures["goblin_ll_l"] = TextureHandler::addTexture("Resources/Enemy/goblin_leg_left_bottom.png", textures.size());
+	meshes["goblin_ll_l"] = ObjLoader::loadObj("Resources/Enemy/Goblin_leg_left_bottom.obj");
+
+	textures["goblin_rl_l"] = TextureHandler::addTexture("Resources/Enemy/goblin_leg_right_bottom.png", textures.size());
+	meshes["goblin_rl_l"] = ObjLoader::loadObj("Resources/Enemy/Goblin_leg_right_bottom.obj");
 
 }
 

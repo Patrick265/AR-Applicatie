@@ -166,7 +166,6 @@ void Rig::rigFemaleElf()
 
 void Rig::rigGoblin()
 {
-	/*
 	Math::vec3d _pos = { 0.0f, 5.50018f, 0.0f };
 	Math::vec3d _rot = { 0.0f, 0.0f, 0.0f };
 	Math::vec3d parentPos;
@@ -184,56 +183,56 @@ void Rig::rigGoblin()
 
 	//Torso
 	_pos = convertCoordinates(torso);
-	Node goblin_torso("torso", ObjLoader::loadObj("Resources/Enemy/Goblin_torso.obj"),
-		TextureHandler::addTexture("Resources/Enemy/goblin_torso.png"),
+	Node goblin_torso("torso", "goblin_torso",
+		"goblin_torso",
 		_pos, _rot);
 
 	//goblin arm left top
 	_pos = convertCoordinates(arm_left_top, torso);
-	Node goblin_arm_left_top("la_u", ObjLoader::loadObj("Resources/Enemy/Goblin_arm_left_top.obj"),
-		TextureHandler::addTexture("Resources/Enemy/goblin_arm_left_top.png"),
+	Node goblin_arm_left_top("la_u", "goblin_la_u",
+		"goblin_la_u",
 		_pos, _rot);
 
 	//goblin arm right top
 	_pos = convertCoordinates(arm_right_top, torso);
-	Node goblin_arm_right_top("ra_u", ObjLoader::loadObj("Resources/Enemy/Goblin_arm_right_top.obj"),
-		TextureHandler::addTexture("Resources/Enemy/goblin_arm_top_right.png"),
+	Node goblin_arm_right_top("ra_u", "goblin_ra_u",
+		"goblin_ra_u",
 		_pos, _rot);
 
 	//goblin leg left top
 	_pos = convertCoordinates(leg_left_top, torso);
-	Node goblin_leg_left_top("ll_u", ObjLoader::loadObj("Resources/Enemy/Goblin_leg_left_top.obj"),
-		TextureHandler::addTexture("Resources/Enemy/goblin_leg_left_top.png"),
+	Node goblin_leg_left_top("ll_u", "goblin_ll_u",
+		"goblin_ll_u",
 		_pos, _rot);
 
 	//goblin leg right top
 	_pos = convertCoordinates(leg_right_top, torso);
-	Node goblin_leg_right_top("rl_u", ObjLoader::loadObj("Resources/Enemy/Goblin_leg_right_top.obj"),
-		TextureHandler::addTexture("Resources/Enemy/goblin_leg_left_top.png"),
+	Node goblin_leg_right_top("rl_u", "goblin_rl_u",
+		"goblin_ll_u",
 		_pos, _rot);
 
 	//goblin arm left bottom
 	_pos = convertCoordinates(arm_left_bottom, arm_left_top);
-	Node goblin_arm_left_bottom("la_l", ObjLoader::loadObj("Resources/Enemy/Goblin_arm_left_bottom.obj"),
-		TextureHandler::addTexture("Resources/Enemy/goblin_arm_left_bottom.png"),
+	Node goblin_arm_left_bottom("la_l", "goblin_la_l",
+		"goblin_la_l",
 		_pos, _rot);
 
 	//goblin arm right bottom
 	_pos = convertCoordinates(arm_right_bottom, arm_right_top);
-	Node goblin_arm_right_bottom("ra_l", ObjLoader::loadObj("Resources/Enemy/Goblin_arm_right_bottom.obj"),
-		TextureHandler::addTexture("Resources/Enemy/goblin_arm_right_bottom.png"),
+	Node goblin_arm_right_bottom("ra_l", "goblin_ra_l",
+		"goblin_ra_l",
 		_pos, _rot);
 
 	//goblin leg left bottom
 	_pos = convertCoordinates(leg_left_bottom, leg_left_top);
-	Node goblin_leg_left_bottom("ll_l", ObjLoader::loadObj("Resources/Enemy/Goblin_leg_left_bottom.obj"),
-		TextureHandler::addTexture("Resources/Enemy/goblin_leg_left_bottom.png"),
+	Node goblin_leg_left_bottom("ll_l", "goblin_ll_l",
+		"goblin_ll_l",
 		_pos, _rot);
 
 	//goblin leg right bottom
 	_pos = convertCoordinates(leg_right_bottom, leg_right_top);
-	Node goblin_leg_right_bottom("rl_l", ObjLoader::loadObj("Resources/Enemy/Goblin_leg_right_bottom.obj"),
-		TextureHandler::addTexture("Resources/Enemy/goblin_leg_right_bottom.png"),
+	Node goblin_leg_right_bottom("rl_l", "goblin_rl_l",
+		"goblin_rl_l",
 		_pos, _rot);
 
 	//Setting parent/child relations
@@ -262,7 +261,6 @@ void Rig::rigGoblin()
 	nodes["ll_l"] = goblin_leg_left_bottom;
 	nodes["rl_u"] = goblin_leg_right_top;
 	nodes["rl_l"] = goblin_leg_right_bottom;
-	*/
 }
 
 void Rig::drawRig(const std::map<std::string, Graphics::mesh> &meshes, const std::map<std::string, uint16_t> &textures)

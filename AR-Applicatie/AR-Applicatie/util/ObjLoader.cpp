@@ -91,6 +91,8 @@ Graphics::mesh ObjLoader::loadObj(std::string filename)
 					tri.p[1] = verts[atoi(verticesdata[i - 1][0].c_str()) - 1];					
 					tri.p[2] = verts[atoi(verticesdata[i][0].c_str()) - 1];
 					
+					tri.fn = Graphics::triangle_getNormal(tri);
+
 					mesh.tris.push_back(tri);
 				}
 			}

@@ -13,8 +13,7 @@ void DrawHandler::drawMesh(const Graphics::mesh & mesh, const uint16_t & texture
 
 	for (Graphics::triangle tri : mesh.tris) {
 
-		Math::vec3d normal = Graphics::triangle_getNormal(tri);
-		glNormal3f(normal.x, normal.y, normal.z);
+		glNormal3f(tri.fn.x, tri.fn.y, tri.fn.z);
 		for (int i = 0; i < 3; i++)
 		{
 			glTexCoord2f(tri.vt[i].x, tri.vt[i].y);
