@@ -6,189 +6,302 @@
 #include "../util/ObjLoader.h"
 #include "../util/TextureHandler.h"
 
-Rig::Rig(Math::vec3d pos, Math::vec3d rot, Math::vec3d scale)
+Rig::Rig(std::string rig_type, Math::vec3d pos, Math::vec3d rot, Math::vec3d scale)
+	:pos(pos), rot(rot), scale(scale)
 {
-	this->pos = pos;
-	this->rot = rot;
-	this->scale = scale;
+	centre = Node(Math::vec3d{ 0,0,0 }, Math::vec3d{ 0,0,0 });
 
-	this->centre = nullptr;
+	if (rig_type == "elf")
+		rigFemaleElf();
+	else if (rig_type == "goblin")
+		rigGoblin();
+
 }
 
-Rig::~Rig()
+Rig::Rig(const Rig & rig)
+	:pos(rig.pos), rot(rig.rot), scale(rig.scale), centre(rig.centre), nodes(rig.nodes)
 {
-	clearNodes();
 }
 
-void Rig::clearNodes()
-{
-	for (std::vector< Node* >::iterator it = nodes.begin(); it != nodes.end(); ++it)
-	{
-		delete (*it);
-	}
-
-	nodes.clear();
-
-	if (centre != nullptr)
-		delete centre;
-}
 
 void Rig::rigFemaleElf()
 {
-	//Cleans up memory in case the rig is being used for a different model
-	clearNodes();
-
-	Math::vec3d _pos = { 0.0f, 0.0f, 0.0f };
+	Math::vec3d _pos = { 0.0f, 2.59547f, 0.0f };
 	Math::vec3d _rot = { 0.0f, 0.0f, 0.0f };
-	centre = new Node(_pos, _rot);
-		
+	centre = Node(_pos, _rot);
+
+	Math::vec3d torso = { 0.0f, 0.0f, 0.952426f };
+	Math::vec3d arm_left_top = { 0.404859f , 0.120226f ,2.16489f };
+	Math::vec3d arm_left_bottom = { 0.61229f , 0.068894f ,1.45316f };
+	Math::vec3d arm_right_top = { -0.38416f, 0.119478f , 2.16327f };
+	Math::vec3d arm_right_bottom = { -0.605497f, 0.112396f, 1.48285f };
+	Math::vec3d leg_left_top = { 0.194586f, 0.0f, 0.735892f };
+	Math::vec3d leg_left_bottom = { 0.272154f, 0.0f, -0.104308f };
+	Math::vec3d leg_right_top = { -0.226518f, 0.0, 0.742508f };
+	Math::vec3d leg_right_bottom = { -0.257862f, 0.0f, -0.13729f };
+	Math::vec3d neck = { 0.015737f,0.0f, 2.3002f };
+	Math::vec3d head = { 0.0f,0.0f,2.48477f };
+	Math::vec3d skirt = { -0.002984f, 0.08143f,1.03797f };
+	Math::vec3d big_sack = { 0.0f,0.0f, 0.32386f };
+
+
 	/* HEAD
 	*/
-	_pos = { -0.01437f, 1.34524f, 0 };
-	Node* neck = new Node("neck", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_head_neck.obj"),
-		TextureHandler::addTexture("Resources/Rune/npc_head.png"),
+	_pos = convertCoordinates(neck, torso);
+	Node elf_neck("neck", "elf_neck",
+		"elf_head",
 		_pos, _rot);
 
-	_pos = { 0, 0.17864f, 0 };
-	Node* head = new Node("head", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_head.obj"),
-		TextureHandler::addTexture("Resources/Rune/npc_head.png"),
+	_pos = convertCoordinates(head, neck);
+	Node elf_head("head", "elf_head",
+		"elf_head",
 		_pos, _rot);
-	
+
 
 	/* BODY
-	*/	
-	_pos = { -0.01437f, 1.77437f, 0 };
-	Node* torso = new Node("tor",ObjLoader::loadObj("Resources/Rigid_NPC/NPC_torso.obj"),
-		TextureHandler::addTexture("Resources/Rune/npc_torso.png"),
-		_pos, _rot);
-	
-	_pos = { 0.001553,0.03752, -0.073612 };
-	Node* lower_body = new Node("lower_bod", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_skirt.obj"),
-		TextureHandler::addTexture("Resources/Rune/npc_legs.png"),
-		_pos, _rot);
-
-	
-	/* ARMS	
 	*/
-	_pos = { 0.380106f, 1.20884f, -0.099151 };
-	Node* leftarm_upper = new Node("la_u",ObjLoader::loadObj("Resources/Rigid_NPC/NPC_arm_left_top.obj"),
-		TextureHandler::addTexture("Resources/Rune/npc_arms.png"),
-		_pos, _rot);
-	
-	_pos = { 0.2, -0.67096, 0.05 };
-	Node* leftarm_lower = new Node("la_l",ObjLoader::loadObj("Resources/Rigid_NPC/NPC_arm_left_bottom.obj"),
-		TextureHandler::addTexture("Resources/Rune/npc_arms.png"),
-		_pos, _rot);
-	
 
-	_pos = { -0.379216f, 1.21166f,  -0.097682f };	
-	Node* rightarm_upper = new Node("ra_u",ObjLoader::loadObj("Resources/Rigid_NPC/NPC_arm_right_top.obj"),
-		TextureHandler::addTexture("Resources/Rune/npc_arms.png"),
-		_pos, _rot);
-	
-	_pos = { -0.21f, -0.67096f, 0.0};
-	Node* rightarm_lower = new Node("ra_l", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_arm_right_bottom.obj"),
-		TextureHandler::addTexture("Resources/Rune/npc_arms.png"), 
+	_pos = convertCoordinates(torso);
+	Node elf_torso("torso", "elf_torso",
+		"elf_torso",
 		_pos, _rot);
 
-	
-	/* LEGS	
-	*/	
-	_pos = { 0.277095, -0.55379f, 0 };
-	Node* leftleg_upper = new Node("ll_u", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_top_left.obj"),
-		TextureHandler::addTexture("Resources/Rune/npc_legs.png"),
-		_pos, _rot);
-		
-	_pos = { 0.08f, -0.84f, 0 };
-	Node* leftleg_lower = new Node("ll_l", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_bottom_left.obj"),
-		TextureHandler::addTexture("Resources/Rune/npc_legs.png"),
+	_pos = convertCoordinates(skirt, torso);
+	Node elf_lower_body("lower_bod", "elf_lowerbod",
+		"elf_legs",
 		_pos, _rot);
 
 
-	_pos = { -0.184185f, -0.50577f, 0 };
-	Node* rightleg_upper = new Node("rl_u", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_top_right.obj"),
-		TextureHandler::addTexture("Resources/Rune/npc_legs.png"),
+	/* ARMS
+	*/
+	_pos = convertCoordinates(arm_left_top, torso);
+	Node elf_leftarm_upper("la_u", "elf_la_u",
+		"elf_arms",
 		_pos, _rot);
-		
-	_pos = { -0.03f, -0.88f, 0 };
-	Node* rightleg_lower = new Node("rl_l", ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_bottom_right.obj"),
-		TextureHandler::addTexture("Resources/Rune/npc_legs.png"),
+
+	_pos = convertCoordinates(arm_left_bottom, arm_left_top);
+	Node elf_leftarm_lower("la_l", "elf_la_l",
+		"elf_arms",
+		_pos, _rot);
+
+
+	_pos = convertCoordinates(arm_right_top, torso);
+	Node elf_rightarm_upper("ra_u", "elf_ra_u",
+		"elf_arms",
+		_pos, _rot);
+
+	_pos = convertCoordinates(arm_right_bottom, arm_right_top);
+	Node elf_rightarm_lower("ra_l", "elf_ra_l",
+		"elf_arms",
+		_pos, _rot);
+
+
+	/* LEGS
+	*/
+	_pos = convertCoordinates(leg_left_top, torso);
+	Node elf_leftleg_upper("ll_u", "elf_ll_u",
+		"elf_legs",
+		_pos, _rot);
+
+	_pos = convertCoordinates(leg_left_bottom, leg_left_top);
+	Node elf_leftleg_lower("ll_l", "elf_rl_l",
+		"elf_legs",
+		_pos, _rot);
+
+	_pos = convertCoordinates(leg_right_top, torso);
+	Node elf_rightleg_upper("rl_u", "elf_rl_u",
+		"elf_legs",
+		_pos, _rot);
+
+	_pos = convertCoordinates(leg_right_bottom, leg_right_top);
+	Node elf_rightleg_lower("rl_l", "elf_rl_l",
+		"elf_legs",
+		_pos, _rot);
+
+	_pos = convertCoordinates(big_sack, torso);
+	Node elf_big_sack("sack", "elf_sack",
+		"elf_sack",
 		_pos, _rot);
 
 
 	//Setting the parent/child relations
-	neck->addChild(head);
+	elf_neck.addChild("head");
 
-	leftarm_upper->addChild(leftarm_lower);
-	rightarm_upper->addChild(rightarm_lower);
+	elf_leftarm_upper.addChild("la_l");
+	elf_rightarm_upper.addChild("ra_l");
+	elf_leftleg_upper.addChild("ll_l");
+	elf_rightleg_upper.addChild("rl_l");
 
-	leftleg_upper->addChild(leftleg_lower);
-	rightleg_upper->addChild(rightleg_lower);
+	elf_torso.addChild("neck");
+	elf_torso.addChild("lower_bod");
+	elf_torso.addChild("la_u");
+	elf_torso.addChild("ra_u");
+	elf_torso.addChild("ll_u");
+	elf_torso.addChild("rl_u");
+	elf_torso.addChild("sack");
 
-	torso->addChild(neck);
-	torso->addChild(lower_body);
-	torso->addChild(leftarm_upper);
-	torso->addChild(rightarm_upper);
-	torso->addChild(leftleg_upper);
-	torso->addChild(rightleg_upper);
-
-	centre->addChild(torso);
+	centre.addChild("torso");
 
 
-	//Storing all nodes to simplify the search process for getting nodes
-	nodes.push_back(neck);
-	nodes.push_back(head);
+	//Storing the nodes
+	nodes["neck"] = elf_neck;
+	nodes["head"] = elf_head;
+	nodes["sack"] = elf_big_sack;
 
-	nodes.push_back(torso);
-	nodes.push_back(lower_body);
-	
-	nodes.push_back(leftarm_upper);
-	nodes.push_back(leftarm_lower);
-	nodes.push_back(rightarm_upper);
-	nodes.push_back(rightarm_lower);
-	
-	nodes.push_back(leftleg_upper);
-	nodes.push_back(rightleg_upper);
-	nodes.push_back(leftleg_lower);
-	nodes.push_back(rightleg_lower);
+	nodes["torso"] = elf_torso;
+	nodes["lower_bod"] = elf_lower_body;
+
+	nodes["la_u"] = elf_leftarm_upper;
+	nodes["la_l"] = elf_leftarm_lower;
+	nodes["ra_u"] = elf_rightarm_upper;
+	nodes["ra_l"] = elf_rightarm_lower;
+
+	nodes["ll_u"] = elf_leftleg_upper;
+	nodes["ll_l"] = elf_leftleg_lower;
+	nodes["rl_u"] = elf_rightleg_upper;
+	nodes["rl_l"] = elf_rightleg_lower;
+
 
 }
 
-void Rig::drawRig()
+void Rig::rigGoblin()
 {
+	Math::vec3d _pos = { 0.0f, 5.50018f, 0.0f };
+	Math::vec3d _rot = { 0.0f, 0.0f, 0.0f };
+	Math::vec3d parentPos;
+	centre = Node(_pos, _rot);
 
-	glScalef(scale.x, scale.y, scale.z);	
+	Math::vec3d torso = { 0.0f, 0.0f, 5.50018f };
+	Math::vec3d arm_left_top = { 1.42841f , -0.220004f ,8.22543f };
+	Math::vec3d arm_left_bottom = { 2.05847f ,-0.30099f ,6.33814f };
+	Math::vec3d arm_right_top = { -1.43497f,-0.222508f , 8.26748f };
+	Math::vec3d arm_right_bottom = { -2.16087f, -0.321007f, 6.32603f };
+	Math::vec3d leg_left_top = { 0.466519f, 0.368012f, 5.4683f };
+	Math::vec3d leg_left_bottom = { 0.5619f, 0.169499f, 3.51627f };
+	Math::vec3d leg_right_top = { -0.562285f, 0.449695f, 5.47866f };
+	Math::vec3d leg_right_bottom = { -0.582013f, 0.280366f, 3.42471f };
+
+	//Torso
+	_pos = convertCoordinates(torso);
+	Node goblin_torso("torso", "goblin_torso",
+		"goblin_torso",
+		_pos, _rot);
+
+	//goblin arm left top
+	_pos = convertCoordinates(arm_left_top, torso);
+	Node goblin_arm_left_top("la_u", "goblin_la_u",
+		"goblin_la_u",
+		_pos, _rot);
+
+	//goblin arm right top
+	_pos = convertCoordinates(arm_right_top, torso);
+	Node goblin_arm_right_top("ra_u", "goblin_ra_u",
+		"goblin_ra_u",
+		_pos, _rot);
+
+	//goblin leg left top
+	_pos = convertCoordinates(leg_left_top, torso);
+	Node goblin_leg_left_top("ll_u", "goblin_ll_u",
+		"goblin_ll_u",
+		_pos, _rot);
+
+	//goblin leg right top
+	_pos = convertCoordinates(leg_right_top, torso);
+	Node goblin_leg_right_top("rl_u", "goblin_rl_u",
+		"goblin_ll_u",
+		_pos, _rot);
+
+	//goblin arm left bottom
+	_pos = convertCoordinates(arm_left_bottom, arm_left_top);
+	Node goblin_arm_left_bottom("la_l", "goblin_la_l",
+		"goblin_la_l",
+		_pos, _rot);
+
+	//goblin arm right bottom
+	_pos = convertCoordinates(arm_right_bottom, arm_right_top);
+	Node goblin_arm_right_bottom("ra_l", "goblin_ra_l",
+		"goblin_ra_l",
+		_pos, _rot);
+
+	//goblin leg left bottom
+	_pos = convertCoordinates(leg_left_bottom, leg_left_top);
+	Node goblin_leg_left_bottom("ll_l", "goblin_ll_l",
+		"goblin_ll_l",
+		_pos, _rot);
+
+	//goblin leg right bottom
+	_pos = convertCoordinates(leg_right_bottom, leg_right_top);
+	Node goblin_leg_right_bottom("rl_l", "goblin_rl_l",
+		"goblin_rl_l",
+		_pos, _rot);
+
+	//Setting parent/child relations
+	goblin_arm_left_top.addChild("la_l");
+	goblin_arm_right_top.addChild("ra_l");
+	goblin_leg_left_top.addChild("ll_l");
+	goblin_leg_right_top.addChild("rl_l");
+
+	goblin_torso.addChild("la_u");
+	goblin_torso.addChild("ra_u");
+	goblin_torso.addChild("ll_u");
+	goblin_torso.addChild("rl_u");
+
+	centre.addChild("torso");
+
+
+	//Adding nodes to map
+	nodes["torso"] = goblin_torso;
+
+	nodes["la_u"] = goblin_arm_left_top;
+	nodes["la_l"] = goblin_arm_left_bottom;
+	nodes["ra_u"] = goblin_arm_right_top;
+	nodes["ra_l"] = goblin_arm_right_bottom;
+
+	nodes["ll_u"] = goblin_leg_left_top;
+	nodes["ll_l"] = goblin_leg_left_bottom;
+	nodes["rl_u"] = goblin_leg_right_top;
+	nodes["rl_l"] = goblin_leg_right_bottom;
+}
+
+void Rig::drawRig(const std::map<std::string, Graphics::mesh> &meshes, const std::map<std::string, uint16_t> &textures)
+{
+	glPushMatrix();
+
+	glScalef(scale.x, scale.y, scale.z);
 
 	glTranslatef(pos.x, pos.y, pos.z);
 	glRotatef(rot.x, 1, 0, 0);
 	glRotatef(rot.y, 0, 1, 0);
 	glRotatef(rot.z, 0, 0, 1);
-	
-	centre->draw();
+
+	centre.draw(nodes, meshes, textures);
+
+	glPopMatrix();
 }
 
-Node* Rig::getNode(std::string node_name)
+Node & Rig::getNode(std::string node_name)
 {
-	for (Node* node : nodes) {
-		if (node->getName() == node_name)
-			return node;
-	}
-
-	return nullptr;
+	return nodes[node_name];
 }
 
-void Rig::setRotation(Math::vec3d rot)
+
+Math::vec3d Rig::convertCoordinates(Math::vec3d posCords)
 {
-	this->rot = rot;
+	Math::vec3d convertedCords;
+	convertedCords.x = posCords.x;
+	convertedCords.y = posCords.z;
+	convertedCords.z = -posCords.y;
+	return convertedCords;
 }
 
-void Rig::setPosition(Math::vec3d pos)
+Math::vec3d Rig::convertCoordinates(Math::vec3d posCords, Math::vec3d parent)
 {
-	this->pos = pos;
+	Math::vec3d convertedCords;
+	convertedCords.x = posCords.x - parent.x;
+	convertedCords.y = posCords.z - parent.z;
+	convertedCords.z = -posCords.y - (-parent.y);
+
+	return convertedCords;
 }
 
-void Rig::setScale(Math::vec3d scale)
-{
-	this->scale = scale;
-}
 

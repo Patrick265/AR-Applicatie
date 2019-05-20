@@ -15,6 +15,9 @@ public:
 		Math::vec2d vt[3];
 		//vertex normals
 		Math::vec3d vn[3];
+
+		//Face normal
+		Math::vec3d fn;
 	};
 
 	struct mesh {

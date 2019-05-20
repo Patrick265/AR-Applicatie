@@ -11,7 +11,7 @@ private:
 public:
 	bool isActive;
 
-	Projectile(std::string objectName, int textureId, float x, float xVelocity, float yVelocity);
+	Projectile(std::string objectName, std::string texture, float x, float xVelocity, float yVelocity);
 
 	void update(float deltaTime);
 	void hasHit();

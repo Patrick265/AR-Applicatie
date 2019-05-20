@@ -15,11 +15,11 @@ bool canThrow = true;
 
 GameLogic::GameLogic()
 {
-	wall = new GameObject(ObjLoader::loadObj("Resources/Cube/cube.obj"), -1);
+	wall = new GameObject("cube", "none");
 	wall->setPosition({0, 10, -1});
 	wall->setScale({20, 20, 1});
 
-	player = new Player("Resources/Cube/cube.obj", -1);
+	player = new Player("cube", "none");
 }
 
 GameLogic::~GameLogic()
@@ -50,8 +50,8 @@ void GameLogic::update(float deltaTime)
 	counter += deltaTime;
 	if (counter > 0.5 && wildlings.size() < 5)
 	{
-		Wildling *wildling = new Wildling("Resources/Rune/giant.obj",
-			TextureHandler::addTexture("Resources/Rune/giant.png"), rand() % 20 - 10);
+		Wildling *wildling = new Wildling("giant",
+			"giant", rand() % 20 - 10);
 		wildlings.push_back(wildling);
 		counter = 0;
 	}
@@ -76,8 +76,8 @@ void GameLogic::update(float deltaTime)
 
 void GameLogic::throwProjectile(float xVelocity, float yVelocity)
 {
-	projectiles.push_back(new Projectile("Resources/Pakketje/Pakketje.obj", 
-		TextureHandler::addTexture("Resources/Pakketje/Pakketje.png"),
+	projectiles.push_back(new Projectile("packet", 
+		"packet",
 		player->getPosition().x, xVelocity, yVelocity));
 }
 

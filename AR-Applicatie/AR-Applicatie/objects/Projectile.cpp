@@ -3,8 +3,8 @@
 #include <string>
 #include <iostream>
 
-Projectile::Projectile(std::string objectName, int textureId, float x, float xVelocity, float yVelocity)
-	: GameObject(ObjLoader::loadObj(objectName), textureId)
+Projectile::Projectile(std::string objectName, std::string texture, float x, float xVelocity, float yVelocity)
+	: GameObject(objectName, texture)
 {
 	position = {x, 20, 1};
 	velocity = {xVelocity, yVelocity, 0};

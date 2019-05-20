@@ -1,10 +1,10 @@
 #include "GameObject.h"
 
 
-GameObject::GameObject(Graphics::mesh mesh, uint16_t texture_id)
+GameObject::GameObject(const std::string &mesh, const std::string &texture)
 {
 	this->mesh = mesh;
-	this->texture_id = texture_id;
+	this->texture = texture;
 
 	this->position = { 0.0f, 0.0f, 0.0f, 0.0f };
 	this->rotation = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -32,16 +32,16 @@ Math::vec3d GameObject::getRotation()
 {
 	return rotation;
 }
-Math::vec3d GameObject::getScale()
+Math::vec3d GameObject::getScale() const
 {
 	return scale;
 }
 
-Graphics::mesh GameObject::getMesh()
+std::string GameObject::getMesh() const
 {
 	return mesh;
 }
-uint16_t GameObject::getTextureId()
+std::string GameObject::getTexture() const
 {
-	return texture_id;
+	return texture;
 }

@@ -1,5 +1,6 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include <map>
 
 #include <GL/freeglut.h>
 #include <opencv2/opencv.hpp>
@@ -9,7 +10,8 @@
 #include "objects/GameObject.h"
 #include "game/GameLogic.h"
 #include "vision/markerdetection.h"
-#include "animation/Rig.h"
+#include "opengl/DrawHandler.h"
+#include "animation/AnimationHandler.h"
 
 float width = 1600;
 float height = 800;
@@ -24,7 +26,7 @@ float current_rotation = 0.0f;
 //Showcasing rigging through simple hardcoded animation
 bool arm_up = false;
 
-Rig* rig;
+AnimationHandler *ani;
 
 
 float fTheta;
@@ -43,9 +45,14 @@ struct Camera
 		rotY = 0;
 } camera;
 
+std::map<std::string, Graphics::mesh> meshes;
+std::map<std::string, uint16_t> textures;
+
 bool keys[255];
 bool justMovedMouse = false;
 bool mouseControl = true;
+
+void initResources();
 
 void onIdle();
 void onDisplay();
@@ -58,7 +65,6 @@ void onMousePassiveMotion(int x, int y);
 void moveCamera(float angle, float fac);
 
 void standardRenderOperations();
-void drawMesh(Graphics::mesh mesh, uint16_t texture_id);
 void drawGameObject(GameObject game_obj);
 void displayText();
 void runOpencCVThread();
@@ -88,11 +94,14 @@ int main(int argc, char** argv) {
 	Math::vec3d rot = { 0.0f, 0.0f, 0.0f };
 	Math::vec3d scale = { 1.0f, 1.0f, 1.0f };
 
-	rig = new Rig(pos, rot, scale);
-	rig->rigFemaleElf();
+	initResources();
+
+	ani = new AnimationHandler();
+	ani->setRig(Rig("elf", Math::vec3d{ 10,20,0 }, Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 }));
+	ani->setAnimation(ATTACK);
 
 	//Cursor image
-	cursorID = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png");
+	cursorID = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png", textures.size());
 	glutSetCursor(GLUT_CURSOR_NONE);
 
 	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
@@ -104,6 +113,8 @@ int main(int argc, char** argv) {
 	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 
 	glutMainLoop();
+
+	free(ani);
 }
 
 void onIdle()
@@ -116,42 +127,18 @@ void onIdle()
 	if (deltaTime < 0)
 		return;
 
+	if (deltaTime > 1)
+		deltaTime = 0.0f;
+
+
+	ani->animate(deltaTime,mousePos.y- height / 2);
+
 	fTheta += 30.0f * deltaTime;
 
 	// Check for vision mouse updates
 	if (hasNewMousePosition())
 		onMouse();
 
-	rig->setRotation({ 0,fTheta * 2,0 });
-
-	//Hardcoded animation to showcase rig
-	if (arm_up)
-		current_rotation += 150.0f * deltaTime;
-	else
-		current_rotation -= 150.0f * deltaTime;
-
-	if (current_rotation <= 0.0f)
-		arm_up = true;
-	else if (current_rotation >= 90.0f)
-		arm_up = false;
-
-	Node * la_u = rig->getNode("la_u");
-	la_u->setRotation({ -current_rotation + 45, 0, 0 });
-	Node * la_l = rig->getNode("la_l");
-	la_l->setRotation({ -current_rotation,0, 0 });
-	Node * ra_u = rig->getNode("ra_u");
-	ra_u->setRotation({ -90 + current_rotation + 45,0, 0 });
-	Node * ra_l = rig->getNode("ra_l");
-	ra_l->setRotation({ -90 + current_rotation,0, 0 });
-
-	Node * ll_u = rig->getNode("ll_u");
-	ll_u->setRotation({ current_rotation - 45, 0, 0 });
-	Node * ll_l = rig->getNode("ll_l");
-	ll_l->setRotation({ current_rotation,0, 0 });
-	Node * rl_u = rig->getNode("rl_u");
-	rl_u->setRotation({ 90 - current_rotation - 45,0, 0 });
-	Node * rl_l = rig->getNode("rl_l");
-	rl_l->setRotation({ 90 - current_rotation,0, 0 });
 
 
 	const float speed = 6;
@@ -163,15 +150,15 @@ void onIdle()
 	if (keys[int('q')]) camera.posZ -= deltaTime * speed;
 
 	gameLogic.update(deltaTime);
-	
-	runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
-	
+
+	//runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
+
 	glutPostRedisplay();
 }
 
-void runOpencCVThread() 
+void runOpencCVThread()
 {
-	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
+	//runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 }
 
 void onDisplay()
@@ -180,39 +167,15 @@ void onDisplay()
 
 
 	glPushMatrix();
-	rig->drawRig();
+
 	glPopMatrix();
 
-	/*// Test cube in the center of the world
-	glPushMatrix();
-	glTranslatef(-0.5, -0.5, -0.5);
-	glutSolidCube(1);
-	glPopMatrix();
-
-	//Testing purposes for the npc
-	for(int i = 0; i < game_objects.size(); i++)
-	{
-		GameObject game_obj = game_objects[i];
-		//To rotate the object
-		//Move to an update function for the gameobjects, which will be called in the idle function
-		Math::vec3d rot = game_obj.getRotation();
-		rot.x = fTheta * game_obj.getTextureId();
-		game_obj.setRotation(rot);
-
-		glPushMatrix();
-
-
-
-
-		glScalef(game_obj.getScale().x, game_obj.getScale().y, game_obj.getScale().z);
-
-		drawMesh(game_obj.getMesh(), game_obj.getTextureId());
-
-		glPopMatrix();
-	}*/
 
 	for (GameObject* gameObject : gameLogic.getGameObjects())
 		drawGameObject(*gameObject);
+
+
+	ani->draw(meshes, textures);
 
 	displayText();
 
@@ -250,29 +213,6 @@ void standardRenderOperations()
 	glEnable(GL_COLOR_MATERIAL);
 }
 
-void drawMesh2(Graphics::mesh mesh, uint16_t texture_id)
-{
-	glBindTexture(GL_TEXTURE_2D, texture_id);
-	glEnable(GL_TEXTURE_2D);
-	glBegin(GL_TRIANGLES);
-
-	for (Graphics::triangle tri : mesh.tris) {
-
-		glColor3f(1.0f, 1.0f, 1.0f);
-
-		Math::vec3d normal = Graphics::triangle_getNormal(tri);
-		glNormal3f(normal.x, normal.y, normal.z);
-		for (int i = 0; i < 3; i++)
-		{
-			glTexCoord2f(tri.vt[i].x, tri.vt[i].y);
-			glVertex3f(tri.p[i].x, tri.p[i].y, tri.p[i].z);
-		}
-	}
-	glEnd();
-	glDisable(GL_TEXTURE_2D);
-
-}
-
 void drawGameObject(GameObject game_obj)
 {
 	glPushMatrix();
@@ -283,7 +223,7 @@ void drawGameObject(GameObject game_obj)
 	glRotatef(game_obj.getRotation().z, 0, 0, 1);
 	glScalef(game_obj.getScale().x, game_obj.getScale().y, game_obj.getScale().z);
 
-	drawMesh2(game_obj.getMesh(), game_obj.getTextureId());
+	DrawHandler::drawMesh(meshes[game_obj.getMesh()], textures[game_obj.getTexture()]);
 
 	glPopMatrix();
 }
@@ -331,7 +271,7 @@ void displayText()
 	glBindTexture(GL_TEXTURE_2D, cursorID);
 	glEnable(GL_TEXTURE_2D);
 	glBegin(GL_QUADS);
-	
+
 	glTexCoord2f(0, 0); glVertex2f(mousePos.x - 25, mousePos.y - 25);
 	glTexCoord2f(0, 1); glVertex2f(mousePos.x - 25, mousePos.y + 25);
 	glTexCoord2f(1, 1); glVertex2f(mousePos.x + 25, mousePos.y + 25);
@@ -362,22 +302,22 @@ void onMouse()
 	if (!mouseControl)
 	{
 		Point2D normalized = getCoordinates();
-		mousePos = {normalized.x * width, normalized.y * height};
+		mousePos = { normalized.x * width, normalized.y * height };
+		/*
+				double xScreen = mousePos.x * width;
+				double yScreen = mousePos.y * height;
 
-		/*double xScreen = mousePos.x * width;
-		double yScreen = mousePos.y * height;
+				if (xScreen >= 0 && xScreen <= width && yScreen >= 0 && yScreen <= height)
+				{
+					cursorX = xScreen;
+					cursorY = yScreen;
+					glutWarpPointer(xScreen, yScreen);
 
-		if (xScreen >= 0 && xScreen <= width && yScreen >= 0 && yScreen <= height)
-		{
-			cursorX = xScreen;
-			cursorY = yScreen;
-			glutWarpPointer(xScreen, yScreen);
-
-		}
-		else
-		{
-			SetCursorPos(width / 2, height / 2);
-		}*/
+				}
+				else
+				{
+					SetCursorPos(width / 2, height / 2);
+				}*/
 	}
 }
 
@@ -390,23 +330,24 @@ void onMousePassiveMotion(int x, int y)
 {
 	if (mouseControl)
 		mousePos = { float(x), float(y) };
-	/*// cursorX = x;
-	// cursorY = y;
-	//int dx = x - width / 2;
-	//int dy = y - height / 2;
-	//if ((dx != 0 || dy != 0) && abs(dx) < 400 && abs(dy) < 400 && !justMovedMouse)
-	//{
-	//	camera.rotY += dx / 10.0f;
-	//	camera.rotX += dy / 10.0f;
-	//	if (camera.rotX < -90)
-	//		camera.rotX = -90;
-	//	if (camera.rotX > 90)
-	//		camera.rotX = 90;
-	//	if (camera.rotY > 360)
-	//		camera.rotY -= 360;
-	//	if (camera.rotY <= 0)
-	//		camera.rotY += 360;
-	//}
+	/*
+	 cursorX = x;
+	 cursorY = y;
+	int dx = x - width / 2;
+	int dy = y - height / 2;
+	if ((dx != 0 || dy != 0) && abs(dx) < 400 && abs(dy) < 400 && !justMovedMouse)
+	{
+		camera.rotY += dx / 10.0f;
+		camera.rotX += dy / 10.0f;
+		if (camera.rotX < -90)
+			camera.rotX = -90;
+		if (camera.rotX > 90)
+			camera.rotX = 90;
+		if (camera.rotY > 360)
+			camera.rotY -= 360;
+		if (camera.rotY <= 0)
+			camera.rotY += 360;
+	}
 
 	if (!justMovedMouse)
 	{
@@ -414,7 +355,8 @@ void onMousePassiveMotion(int x, int y)
 		justMovedMouse = true;
 	}
 	else
-		justMovedMouse = false;*/
+		justMovedMouse = false;
+	*/
 }
 
 void onReshape(int w, int h)
@@ -428,4 +370,88 @@ void moveCamera(float angle, float fac)
 {
 	camera.posX -= (float)cos((camera.rotY + angle) / 180 * M_PI) * fac;
 	camera.posY -= (float)sin((camera.rotY + angle) / 180 * M_PI) * fac;
+}
+
+void initRigParts()
+{
+
+	/*
+		FEMALE ELF
+	*/
+	textures["elf_head"] = TextureHandler::addTexture("Resources/Rune/npc_head.png", textures.size());
+	meshes["elf_head"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_head.obj");
+	meshes["elf_neck"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_head_neck.obj");
+
+	textures["elf_torso"] = TextureHandler::addTexture("Resources/Rune/npc_torso.png", textures.size());
+	meshes["elf_torso"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_torso.obj");
+
+	textures["elf_legs"] = TextureHandler::addTexture("Resources/Rune/npc_legs.png", textures.size());
+	meshes["elf_lowerbod"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_skirt.obj");
+	meshes["elf_ll_u"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_top_left.obj");
+	meshes["elf_ll_l"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_bottom_left.obj");
+	meshes["elf_rl_u"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_top_right.obj");
+	meshes["elf_rl_l"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_bottom_right.obj");
+
+	textures["elf_arms"] = TextureHandler::addTexture("Resources/Rune/npc_arms.png", textures.size());
+	meshes["elf_la_u"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_arm_left_top.obj");
+	meshes["elf_la_l"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_arm_left_bottom.obj");
+	meshes["elf_ra_u"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_arm_right_top.obj");
+	meshes["elf_ra_l"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_arm_right_bottom.obj");
+
+	textures["elf_sack"] = TextureHandler::addTexture("Resources/Rigid_NPC/NPC_big_sack.png", textures.size());
+	meshes["elf_sack"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_big_sack.obj");
+
+
+	/*
+	GOBLIN
+	*/
+	textures["goblin_torso"] = TextureHandler::addTexture("Resources/Enemy/goblin_torso.png", textures.size());
+	meshes["goblin_torso"] = ObjLoader::loadObj("Resources/Enemy/Goblin_torso.obj");
+
+	textures["goblin_la_u"] = TextureHandler::addTexture("Resources/Enemy/goblin_arm_left_top.png", textures.size());
+	meshes["goblin_la_u"] = ObjLoader::loadObj("Resources/Enemy/Goblin_arm_left_top.obj");
+
+	textures["goblin_ra_u"] = TextureHandler::addTexture("Resources/Enemy/goblin_arm_top_right.png", textures.size());
+	meshes["goblin_ra_u"] = ObjLoader::loadObj("Resources/Enemy/Goblin_arm_right_top.obj");
+
+	textures["goblin_ll_u"] = TextureHandler::addTexture("Resources/Enemy/goblin_leg_left_top.png", textures.size());
+	meshes["goblin_ll_u"] = ObjLoader::loadObj("Resources/Enemy/Goblin_leg_left_top.obj");
+	meshes["goblin_rl_u"] = ObjLoader::loadObj("Resources/Enemy/Goblin_leg_right_top.obj");
+
+	textures["goblin_la_l"] = TextureHandler::addTexture("Resources/Enemy/goblin_arm_left_bottom.png", textures.size());
+	meshes["goblin_la_l"] = ObjLoader::loadObj("Resources/Enemy/Goblin_arm_left_bottom.obj");
+
+	textures["goblin_ra_l"] = TextureHandler::addTexture("Resources/Enemy/goblin_arm_right_bottom.png", textures.size());
+	meshes["goblin_ra_l"] = ObjLoader::loadObj("Resources/Enemy/Goblin_arm_right_bottom.obj");
+
+	textures["goblin_ll_l"] = TextureHandler::addTexture("Resources/Enemy/goblin_leg_left_bottom.png", textures.size());
+	meshes["goblin_ll_l"] = ObjLoader::loadObj("Resources/Enemy/Goblin_leg_left_bottom.obj");
+
+	textures["goblin_rl_l"] = TextureHandler::addTexture("Resources/Enemy/goblin_leg_right_bottom.png", textures.size());
+	meshes["goblin_rl_l"] = ObjLoader::loadObj("Resources/Enemy/Goblin_leg_right_bottom.obj");
+
+}
+
+void initGameLogicModels()
+{
+	meshes["cube"] = ObjLoader::loadObj("Resources/Cube/cube.obj");
+
+	textures["giant"] = TextureHandler::addTexture("Resources/Rune/giant.png", textures.size());
+	meshes["giant"] = ObjLoader::loadObj("Resources/Rune/giant.obj");
+
+	textures["packet"] = TextureHandler::addTexture("Resources/Pakketje/Pakketje.png", textures.size());
+	meshes["packet"] = ObjLoader::loadObj("Resources/Pakketje/Pakketje.obj");
+
+}
+
+
+void initResources()
+{
+	//To prevent the map from throwing an exception
+	meshes["none"] = {};
+	textures["none"] = -1;
+
+	initRigParts();
+	initGameLogicModels();
+
 }

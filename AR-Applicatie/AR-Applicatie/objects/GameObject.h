@@ -15,8 +15,8 @@ protected:
 	//x, y, z are the scaling factors of the x, y and z axis
 	Math::vec3d scale;
 
-	Graphics::mesh mesh;
-	uint16_t texture_id;
+	std::string mesh;
+	std::string texture;
 
 public:
 	
@@ -26,7 +26,7 @@ public:
 		@param mesh - The mesh of the gameobject
 		@param texture_id - The texture id of the gameobject
 	*/
-	GameObject(Graphics::mesh mesh, uint16_t texture_id);
+	GameObject(const std::string &mesh, const std::string &texture);
 
 	/*
 		Sets the position of the gameobject
@@ -68,19 +68,19 @@ public:
 
 		Returns the scale
 	*/
-	Math::vec3d getScale();
+	Math::vec3d getScale() const;
 
 	/*
 		Gets the mesh of the gameobject
 
 		Returns the mesh
 	*/
-	Graphics::mesh getMesh();
+	std::string getMesh() const;
 
 	/*
 		Gets the texture id of the gameobject
 
 		Returns the texture id
 	*/
-	uint16_t getTextureId();
+	std::string getTexture() const;
 };

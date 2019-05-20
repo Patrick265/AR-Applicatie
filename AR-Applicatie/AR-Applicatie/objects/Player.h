@@ -12,7 +12,7 @@ public:
 	bool isDead;
 	float targetX;
 
-	Player(std::string objectName, int textureId);
+	Player(const std::string &objectName, const std::string &texture);
 
 	void spawn();
 	void update(float deltaTime);

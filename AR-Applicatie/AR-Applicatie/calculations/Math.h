@@ -17,6 +17,15 @@ public:
 		float y = 0;
 		float z = 0;
 		float w = 1;
+
+		vec3d& operator+=(const vec3d& a)
+		{
+			x += a.x;
+			y += a.y;
+			z += a.z;
+
+			return *this;
+		}
 	};
 
 	struct mat4x4 {
