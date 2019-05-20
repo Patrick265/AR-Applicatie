@@ -6,7 +6,7 @@ class ObjLoader {
 private:
 public:
 	/*
-		Loads the obj file and extracts the triangles which form the mesh
+		Loads the obj file and extracts the vertices which form the mesh
 
 		@param filename - The name of the file
 

@@ -223,7 +223,7 @@ void drawGameObject(GameObject game_obj)
 	glRotatef(game_obj.getRotation().z, 0, 0, 1);
 	glScalef(game_obj.getScale().x, game_obj.getScale().y, game_obj.getScale().z);
 
-	DrawHandler::drawMesh(meshes[game_obj.getMesh()], textures[game_obj.getTexture()]);
+	DrawHandler::drawMesh_array(meshes[game_obj.getMesh()], textures[game_obj.getTexture()]);
 
 	glPopMatrix();
 }

@@ -7,12 +7,21 @@
 class DrawHandler {
 private:
 public:
+	
 	/*
-		Draws the mesh and gives it a texture
+	Draws the mesh and gives it a texture
 
-		@param mesh - The given mesh
-		@param texture_id - The given texture
+	@param mesh - The given mesh
+	@param texture_id - The given texture
 
 	*/
 	static void drawMesh(const Graphics::mesh &mesh, const uint16_t &texture_id);
+
+	/*
+		Draws the mesh using the array drawing method
+
+		@param mesh - The given mesh
+		@param texture_id - The given texture
+	*/
+	static void drawMesh_array(const Graphics::mesh &mesh, const uint16_t &texture_id);
 };

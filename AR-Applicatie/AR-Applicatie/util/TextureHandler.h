@@ -8,7 +8,7 @@ private:
 public:
 
 	/*
-		Adds a texture to the
+		Reads a texture from an image, and adds it to opengl
 
 		@param image_path - The relative path of the image
 		@param amount_of_textures - The amount of textures that already exist
