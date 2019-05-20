@@ -19,7 +19,8 @@ float height = 800;
 float deltaTime;
 float lastFrameTime;
 
-Point2D mousePos;
+markerdetection::Point2D mousePos;
+markerdetection m;
 
 //Rotation for the showcasing of the rigging
 float current_rotation = 0.0f;
@@ -110,7 +111,7 @@ int main(int argc, char** argv) {
 
 	//std::thread openCV(runOpencCVThread);
 	//openCV.join();
-	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
+	
 
 	glutMainLoop();
 
@@ -136,7 +137,7 @@ void onIdle()
 	fTheta += 30.0f * deltaTime;
 
 	// Check for vision mouse updates
-	if (hasNewMousePosition())
+	if (m.hasNewMousePosition())
 		onMouse();
 
 
@@ -151,7 +152,7 @@ void onIdle()
 
 	gameLogic.update(deltaTime);
 
-	//runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
+	m.runMarkerDetection(markerdetection::DetectionMode::opencv);
 
 	glutPostRedisplay();
 }
@@ -301,7 +302,7 @@ void onMouse()
 	// If controls with OpenCV
 	if (!mouseControl)
 	{
-		Point2D normalized = getCoordinates();
+		markerdetection::Point2D normalized = m.getCoordinates();
 		mousePos = { normalized.x * width, normalized.y * height };
 		/*
 				double xScreen = mousePos.x * width;

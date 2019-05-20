@@ -4,12 +4,12 @@
 #include "../vision/markerdetection.h"
 #include <queue>
 
-extern Point2D mousePos;
+extern markerdetection::Point2D mousePos;
 extern float width;
 
 float counter = 0;
 
-std::queue<Point2D> mouseHistory;
+std::queue<markerdetection::Point2D> mouseHistory;
 const int Y_TRIGGER_DISTANCE = 40;
 bool canThrow = true;
 
@@ -106,8 +106,8 @@ void GameLogic::handleMouse()
 	if (mouseHistory.size() > 5)
 		mouseHistory.pop();
 
-	Point2D first = mouseHistory.front();
-	Point2D last = mouseHistory.back();
+	markerdetection::Point2D first = mouseHistory.front();
+	markerdetection::Point2D last = mouseHistory.back();
 
 	// If downwards movement is large enough, throw a projectiles
 	if (canThrow && first.y - last.y < -Y_TRIGGER_DISTANCE)

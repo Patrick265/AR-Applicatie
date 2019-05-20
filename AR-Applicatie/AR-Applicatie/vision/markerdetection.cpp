@@ -1,5 +1,4 @@
 #include "markerdetection.h"
-#include <opencv2/opencv.hpp>
 #include <iostream>
 #include <string>
 
@@ -22,7 +21,7 @@ cv::Mat blobImg;
 cv::SimpleBlobDetector::Params params;
 std::vector<cv::KeyPoint> myBlobs;
 cv::Mat originalBlobImg;
-int detectionMode = 1;
+markerdetection::DetectionMode mode;
 int lowerS = -1;
 int upperS = -1;
 
@@ -46,20 +45,22 @@ bool newMousePosition = false;
 //
 //  @return returns the Markerdetection mode. 0 for OpenCV and 1 for Mouse detection
 */
-int getDetectionMode() {
-	return detectionMode;
+markerdetection::DetectionMode markerdetection::getDetectionMode() 
+{
+	return mode;
 }
 
 /*
 //	This function is used for changing the detection mode of the OpenCV module.
 //
 */
-void changeDetectionMode() {
-	if (detectionMode == 0) {
-		detectionMode = 1;
+void markerdetection::changeDetectionMode() {
+	if (mode == markerdetection::DetectionMode::opencv) 
+	{
+		mode = markerdetection::DetectionMode::mouse;
 	}
 	else {
-		detectionMode = 0;
+		mode = markerdetection::DetectionMode::opencv;
 	}
 }
 
@@ -67,7 +68,8 @@ void changeDetectionMode() {
 //	This function is used for terminating the OpenCV windows.
 //
 */
-void terminateDetection() {
+void markerdetection::terminateDetection() 
+{
 	cv::destroyAllWindows();
 }
 
@@ -75,7 +77,8 @@ void terminateDetection() {
 // This method is used for setting the parameters of the blobdetector.
 //
 */
-void resetBlobDetector() {
+void markerdetection::resetBlobDetector() 
+{
 	params.minDistBetweenBlobs = 1.0;   
 	params.filterByArea = true;           
 	params.filterByColor = false;        
@@ -99,9 +102,9 @@ void resetBlobDetector() {
 //
 //  @return Struct of Point2D with x and y coordinates
 */
-Point2D getCoordinates()
+markerdetection::Point2D markerdetection::getCoordinates()
 {
-	Point2D point = { markerPosition.x / float(width), markerPosition.y / float(height)};
+	markerdetection::Point2D point = { markerPosition.x / float(width), markerPosition.y / float(height)};
 	return point;
 }
 
@@ -114,7 +117,8 @@ Point2D getCoordinates()
 //	@return returnvalue returns the value 0 or 1, 0 for not in bounds and 1 for in bounds
 //
 */
-int checkBounds(cv::Point point1, cv::Point point2) {
+int markerdetection::checkBounds(cv::Point point1, cv::Point point2) 
+{
 	int returnValue = 0;
 	if (markerPosition.x >= point1.x && markerPosition.x <= point2.x && markerPosition.y >= point1.y && markerPosition.y <= point2.y) {
 		//std::cout << "point is in bounds" << std::endl;
@@ -127,15 +131,17 @@ int checkBounds(cv::Point point1, cv::Point point2) {
 /*
 //	This function is used for detecting the marker
 */
-void detectMarker() {
+void markerdetection::detectMarker() 
+{
 	int size = 0;
 	for (cv::KeyPoint k : myBlobs)
 	{
 		if (k.size > size) {
-			Point2D points{ k.pt.x, k.pt.y };
+			markerdetection::Point2D points{ k.pt.x, k.pt.y };
 			markerPosition.x = k.pt.x;
 			markerPosition.y = k.pt.y;
 			size = k.size;
+			
 		}
 	}
 }
@@ -144,13 +150,14 @@ void detectMarker() {
 //	This function is a callback used for using the mouse on the openCV screen.
 //
 */
-void mouseCallback(int  event, int  x, int  y, int  flag, void *param) {
+void mouseCallback(int  event, int  x, int  y, int  flag, void *param) 
+{
 	markerPosition.x = x;
 	markerPosition.y = y;
 	newMousePosition = true;
 }
 
-bool hasNewMousePosition()
+bool markerdetection::hasNewMousePosition()
 {
 	if (newMousePosition)
 	{
@@ -164,7 +171,8 @@ bool hasNewMousePosition()
 //	This function is used for drawing the borders on the openCV screen.
 //
 */
-void drawBounds(cv::Mat drawImg) {
+void markerdetection::drawBounds(cv::Mat drawImg) 
+{
 	//Draw Horizontal raster
 	cv::line(drawImg, cv::Point(0, height / SCREEN_DIVIDER_RATIO), cv::Point(width, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 255, 255), 2);
 	cv::line(drawImg, cv::Point(0, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 255, 255), 2);
@@ -179,7 +187,8 @@ void drawBounds(cv::Mat drawImg) {
 //	This function is used for checking if the x and the y values of the object are in the bounds.
 //
 */
-void checkAllBounds(cv::Mat drawImg) {
+void markerdetection::checkAllBounds(cv::Mat drawImg) 
+{
 	//Check left bound
 	if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO)) == 1) {
 		cv::rectangle(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 0, 0), 5, 1, 0);
@@ -210,7 +219,8 @@ void checkAllBounds(cv::Mat drawImg) {
 //	This function is used for calibrating the tracked object.
 //
 */
-void calibrate() {
+void markerdetection::calibrate() 
+{
 	int counterUp = 0;
 	int counterDown = 0;
 	while ((lowerS == -1 || upperS == -1) && lowS >= 0) {
@@ -220,7 +230,6 @@ void calibrate() {
 			continue;
 		}
 		flip(frame, frame, 1);
-
 
 		// Convert from BGR to HSV colorspace
 		cvtColor(frame, frame_HSV, cv::COLOR_BGR2HSV);
@@ -261,7 +270,8 @@ void calibrate() {
 //	This function starts the mouse detection modus.
 //
 */
-void excecuteMouseDetection() {
+void markerdetection::excecuteMouseDetection() 
+{
 
 	originalBlobImg = cv::imread("Resources/Vision/Black_Picture.jpg");
 
@@ -296,8 +306,8 @@ void excecuteMouseDetection() {
 //	This function starts the OpenCV detection modus.
 //
 */
-void excecuteOpenCVDetection() {
-
+void markerdetection::excecuteOpenCVDetection() 
+{
 		cap >> frame;
 		if (frame.empty()) {
 			std::cerr << "Frame invalid and skipped!" << std::endl;
@@ -336,9 +346,9 @@ void excecuteOpenCVDetection() {
 //	@param int input is for switching the mode between mouse and openCV
 //
 */
-int runMarkerDetection(int input)
+int markerdetection::runMarkerDetection(markerdetection::DetectionMode mode)
 {
-	if (input == MARKERDETECTION_WITH_OPENCV) {
+	if (mode == markerdetection::DetectionMode::opencv) {
 
 		resetBlobDetector();
 
@@ -354,7 +364,7 @@ int runMarkerDetection(int input)
 
 		excecuteOpenCVDetection();
 	}
-	if (input == MARKERDETECTION_WITH_MOUSE) {
+	if (mode == markerdetection::DetectionMode::mouse) {
 
 		excecuteMouseDetection();
 	}
