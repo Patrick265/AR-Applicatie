@@ -118,6 +118,7 @@
     <ClCompile Include="calculations\Graphics.cpp" />
     <ClCompile Include="calculations\Math.cpp" />
     <ClCompile Include="components\Component.cpp" />
+    <ClCompile Include="states\GameState.cpp" />
     <ClCompile Include="game\GameLogic.cpp" />
     <ClCompile Include="objects\Player.cpp" />
     <ClCompile Include="objects\Projectile.cpp" />
@@ -139,6 +140,7 @@
     <ClInclude Include="calculations\Graphics.h" />
     <ClInclude Include="calculations\Math.h" />
     <ClInclude Include="components\Component.h" />
+    <ClInclude Include="states\GameState.h" />
     <ClInclude Include="game\GameLogic.h" />
     <ClInclude Include="objects\Player.h" />
     <ClInclude Include="objects\Projectile.h" />

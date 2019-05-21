@@ -1,9 +1,5 @@
 #include "State.h"
 
-State::State()
-{
-}
+State::State() = default;
 
-State::~State()
-{
-}
+State::~State() = default;
