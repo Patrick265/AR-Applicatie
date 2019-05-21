@@ -3,7 +3,11 @@
 #include <GL/freeglut.h>
 #include "../objects/GameObject.h"
 
-StaticComponent::StaticComponent() = default;
+StaticComponent::StaticComponent(const std::string &mesh, const std::string &texture)
+{
+	this->mesh = mesh;
+	this->texture = texture;
+};
 
 StaticComponent::~StaticComponent() = default;
 
@@ -17,7 +21,7 @@ void StaticComponent::draw(std::map<std::string, Graphics::mesh>& meshes, std::m
 	glRotatef(gameObject->getRotation().z, 0, 0, 1);
 	glScalef(gameObject->getScale().x, gameObject->getScale().y, gameObject->getScale().z);
 
-	DrawHandler::drawMesh(meshes[gameObject->getMesh()], textures[gameObject->getTexture()]);
+	DrawHandler::drawMesh(meshes[mesh], textures[texture]);
 
 	glPopMatrix();
 }

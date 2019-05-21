@@ -1,11 +1,7 @@
 #include "GameObject.h"
 
-
-GameObject::GameObject(const std::string &mesh, const std::string &texture)
+GameObject::GameObject()
 {
-	this->mesh = mesh;
-	this->texture = texture;
-
 	this->position = { 0.0f, 0.0f, 0.0f, 0.0f };
 	this->rotation = { 0.0f, 0.0f, 0.0f, 0.0f };
 	this->scale = { 1.0f, 1.0f, 1.0f, 0.0f };
@@ -62,14 +58,4 @@ Math::vec3d GameObject::getRotation() const
 Math::vec3d GameObject::getScale() const
 {
 	return scale;
-}
-
-std::string GameObject::getMesh() const
-{
-	return mesh;
-}
-
-std::string GameObject::getTexture() const
-{
-	return texture;
 }

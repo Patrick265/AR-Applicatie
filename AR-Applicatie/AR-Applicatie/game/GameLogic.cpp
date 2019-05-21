@@ -15,13 +15,13 @@ bool canThrow = true;
 
 GameLogic::GameLogic()
 {
-	wall = new GameObject("cube", "none");
-	wall->addComponent(new StaticComponent());
-	wall->setPosition({0, 10, -1});
-	wall->setScale({20, 20, 1});
+	wall = new GameObject();
+	wall->addComponent(new StaticComponent("cube", "none"));
+	wall->setPosition({ 0, 10, -1 });
+	wall->setScale({ 20, 20, 1 });
 
-	player = new Player("cube", "none");
-	player->addComponent(new StaticComponent());
+	player = new Player();
+	player->addComponent(new StaticComponent("cube", "none"));
 }
 
 GameLogic::~GameLogic()
@@ -31,7 +31,6 @@ GameLogic::~GameLogic()
 
 void GameLogic::start()
 {
-	
 }
 
 void GameLogic::update(float deltaTime)
@@ -52,9 +51,8 @@ void GameLogic::update(float deltaTime)
 	counter += deltaTime;
 	if (counter > 0.5 && wildlings.size() < 5)
 	{
-		Wildling *wildling = new Wildling("giant",
-			"giant", rand() % 20 - 10);
-		wildling->addComponent(new StaticComponent());
+		Wildling *wildling = new Wildling(rand() % 20 - 10);
+		wildling->addComponent(new StaticComponent("giant", "giant"));
 		wildlings.push_back(wildling);
 		counter = 0;
 	}
@@ -75,7 +73,7 @@ void GameLogic::update(float deltaTime)
 		for (Projectile* projectile : projectiles)
 			if (projectile->isActive && wildling->isHit(projectile->getPosition().x, projectile->getPosition().y))
 				projectile->hasHit();
-	
+
 	// Update components
 	for (auto o : getGameObjects())
 		for (auto c : o->getComponents())
@@ -91,8 +89,8 @@ void GameLogic::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std
 
 void GameLogic::throwProjectile(float xVelocity, float yVelocity)
 {
-	Projectile *p = new Projectile("packet", "packet", player->getPosition().x, xVelocity, yVelocity);
-	p->addComponent(new StaticComponent());
+	Projectile *p = new Projectile(player->getPosition().x, xVelocity, yVelocity);
+	p->addComponent(new StaticComponent("packet", "packet"));
 	projectiles.push_back(p);
 }
 

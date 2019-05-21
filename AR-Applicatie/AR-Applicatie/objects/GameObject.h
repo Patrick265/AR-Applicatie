@@ -4,33 +4,19 @@
 #include "../components/Component.h"
 #include <list>
 
-class GameObject 
+class GameObject
 {
 	std::list<Component *> components;
 
 protected:
 
-	//x, y, z are the coordinates of the object
 	Math::vec3d position;
-
-	//x, y, z are the rotations of the x, y and z axis
 	Math::vec3d rotation;
-
-	//x, y, z are the scaling factors of the x, y and z axis
 	Math::vec3d scale;
 
-	std::string mesh;
-	std::string texture;
-
 public:
-	
-	/*
-		Constructor with mesh and id
-		
-		@param mesh - The mesh of the gameobject
-		@param texture_id - The texture id of the gameobject
-	*/
-	GameObject(const std::string &mesh, const std::string &texture);
+
+	GameObject();
 
 	void addComponent(Component *component);
 	std::list<Component *> getComponents() const;
