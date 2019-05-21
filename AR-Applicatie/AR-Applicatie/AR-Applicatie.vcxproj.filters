@@ -57,6 +57,9 @@
     <ClCompile Include="util\MousePicking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="game\WorldMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="calculations\Math.h">
@@ -101,8 +104,13 @@
     <ClInclude Include="util\MousePicking.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="game\WorldMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenGL-OpenCV-PropertySheet.props" />
+    <None Include="OpenGL-OpenCV-PropertySheet-Debug.props" />
+    <None Include="OpenGL-OpenCV-PropertySheet-Release.props" />
   </ItemGroup>
 </Project>

@@ -11,6 +11,7 @@
 #include "vision/markerdetection.h"
 #include "animation/Rig.h"
 #include "Util/MousePicking.h"
+#include "game/WorldMap.h"
 
 float width = 1920;
 float height = 1080;
@@ -31,16 +32,6 @@ float fTheta;
 //std::vector<GameObject> game_objects;
 
 GameLogic gameLogic;
-
-// Skybox obj
-GameObject* skybox;
-// World map obj 
-GameObject* map;
-// Castle black icon obj
-GameObject* castleBlackIcon;
-
-// MousePicking object
-MousePicking* mousePicking;
 
 struct Camera
 {
@@ -66,13 +57,11 @@ void mouseClicks(int button, int state, int x, int y);
 void moveCamera(float angle, float fac);
 
 void standardRenderOperations();
-void drawMesh(Graphics::mesh mesh, uint16_t texture_id);
-void drawGameObject(GameObject game_obj);
 void displayText();
 void runOpencCVThread();
-void initMap();
 
 
+WorldMap* map;
 int cursorID;
 int cursorX = 0;
 int cursorY = 0;
@@ -84,6 +73,7 @@ int main(int argc, char** argv) {
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - width) / 2, (glutGet(GLUT_SCREEN_HEIGHT) - height) / 2);
 	glutInitWindowSize(width, height);
+
 	glutCreateWindow("Game Of Thrones: AR");
 
 	glutIdleFunc(onIdle);
@@ -111,9 +101,10 @@ int main(int argc, char** argv) {
 	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
 
 	glutWarpPointer(width / 2, height / 2);
-	initMap();
-	scaleLoading = mousePicking->getTimePassed();
+	map = new WorldMap(int(height), cursorX, cursorY);
+	scaleLoading = map->getMousePicking()->getTimePassed();
 	loadingID = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon_loading.png");
+
 	//std::thread openCV(runOpencCVThread);
 	//openCV.join();
 	//runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
@@ -128,6 +119,7 @@ void onIdle()
 	deltaTime = currentTime - lastFrameTime;
 	lastFrameTime = currentTime;
 
+	
 	if (deltaTime < 0)
 		return;
 
@@ -135,7 +127,7 @@ void onIdle()
 
 	rig->setRotation({ 0,fTheta * 2,0 });
 
-
+	map->update(deltaTime, cursorX, cursorY, static_cast<int>(height));
 	//Hardcoded animation to showcase rig
 	if (arm_up)
 		current_rotation += 150.0f * deltaTime;
@@ -177,7 +169,7 @@ void onIdle()
 	gameLogic.update(deltaTime);
 	
 	//runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
-	scaleLoading = mousePicking->getTimePassed() * 12;
+	scaleLoading = map->getMousePicking()->getTimePassed() * 12;
 
 	glutPostRedisplay();
 }
@@ -193,9 +185,11 @@ void onDisplay()
 
 
 	glPushMatrix();
-	rig->drawRig();
+	//rig->drawRig();
+
 	glPopMatrix();
 
+	map->draw();
 	/*// Test cube in the center of the world
 	glPushMatrix();
 	glTranslatef(-0.5, -0.5, -0.5);
@@ -226,20 +220,10 @@ void onDisplay()
 
 	// for (GameObject* gameObject : gameLogic.getGameObjects())
 	// 	drawGameObject(*gameObject);
-
-	drawGameObject(*map);
-
 	//Skybox
 	///Warning: I don't know if OpenGL appreciates me enabling/disabled GL_LIGHTNING like a fiddle
-	///Might cause spikes? 
-	glDisable(GL_LIGHTING);
-	drawGameObject(*skybox);
-	glEnable(GL_LIGHTING);
+	///Might cause spikes? 	
 
-
-	drawGameObject(*castleBlackIcon);
-	
-	mousePicking->update(cursorX, cursorY, height, deltaTime);
 
 	displayText();
 
@@ -278,43 +262,9 @@ void standardRenderOperations()
 	glEnable(GL_COLOR_MATERIAL);
 }
 
-void drawMesh2(Graphics::mesh mesh, uint16_t texture_id)
-{
-	glBindTexture(GL_TEXTURE_2D, texture_id);
-	glEnable(GL_TEXTURE_2D);
-	glBegin(GL_TRIANGLES);
 
-	for (Graphics::triangle tri : mesh.tris) {
 
-		glColor3f(1.0f, 1.0f, 1.0f);
 
-		Math::vec3d normal = Graphics::triangle_getNormal(tri);
-		glNormal3f(normal.x, normal.y, normal.z);
-		for (int i = 0; i < 3; i++)
-		{
-			glTexCoord2f(tri.vt[i].x, tri.vt[i].y);
-			glVertex3f(tri.p[i].x, tri.p[i].y, tri.p[i].z);
-		}
-	}
-	glEnd();
-	glDisable(GL_TEXTURE_2D);
-
-}
-
-void drawGameObject(GameObject game_obj)
-{
-	glPushMatrix();
-
-	glTranslatef(game_obj.getPosition().x, game_obj.getPosition().y, game_obj.getPosition().z);
-	glRotatef(game_obj.getRotation().x, 1, 0, 0);
-	glRotatef(game_obj.getRotation().y, 0, 1, 0);
-	glRotatef(game_obj.getRotation().z, 0, 0, 1);
-	glScalef(game_obj.getScale().x, game_obj.getScale().y, game_obj.getScale().z);
-
-	drawMesh2(game_obj.getMesh(), game_obj.getTextureId());
-
-	glPopMatrix();
-}
 
 void displayText()
 {
@@ -355,8 +305,6 @@ void displayText()
 		}
 		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
 	}
-
-	std::cout << "\t\t\t\t" << scaleLoading << std::endl;
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, loadingID);
@@ -465,26 +413,5 @@ void moveCamera(float angle, float fac)
 {
 	camera.posX -= (float)cos((camera.rotY + angle) / 180 * M_PI) * fac;
 	camera.posY -= (float)sin((camera.rotY + angle) / 180 * M_PI) * fac;
-}
-
-void initMap()
-{
-
-	map = new GameObject(ObjLoader::loadObj("Resources/Map/Map.obj"), TextureHandler::addTexture("Resources/Map/Map.jpg"));
-	map->setPosition(Math::vec3d{ 0, 0, 0 });
-	map->setScale(Math::vec3d{ 1, 1, 1 });
-	map->setRotation(Math::vec3d{ 0, 0, 0 });
-	castleBlackIcon = new GameObject(ObjLoader::loadObj("Resources/Map/Castleblack icon.obj"), -1);
-	castleBlackIcon->setPosition(Math::vec3d{ 15.277f, 0.50308f, 2.8563f});
-	castleBlackIcon->setScale(Math::vec3d{ 1, 1, 1 });
-
-	skybox = new GameObject(ObjLoader::loadObj("Resources/Skybox/skybox.obj"), TextureHandler::addTexture("Resources/Skybox/skybox.png"));
-	skybox->setPosition(Math::vec3d{ 0, 0, 0 });
-	skybox->setScale(Math::vec3d{ 1, 1, 1});
-	skybox->setRotation(Math::vec3d{ 0, 0, 0 });
-
-
-	
-	mousePicking = new MousePicking(castleBlackIcon, height, cursorX, cursorY);
 }
 

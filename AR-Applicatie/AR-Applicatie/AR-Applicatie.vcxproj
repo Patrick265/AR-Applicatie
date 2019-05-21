@@ -126,6 +126,7 @@
     <ClCompile Include="util\ObjLoader.cpp" />
     <ClCompile Include="util\TextureHandler.cpp" />
     <ClCompile Include="vision\markerdetection.cpp" />
+    <ClCompile Include="game\WorldMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="animation\Node.h" />
@@ -142,8 +143,11 @@
     <ClInclude Include="util\stb_image.h" />
     <ClInclude Include="util\TextureHandler.h" />
     <ClInclude Include="vision\markerdetection.h" />
+    <ClInclude Include="game\WorldMap.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="OpenGL-OpenCV-PropertySheet-Debug.props" />
+    <None Include="OpenGL-OpenCV-PropertySheet-Release.props" />
     <None Include="OpenGL-OpenCV-PropertySheet.props" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

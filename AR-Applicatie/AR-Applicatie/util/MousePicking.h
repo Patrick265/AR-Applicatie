@@ -29,6 +29,7 @@ public:
 	y: The y position of the mouse for initialization purpose
 	*/
 	MousePicking(GameObject *objectsToCheck, int height, int x, int y);
+	~MousePicking();
 	/*
 	The method which checks if the cursor position corresponds to the position of the object
 	*/

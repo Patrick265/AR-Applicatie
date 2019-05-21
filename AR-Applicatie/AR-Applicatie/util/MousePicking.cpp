@@ -12,6 +12,11 @@ MousePicking::MousePicking(GameObject *objects, int height, int x, int y)
 	this->cursorCounter = 0;
 }
 
+MousePicking::~MousePicking()
+{
+	
+}
+
 void MousePicking::searchObject(int cursorX, int cursorY)
 {
 	float winZ;
@@ -73,6 +78,7 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 	}
 	else {
 		if (abs(cursorX - lastX) <= 5 && abs(cursorY - lastY) <= 5) {
+			std::cout << "entered" << time << std::endl;
 			timePassed += time;
 			if (timePassed >= 3.0f && timePassed <= 3.1f) {
 				std::cout << "selected the game!!" << std::endl;
