@@ -73,27 +73,35 @@ Graphics::mesh ObjLoader::loadObj(std::string filename)
 				verticesdata.push_back(vertexdata);
 
 				if (i >= 2) {
-					Graphics::triangle tri;
 
-					if (texture_coords.size() > 0) {
-						tri.vt[0] = texture_coords[atoi(verticesdata[0][1].c_str()) - 1];
-						tri.vt[1] = texture_coords[atoi(verticesdata[i - 1][1].c_str()) - 1];
-						tri.vt[2] = texture_coords[atoi(verticesdata[i][1].c_str()) - 1];
+					Graphics::vertex vert;
+					Graphics::vertex vert2;
+					Graphics::vertex vert3;
+
+					if (texture_coords.size() > 0)
+					{
+						vert.vt = texture_coords[atoi(verticesdata[0][1].c_str()) - 1];
+						vert2.vt = texture_coords[atoi(verticesdata[i - 1][1].c_str()) - 1];
+						vert3.vt = texture_coords[atoi(verticesdata[i][1].c_str()) - 1];
+					}
+					if (normals.size() > 0)
+					{
+						vert.vn = normals[atoi(verticesdata[0][2].c_str()) - 1];
+						vert2.vn = normals[atoi(verticesdata[i - 1][2].c_str()) - 1];
+						vert3.vn = normals[atoi(verticesdata[i][2].c_str()) - 1];
 					}
 
-					if (normals.size() > 0) {
-						tri.vn[0] = normals[atoi(verticesdata[0][2].c_str()) - 1];
-						tri.vn[1] = normals[atoi(verticesdata[i - 1][2].c_str()) - 1];
-						tri.vn[2] = normals[atoi(verticesdata[i][2].c_str()) - 1];
-					}
-					
-					tri.p[0] = verts[atoi(verticesdata[0][0].c_str()) - 1];
-					tri.p[1] = verts[atoi(verticesdata[i - 1][0].c_str()) - 1];					
-					tri.p[2] = verts[atoi(verticesdata[i][0].c_str()) - 1];
-					
-					tri.fn = Graphics::triangle_getNormal(tri);
+					vert.p = verts[atoi(verticesdata[0][0].c_str()) - 1];
+					vert2.p = verts[atoi(verticesdata[i - 1][0].c_str()) - 1];
+					vert3.p = verts[atoi(verticesdata[i][0].c_str()) - 1];
 
-					mesh.tris.push_back(tri);
+					vert.fn = Graphics::getNormal(vert.p, vert2.p, vert3.p);
+					vert2.fn = Graphics::getNormal(vert.p, vert2.p, vert3.p);
+					vert3.fn = Graphics::getNormal(vert.p, vert2.p, vert3.p);
+
+					mesh.vertices.push_back(vert);
+					mesh.vertices.push_back(vert2);
+					mesh.vertices.push_back(vert3);
 				}
 			}
 

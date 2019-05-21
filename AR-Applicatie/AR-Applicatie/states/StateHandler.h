@@ -1,7 +1,7 @@
 #pragma once
-#include "State.h"
 #include <map>
 #include "../calculations/Graphics.h"
+#include "State.h"
 
 class StateHandler
 {

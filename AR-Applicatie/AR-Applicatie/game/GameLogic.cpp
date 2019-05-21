@@ -2,6 +2,7 @@
 #include "../util/ObjLoader.h"
 #include "../vision/markerdetection.h"
 #include <queue>
+#include "../components/StaticComponent.h"
 
 extern Point2D mousePos;
 extern float width;
@@ -15,10 +16,12 @@ bool canThrow = true;
 GameLogic::GameLogic()
 {
 	wall = new GameObject("cube", "none");
+	wall->addComponent(new StaticComponent());
 	wall->setPosition({0, 10, -1});
 	wall->setScale({20, 20, 1});
 
 	player = new Player("cube", "none");
+	player->addComponent(new StaticComponent());
 }
 
 GameLogic::~GameLogic()
@@ -51,6 +54,7 @@ void GameLogic::update(float deltaTime)
 	{
 		Wildling *wildling = new Wildling("giant",
 			"giant", rand() % 20 - 10);
+		wildling->addComponent(new StaticComponent());
 		wildlings.push_back(wildling);
 		counter = 0;
 	}
@@ -87,9 +91,9 @@ void GameLogic::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std
 
 void GameLogic::throwProjectile(float xVelocity, float yVelocity)
 {
-	projectiles.push_back(new Projectile("packet", 
-		"packet",
-		player->getPosition().x, xVelocity, yVelocity));
+	Projectile *p = new Projectile("packet", "packet", player->getPosition().x, xVelocity, yVelocity);
+	p->addComponent(new StaticComponent());
+	projectiles.push_back(p);
 }
 
 std::vector<GameObject *> GameLogic::getGameObjects()

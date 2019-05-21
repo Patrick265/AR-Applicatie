@@ -1,5 +1,6 @@
 #pragma once
-#include "StateHandler.h"
+
+class StateHandler;
 
 class State
 {
@@ -7,6 +8,6 @@ public:
 	State();
 	~State();
 
-	virtual void on(StateHandler *m);
-	virtual void off(StateHandler *m);
+	// virtual void on(StateHandler *m);
+	// virtual void off(StateHandler *m);
 };

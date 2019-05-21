@@ -11,6 +11,7 @@
 #include "game/GameLogic.h"
 #include "vision/markerdetection.h"
 #include "animation/AnimationHandler.h"
+#include "opengl/DrawHandler.h"
 
 float width = 1600;
 float height = 800;
