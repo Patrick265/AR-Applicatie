@@ -16,6 +16,8 @@ void Wildling::spawn()
 
 void Wildling::update(float deltaTime)
 {
+	GameObject::update(deltaTime);
+
 	if (isDead)
 		speed -= deltaTime * 10;
 

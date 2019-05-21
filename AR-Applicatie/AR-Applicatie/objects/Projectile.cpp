@@ -11,6 +11,8 @@ Projectile::Projectile(float x, float xVelocity, float yVelocity)
 
 void Projectile::update(float deltaTime)
 {
+	GameObject::update(deltaTime);
+
 	velocity.y -= deltaTime * gravity;
 
 	position.x += deltaTime * velocity.x;

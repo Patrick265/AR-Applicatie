@@ -9,7 +9,6 @@
 #include "objects/GameObject.h"
 #include "game/GameLogic.h"
 #include "vision/markerdetection.h"
-#include "animation/AnimationHandler.h"
 
 float width = 1280;
 float height = 720;
@@ -18,12 +17,6 @@ float deltaTime;
 float lastFrameTime;
 
 Point2D mousePos;
-
-// Fields for showcasing rigging through simple hardcoded animation
-float current_rotation = 0.0f;
-bool arm_up = false;
-AnimationHandler *ani;
-float fTheta;
 
 GameLogic gameLogic;
 
@@ -79,17 +72,11 @@ int main(int argc, char** argv) {
 	glutMotionFunc(onMotion);
 	glutReshapeFunc(onReshape);
 
-	current_rotation = 0.0f;
-
 	Math::vec3d pos = { -5, 0, 0 };
 	Math::vec3d rot = { 0.0f, 0.0f, 0.0f };
 	Math::vec3d scale = { 1.0f, 1.0f, 1.0f };
 
 	initResources();
-
-	ani = new AnimationHandler();
-	ani->setRig(Rig("elf", Math::vec3d{ 10,20,0 }, Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 }));
-	ani->setAnimation(ATTACK);
 
 	//Cursor image
 	cursorID = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png", textures.size());
@@ -102,8 +89,6 @@ int main(int argc, char** argv) {
 	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 
 	glutMainLoop();
-
-	free(ani);
 }
 
 void onIdle()
@@ -115,10 +100,6 @@ void onIdle()
 
 	if (deltaTime < 0 || deltaTime > 1)
 		return;
-
-	ani->animate(deltaTime, mousePos.y - height / 2);
-
-	fTheta += 30.0f * deltaTime;
 
 	// Check for vision mouse updates
 	if (hasNewMousePosition())
@@ -148,7 +129,6 @@ void onDisplay()
 {
 	standardRenderOperations();
 	gameLogic.draw(meshes, textures);
-	ani->draw(meshes, textures);
 	displayText();
 
 	glutSwapBuffers();

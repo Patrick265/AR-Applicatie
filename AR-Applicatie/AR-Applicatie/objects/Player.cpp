@@ -17,6 +17,8 @@ void Player::spawn()
 
 void Player::update(float deltaTime)
 {
+	GameObject::update(deltaTime);
+
 	if (isDead)
 		return;
 

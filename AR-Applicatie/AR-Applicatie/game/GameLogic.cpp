@@ -3,6 +3,7 @@
 #include "../vision/markerdetection.h"
 #include <queue>
 #include "../components/StaticComponent.h"
+#include "../components/AnimationComponent.h"
 
 extern Point2D mousePos;
 extern float width;
@@ -22,6 +23,10 @@ GameLogic::GameLogic()
 
 	player = new Player();
 	player->addComponent(new StaticComponent("cube", "none"));
+
+	animation = new GameObject();
+	animation->addComponent(new AnimationComponent(Rig("elf", Math::vec3d{ 10,20,0 }, Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 })));
+	animation->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::ATTACK);
 }
 
 GameLogic::~GameLogic()
@@ -104,6 +109,7 @@ std::vector<GameObject *> GameLogic::getGameObjects()
 		gameObjects.push_back(wildling);
 	for (Projectile* projectile : projectiles)
 		gameObjects.push_back(projectile);
+	gameObjects.push_back(animation);
 	return gameObjects;
 }
 
