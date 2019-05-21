@@ -1,7 +1,6 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <map>
-
 #include <GL/freeglut.h>
 #include <opencv2/opencv.hpp>
 
@@ -10,28 +9,14 @@
 #include "objects/GameObject.h"
 #include "game/GameLogic.h"
 #include "vision/markerdetection.h"
-#include "opengl/DrawHandler.h"
-#include "animation/AnimationHandler.h"
 
-float width = 1600;
-float height = 800;
+float width = 1280;
+float height = 720;
 
 float deltaTime;
 float lastFrameTime;
 
 Point2D mousePos;
-
-//Rotation for the showcasing of the rigging
-float current_rotation = 0.0f;
-//Showcasing rigging through simple hardcoded animation
-bool arm_up = false;
-
-AnimationHandler *ani;
-
-
-float fTheta;
-
-//std::vector<GameObject> game_objects;
 
 GameLogic gameLogic;
 
@@ -56,18 +41,17 @@ void initResources();
 
 void onIdle();
 void onDisplay();
-void onReshape(int width, int height);
-void onKey(unsigned char c, int x, int y);
-void onKeyUp(unsigned char c, int x, int y);
+void onReshape(int w, int h);
+void onKey(unsigned char keyId, int x, int y);
+void onKeyUp(unsigned char keyId, int x, int y);
 void onMouse();
 void onMotion(int x, int y);
 void onMousePassiveMotion(int x, int y);
 void moveCamera(float angle, float fac);
 
 void standardRenderOperations();
-void drawGameObject(GameObject game_obj);
 void displayText();
-void runOpencCVThread();
+void runOpenCVThread();
 
 int cursorID;
 int cursorX = 0;
@@ -88,17 +72,11 @@ int main(int argc, char** argv) {
 	glutMotionFunc(onMotion);
 	glutReshapeFunc(onReshape);
 
-	current_rotation = 0.0f;
-
 	Math::vec3d pos = { -5, 0, 0 };
 	Math::vec3d rot = { 0.0f, 0.0f, 0.0f };
 	Math::vec3d scale = { 1.0f, 1.0f, 1.0f };
 
 	initResources();
-
-	ani = new AnimationHandler();
-	ani->setRig(Rig("elf", Math::vec3d{ 10,20,0 }, Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 }));
-	ani->setAnimation(ATTACK);
 
 	//Cursor image
 	cursorID = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png", textures.size());
@@ -106,40 +84,26 @@ int main(int argc, char** argv) {
 
 	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
 
-	glutWarpPointer(width / 2, height / 2);
-
-	//std::thread openCV(runOpencCVThread);
+	//std::thread openCV(runOpenCVThread);
 	//openCV.join();
 	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 
 	glutMainLoop();
-
-	free(ani);
 }
 
 void onIdle()
 {
 	//Calculate delta time
-	float currentTime = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
+	const auto currentTime = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
 	deltaTime = currentTime - lastFrameTime;
 	lastFrameTime = currentTime;
 
-	if (deltaTime < 0)
+	if (deltaTime < 0 || deltaTime > 1)
 		return;
-
-	if (deltaTime > 1)
-		deltaTime = 0.0f;
-
-
-	ani->animate(deltaTime,mousePos.y- height / 2);
-
-	fTheta += 30.0f * deltaTime;
 
 	// Check for vision mouse updates
 	if (hasNewMousePosition())
 		onMouse();
-
-
 
 	const float speed = 6;
 	if (keys[int('a')]) moveCamera(0, deltaTime * speed);
@@ -156,7 +120,7 @@ void onIdle()
 	glutPostRedisplay();
 }
 
-void runOpencCVThread()
+void runOpenCVThread()
 {
 	//runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 }
@@ -164,19 +128,7 @@ void runOpencCVThread()
 void onDisplay()
 {
 	standardRenderOperations();
-
-
-	glPushMatrix();
-
-	glPopMatrix();
-
-
-	for (GameObject* gameObject : gameLogic.getGameObjects())
-		drawGameObject(*gameObject);
-
-
-	ani->draw(meshes, textures);
-
+	gameLogic.draw(meshes, textures);
 	displayText();
 
 	glutSwapBuffers();
@@ -188,17 +140,12 @@ void standardRenderOperations()
 	glClearColor(0.4, 0.4, 0.4, 1.0);
 
 	glMatrixMode(GL_PROJECTION);
-
 	glLoadIdentity();
-
-	//Swapping between perspective and orthographic mode (disabled)
-	// if (currentRenderMode == PERSP)
 	gluPerspective(70.0f, float(width) / float(height), 0.1f, 1000.0f);
-	// else if (currentRenderMode == ORTHO)
-	// 	glOrtho(-20, 20, -20, 20, 1.0, 10000.0f);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
 	// Change to camera position
 	glRotatef(camera.rotX, 1, 0, 0);
 	glRotatef(camera.rotY, 0, 1, 0);
@@ -213,25 +160,10 @@ void standardRenderOperations()
 	glEnable(GL_COLOR_MATERIAL);
 }
 
-void drawGameObject(GameObject game_obj)
-{
-	glPushMatrix();
-
-	glTranslatef(game_obj.getPosition().x, game_obj.getPosition().y, game_obj.getPosition().z);
-	glRotatef(game_obj.getRotation().x, 1, 0, 0);
-	glRotatef(game_obj.getRotation().y, 0, 1, 0);
-	glRotatef(game_obj.getRotation().z, 0, 0, 1);
-	glScalef(game_obj.getScale().x, game_obj.getScale().y, game_obj.getScale().z);
-
-	DrawHandler::drawMesh_array(meshes[game_obj.getMesh()], textures[game_obj.getTexture()]);
-
-	glPopMatrix();
-}
-
 void displayText()
 {
 	// Create a string that displays the fps, current camera location and rotation
-	std::string text =
+	auto text =
 		"fps " + std::to_string(int(1 / deltaTime)) +
 		"\nx " + std::to_string(camera.posX) +
 		"\ny " + std::to_string(camera.posY) +
@@ -239,8 +171,8 @@ void displayText()
 		"\nX " + std::to_string(camera.rotX) +
 		"\nY " + std::to_string(camera.rotY);
 
-	int xpos = 20;
-	int ypos = 30;
+	const auto xPos = 20;
+	auto yPos = 30;
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_COLOR_MATERIAL);
@@ -252,15 +184,15 @@ void displayText()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glRasterPos2f(xpos, ypos);
+	glRasterPos2f(xPos, yPos);
 	glColor3f(1, 1, 1);
-	int len = text.length();
-	for (int i = 0; i < len; i++)
+	const int len = text.length();
+	for (auto i = 0; i < len; i++)
 	{
 		if (text[i] == '\n')
 		{
-			ypos += 20;
-			glRasterPos2f(xpos, ypos);
+			yPos += 20;
+			glRasterPos2f(xPos, yPos);
 			continue;
 		}
 		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
@@ -312,7 +244,6 @@ void onMouse()
 					cursorX = xScreen;
 					cursorY = yScreen;
 					glutWarpPointer(xScreen, yScreen);
-
 				}
 				else
 				{
@@ -374,7 +305,6 @@ void moveCamera(float angle, float fac)
 
 void initRigParts()
 {
-
 	/*
 		FEMALE ELF
 	*/
@@ -400,7 +330,6 @@ void initRigParts()
 
 	textures["elf_sack"] = TextureHandler::addTexture("Resources/Rigid_NPC/NPC_big_sack.png", textures.size());
 	meshes["elf_sack"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_big_sack.obj");
-
 
 	/*
 	GOBLIN
@@ -429,7 +358,6 @@ void initRigParts()
 
 	textures["goblin_rl_l"] = TextureHandler::addTexture("Resources/Enemy/goblin_leg_right_bottom.png", textures.size());
 	meshes["goblin_rl_l"] = ObjLoader::loadObj("Resources/Enemy/Goblin_leg_right_bottom.obj");
-
 }
 
 void initGameLogicModels()
@@ -441,9 +369,7 @@ void initGameLogicModels()
 
 	textures["packet"] = TextureHandler::addTexture("Resources/Pakketje/Pakketje.png", textures.size());
 	meshes["packet"] = ObjLoader::loadObj("Resources/Pakketje/Pakketje.obj");
-
 }
-
 
 void initResources()
 {
@@ -453,5 +379,4 @@ void initResources()
 
 	initRigParts();
 	initGameLogicModels();
-
 }

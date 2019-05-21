@@ -1,10 +1,7 @@
 #include "Projectile.h"
 #include "../util/ObjLoader.h"
-#include <string>
-#include <iostream>
 
-Projectile::Projectile(std::string objectName, std::string texture, float x, float xVelocity, float yVelocity)
-	: GameObject(objectName, texture)
+Projectile::Projectile(float x, float xVelocity, float yVelocity)
 {
 	position = {x, 20, 1};
 	velocity = {xVelocity, yVelocity, 0};
@@ -14,6 +11,8 @@ Projectile::Projectile(std::string objectName, std::string texture, float x, flo
 
 void Projectile::update(float deltaTime)
 {
+	GameObject::update(deltaTime);
+
 	velocity.y -= deltaTime * gravity;
 
 	position.x += deltaTime * velocity.x;

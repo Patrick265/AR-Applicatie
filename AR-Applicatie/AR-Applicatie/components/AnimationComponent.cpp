@@ -1,64 +1,59 @@
-#include "AnimationHandler.h"
+#include "AnimationComponent.h"
+#include "../vision/markerdetection.h"
 
-AnimationHandler::AnimationHandler()
+extern Point2D mousePos;
+extern float height;
+
+AnimationComponent::AnimationComponent(Rig rig)
 {
-	deltaTime = 0;
 	current_animation = IDLE;
 	current_rotation = 0.0f;
 	ani_forward = true;
+	this->rig = rig;
 }
 
-AnimationHandler::AnimationHandler(const AnimationHandler & ani)
+AnimationComponent::AnimationComponent(const AnimationComponent &ani)
 	:rig(ani.rig), current_animation(ani.current_animation),
-	deltaTime(ani.deltaTime),
 	current_rotation(ani.current_rotation), ani_forward(ani.ani_forward)
 {
 }
 
-void AnimationHandler::setRig(Rig rig)
+void AnimationComponent::update(float elapsedTime)
 {
-	this->rig = rig;
-}
-
-
-void AnimationHandler::animate(const float &deltaTime, const int &cursor_pos_y)
-{
-	this->deltaTime = deltaTime;
-
 	if (current_animation == RUN)
-		run();
+		run(elapsedTime);
 	else if (current_animation == IDLE)
-		idle();
+		idle(elapsedTime);
 	else if (current_animation == ATTACK)
-		attack(cursor_pos_y);
+		attack(elapsedTime);
 	else if (current_animation == CLIMB)
-		climb();
+		climb(elapsedTime);
 }
 
-void AnimationHandler::draw(std::map<std::string, Graphics::mesh> &meshes, std::map<std::string, uint16_t> &textures)
+void AnimationComponent::draw(std::map<std::string, Graphics::mesh> &meshes, std::map<std::string, uint16_t> &textures)
 {
 	rig.drawRig(meshes, textures);
 }
 
-void AnimationHandler::setAnimation(int animation)
+void AnimationComponent::setAnimation(int animation)
 {
 	current_rotation = 0.0f;
 
 	current_animation = animation;
 }
 
-void AnimationHandler::positionToRotation(int y)
+void AnimationComponent::positionToRotation(int y)
 {
 	//With 100 pixels away from the centre it reaches maximum rotation, 160 degrees
 	current_rotation = -y * 1.6f;
 }
 
-void AnimationHandler::run()
+void AnimationComponent::run(float elapsedTime)
 {
 	if (ani_forward)
-		current_rotation += 150.0f * deltaTime;
+		current_rotation += 150.0f * elapsedTime;
 	else
-		current_rotation -= 150.0f * deltaTime;
+		current_rotation -= 150.0f * elapsedTime;
 
 	if (current_rotation <= 0.0f)
 		ani_forward = true;
@@ -76,12 +71,12 @@ void AnimationHandler::run()
 	rig.getNode("rl_l").setRotation({ 90 - current_rotation,0, 0 });
 }
 
-void AnimationHandler::idle()
+void AnimationComponent::idle(float elapsedTime)
 {
 	if (ani_forward)
-		current_rotation += 5.0f * deltaTime;
+		current_rotation += 5.0f * elapsedTime;
 	else
-		current_rotation -= 5.0f * deltaTime;
+		current_rotation -= 5.0f * elapsedTime;
 
 	if (current_rotation <= 0.0f)
 		ani_forward = true;
@@ -101,12 +96,11 @@ void AnimationHandler::idle()
 	rig.getNode("ll_l").setRotation({ current_rotation,0, 0 });
 	rig.getNode("rl_u").setRotation({ -10 + current_rotation,0, 0 });
 	rig.getNode("rl_l").setRotation({ 10 - current_rotation,0, 0 });
-
 }
 
-void AnimationHandler::attack(const int &cursor_pos_y)
+void AnimationComponent::attack(float elapsedTime)
 {
-	positionToRotation(cursor_pos_y);
+	positionToRotation(mousePos.y - height / 2);
 
 	if (current_rotation <= 0.0f)
 		current_rotation = 0.0f;
@@ -126,15 +120,14 @@ void AnimationHandler::attack(const int &cursor_pos_y)
 	rig.getNode("ll_l").setRotation({ leg_rotation + 10,0, 0 });
 	rig.getNode("rl_u").setRotation({ leg_rotation - 10,0, 0 });
 	rig.getNode("rl_l").setRotation({ leg_rotation,0, 0 });
-
 }
 
-void AnimationHandler::climb()
+void AnimationComponent::climb(float elapsedTime)
 {
 	if (ani_forward)
-		current_rotation += 150.0f * deltaTime;
+		current_rotation += 150.0f * elapsedTime;
 	else
-		current_rotation -= 150.0f * deltaTime;
+		current_rotation -= 150.0f * elapsedTime;
 
 	if (current_rotation <= 0.0f)
 		ani_forward = true;

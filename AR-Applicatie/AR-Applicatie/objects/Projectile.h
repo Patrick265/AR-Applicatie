@@ -1,6 +1,5 @@
 #pragma once
 #include "../objects/GameObject.h"
-#include <string>
 
 class Projectile : public GameObject
 {
@@ -11,7 +10,7 @@ private:
 public:
 	bool isActive;
 
-	Projectile(std::string objectName, std::string texture, float x, float xVelocity, float yVelocity);
+	Projectile(float x, float xVelocity, float yVelocity);
 
 	void update(float deltaTime);
 	void hasHit();

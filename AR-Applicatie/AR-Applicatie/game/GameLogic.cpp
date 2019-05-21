@@ -1,8 +1,9 @@
 #include "GameLogic.h"
 #include "../util/ObjLoader.h"
-#include "../util/TextureHandler.h"
 #include "../vision/markerdetection.h"
 #include <queue>
+#include "../components/StaticComponent.h"
+#include "../components/AnimationComponent.h"
 
 extern Point2D mousePos;
 extern float width;
@@ -15,11 +16,17 @@ bool canThrow = true;
 
 GameLogic::GameLogic()
 {
-	wall = new GameObject("cube", "none");
-	wall->setPosition({0, 10, -1});
-	wall->setScale({20, 20, 1});
+	wall = new GameObject();
+	wall->addComponent(new StaticComponent("cube", "none"));
+	wall->setPosition({ 0, 10, -1 });
+	wall->setScale({ 20, 20, 1 });
 
-	player = new Player("cube", "none");
+	player = new Player();
+	player->addComponent(new StaticComponent("cube", "none"));
+
+	animation = new GameObject();
+	animation->addComponent(new AnimationComponent(Rig("elf", Math::vec3d{ 10,20,0 }, Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 })));
+	animation->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::ATTACK);
 }
 
 GameLogic::~GameLogic()
@@ -29,7 +36,6 @@ GameLogic::~GameLogic()
 
 void GameLogic::start()
 {
-	
 }
 
 void GameLogic::update(float deltaTime)
@@ -50,8 +56,8 @@ void GameLogic::update(float deltaTime)
 	counter += deltaTime;
 	if (counter > 0.5 && wildlings.size() < 5)
 	{
-		Wildling *wildling = new Wildling("giant",
-			"giant", rand() % 20 - 10);
+		Wildling *wildling = new Wildling(rand() % 20 - 10);
+		wildling->addComponent(new StaticComponent("giant", "giant"));
 		wildlings.push_back(wildling);
 		counter = 0;
 	}
@@ -72,13 +78,25 @@ void GameLogic::update(float deltaTime)
 		for (Projectile* projectile : projectiles)
 			if (projectile->isActive && wildling->isHit(projectile->getPosition().x, projectile->getPosition().y))
 				projectile->hasHit();
+
+	// Update components
+	for (auto o : getGameObjects())
+		for (auto c : o->getComponents())
+			c->update(deltaTime);
+}
+
+void GameLogic::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std::string, uint16_t>& textures)
+{
+	for (auto o : getGameObjects())
+		for (auto c : o->getComponents())
+			c->draw(meshes, textures);
 }
 
 void GameLogic::throwProjectile(float xVelocity, float yVelocity)
 {
-	projectiles.push_back(new Projectile("packet", 
-		"packet",
-		player->getPosition().x, xVelocity, yVelocity));
+	Projectile *p = new Projectile(player->getPosition().x, xVelocity, yVelocity);
+	p->addComponent(new StaticComponent("packet", "packet"));
+	projectiles.push_back(p);
 }
 
 std::vector<GameObject *> GameLogic::getGameObjects()
@@ -91,6 +109,7 @@ std::vector<GameObject *> GameLogic::getGameObjects()
 		gameObjects.push_back(wildling);
 	for (Projectile* projectile : projectiles)
 		gameObjects.push_back(projectile);
+	gameObjects.push_back(animation);
 	return gameObjects;
 }
 

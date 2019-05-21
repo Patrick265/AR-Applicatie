@@ -2,8 +2,7 @@
 #include "../util/ObjLoader.h"
 #include <string>
 
-Wildling::Wildling(std::string objectName, std::string texture, float x)
-: GameObject(objectName, texture)
+Wildling::Wildling(float x)
 {
 	position.x = x;
 	speed = 1;
@@ -17,6 +16,8 @@ void Wildling::spawn()
 
 void Wildling::update(float deltaTime)
 {
+	GameObject::update(deltaTime);
+
 	if (isDead)
 		speed -= deltaTime * 10;
 
