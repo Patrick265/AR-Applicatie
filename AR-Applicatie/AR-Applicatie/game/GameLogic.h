@@ -12,9 +12,7 @@ class GameLogic
 	Player* player;
 	std::vector<Projectile *> projectiles;
 	std::vector<Wildling *> wildlings;
-
-	GameObject *animation;
-
+	
 	void handleMouse();
 
 public:
