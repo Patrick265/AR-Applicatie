@@ -5,6 +5,7 @@
 Wildling::Wildling(float x)
 {
 	position.x = x;
+	position.z = 1;
 	speed = 1;
 	isDead = false;
 }

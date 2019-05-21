@@ -17,15 +17,15 @@ bool canThrow = true;
 GameLogic::GameLogic()
 {
 	wall = new GameObject();
-	wall->addComponent(new StaticComponent("cube", "none"));
-	wall->setPosition({ 0, 10, -1 });
-	wall->setScale({ 20, 20, 1 });
+	wall->addComponent(new StaticComponent("cube", "wall"));
+	wall->setPosition({ 0, 10, -2 });
+	wall->setScale({ 20, 20, 2 });
 
 	player = new Player();
 	//player->addComponent(new StaticComponent("cube", "none"));
 	player->addComponent(new AnimationComponent(Rig("elf", Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 })));
-	player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::ATTACK);
-	player->setPosition(Math::vec3d{10,20,0});
+	player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animations::ATTACK);
+	player->setPosition(Math::vec3d{10,19.8,-2});
 
 }
 
@@ -57,7 +57,9 @@ void GameLogic::update(float deltaTime)
 	if (counter > 0.5 && wildlings.size() < 5)
 	{
 		Wildling *wildling = new Wildling(rand() % 20 - 10);
-		wildling->addComponent(new StaticComponent("giant", "giant"));
+		wildling->addComponent(new AnimationComponent(Rig("goblin", Math::vec3d{ 0,180,0 }, Math::vec3d{0.5,0.5,0.5})));//new StaticComponent("giant", "giant"));
+		wildling->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animations::CLIMB);
+		
 		wildlings.push_back(wildling);
 		counter = 0;
 	}
@@ -95,7 +97,8 @@ void GameLogic::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std
 void GameLogic::throwProjectile(float xVelocity, float yVelocity)
 {
 	Projectile *p = new Projectile(player->getPosition().x, xVelocity, yVelocity);
-	p->addComponent(new StaticComponent("packet", "packet"));
+	p->addComponent(new StaticComponent("cube", "brick"));
+	p->setScale(Math::vec3d{ 0.5,0.5,0.5 });
 	projectiles.push_back(p);
 }
 

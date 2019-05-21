@@ -8,7 +8,7 @@ extern float height;
 
 AnimationComponent::AnimationComponent(Rig rig)
 {
-	current_animation = IDLE;
+	current_animation = Animations::IDLE;
 	current_rotation = 0.0f;
 	ani_forward = true;
 	this->rig = rig;
@@ -22,13 +22,13 @@ AnimationComponent::AnimationComponent(const AnimationComponent &ani)
 
 void AnimationComponent::update(float elapsedTime)
 {
-	if (current_animation == RUN)
+	if (current_animation == Animations::RUN)
 		run(elapsedTime);
-	else if (current_animation == IDLE)
+	else if (current_animation == Animations::IDLE)
 		idle(elapsedTime);
-	else if (current_animation == ATTACK)
+	else if (current_animation == Animations::ATTACK)
 		attack(elapsedTime);
-	else if (current_animation == CLIMB)
+	else if (current_animation == Animations::CLIMB)
 		climb(elapsedTime);
 }
 
@@ -47,7 +47,7 @@ void AnimationComponent::draw(std::map<std::string, Graphics::mesh> &meshes, std
 	glPopMatrix();
 }
 
-void AnimationComponent::setAnimation(int animation)
+void AnimationComponent::setAnimation(Animations animation)
 {
 	current_rotation = 0.0f;
 

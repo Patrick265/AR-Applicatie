@@ -362,13 +362,16 @@ void initRigParts()
 
 void initGameLogicModels()
 {
+	textures["wall"] = TextureHandler::addTexture("Resources/Wall/Snow.jpg",textures.size());
 	meshes["cube"] = ObjLoader::loadObj("Resources/Cube/cube.obj");
-
+	
 	textures["giant"] = TextureHandler::addTexture("Resources/Rune/giant.png", textures.size());
 	meshes["giant"] = ObjLoader::loadObj("Resources/Rune/giant.obj");
 
 	textures["packet"] = TextureHandler::addTexture("Resources/Pakketje/Pakketje.png", textures.size());
 	meshes["packet"] = ObjLoader::loadObj("Resources/Pakketje/Pakketje.obj");
+
+	textures["brick"] = TextureHandler::addTexture("Resources/Weapons/Brick.png", textures.size());
 }
 
 void initResources()
