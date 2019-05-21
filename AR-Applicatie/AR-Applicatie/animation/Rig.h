@@ -9,29 +9,24 @@
 class Rig {
 
 private:
-	Math::vec3d pos;
 	Math::vec3d rot;
 	Math::vec3d scale;
 
 	//Node at the centre of the model
 	Node centre;
 	//All nodes in the rig
-	//std::vector<Node> nodes;
 	std::map<std::string, Node> nodes;
 
 public:
 	/*
 		Constructs a rig with a position, rotation and scale
 
-		@param meshes - A reference to all meshes currently stored
-		@param textures - A reference to all textures currently stored
 		@param rig_type - The rig that wil be constructed (currently elf or goblin)
-		@param pos - The given position
 		@param rot - The current rotation
 		@param scale - The current scale
 
 	*/
-	Rig(std::string rig_type, Math::vec3d pos, Math::vec3d rot, Math::vec3d scale);
+	Rig(std::string rig_type, Math::vec3d rot, Math::vec3d scale);
 	Rig(const Rig &rig);
 
 	//DONT USE, needed for default constructor
@@ -59,7 +54,6 @@ public:
 	void addRotation(Math::vec3d rot) { this->rot += rot; }
 
 	void setRotation(Math::vec3d rot) { this->rot = rot; }
-	void setPosition(Math::vec3d pos) { this->pos = pos; }
 	void setScale(Math::vec3d scale) { this->scale = scale; }
 
 

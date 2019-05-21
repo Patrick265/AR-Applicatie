@@ -6,8 +6,8 @@
 #include "../util/ObjLoader.h"
 #include "../util/TextureHandler.h"
 
-Rig::Rig(std::string rig_type, Math::vec3d pos, Math::vec3d rot, Math::vec3d scale)
-	:pos(pos), rot(rot), scale(scale)
+Rig::Rig(std::string rig_type, Math::vec3d rot, Math::vec3d scale)
+	:rot(rot), scale(scale)
 {
 	centre = Node(Math::vec3d{ 0,0,0 }, Math::vec3d{ 0,0,0 });
 
@@ -15,11 +15,10 @@ Rig::Rig(std::string rig_type, Math::vec3d pos, Math::vec3d rot, Math::vec3d sca
 		rigFemaleElf();
 	else if (rig_type == "goblin")
 		rigGoblin();
-
 }
 
 Rig::Rig(const Rig & rig)
-	:pos(rig.pos), rot(rig.rot), scale(rig.scale), centre(rig.centre), nodes(rig.nodes)
+	:rot(rig.rot), scale(rig.scale), centre(rig.centre), nodes(rig.nodes)
 {
 }
 
@@ -269,7 +268,6 @@ void Rig::drawRig(const std::map<std::string, Graphics::mesh> &meshes, const std
 
 	glScalef(scale.x, scale.y, scale.z);
 
-	glTranslatef(pos.x, pos.y, pos.z);
 	glRotatef(rot.x, 1, 0, 0);
 	glRotatef(rot.y, 0, 1, 0);
 	glRotatef(rot.z, 0, 0, 1);

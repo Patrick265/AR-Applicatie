@@ -25,8 +25,11 @@ GameLogic::GameLogic()
 	player->addComponent(new StaticComponent("cube", "none"));
 
 	animation = new GameObject();
-	animation->addComponent(new AnimationComponent(Rig("elf", Math::vec3d{ 10,20,0 }, Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 })));
+	//animation->addComponent(new StaticComponent("elf_head", "elf_head"));
+	animation->addComponent(new AnimationComponent(Rig("elf", Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 })));
 	animation->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::ATTACK);
+	animation->setPosition(Math::vec3d{10,20,0});
+
 }
 
 GameLogic::~GameLogic()
