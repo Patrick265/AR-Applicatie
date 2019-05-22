@@ -140,8 +140,6 @@ void onIdle()
 	if (m.hasNewMousePosition())
 		onMouse();
 
-
-
 	const float speed = 6;
 	if (keys[int('a')]) moveCamera(0, deltaTime * speed);
 	if (keys[int('d')]) moveCamera(180, deltaTime * speed);

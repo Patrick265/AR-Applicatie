@@ -55,7 +55,7 @@ public:
 	*/
 	 Point2D getCoordinates();
 
-	 bool hasNewMousePosition();
+	 static bool hasNewMousePosition();
 };
 
 #endif // MARKER_DETECTION

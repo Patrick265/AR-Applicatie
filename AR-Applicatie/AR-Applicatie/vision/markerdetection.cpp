@@ -135,6 +135,7 @@ int markerdetection::checkBounds(cv::Point point1, cv::Point point2)
 */
 void markerdetection::detectMarker() 
 {
+	newMousePosition = true;
 	int size = 0;
 	for (cv::KeyPoint k : myBlobs)
 	{
