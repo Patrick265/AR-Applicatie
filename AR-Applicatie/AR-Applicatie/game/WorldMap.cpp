@@ -5,12 +5,14 @@ WorldMap::WorldMap()
 {
 	this->map = new GameObject();
 	this->map->addComponent(new StaticComponent("map", "map"));
-	this->map->setPosition({ 0, 0, 0 });
+	this->map->setPosition({ 3.5, 15 + 3, 27 });
+	this->map->setRotation({ 0, 90, 0});
 
 	this->icon = new GameObject();
 	this->icon->addComponent(new StaticComponent("icon", "none"));
-	this->icon->setPosition({ 15.277f, 0.50308f, 2.8563f });
-
+	this->icon->setPosition({ -3.8563f, 15.50308f + 3, 10 });
+	this->icon->setRotation({ 0, 90, 0 });
+	this->mousePicking = new MousePicking(icon, 1080, 0,0);
 }
 
 WorldMap::~WorldMap()

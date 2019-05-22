@@ -1,9 +1,14 @@
 #pragma once
 #include "State.h"
+#include "../game/WorldMap.h"
 
 class WorldMapState : public State
 {
+private:
+	WorldMap map;
+
 public:
+
 	WorldMapState();
 	virtual ~WorldMapState();
 

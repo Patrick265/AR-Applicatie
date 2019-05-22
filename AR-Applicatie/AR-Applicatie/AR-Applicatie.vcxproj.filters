@@ -81,7 +81,10 @@
     <ClCompile Include="states\DeathState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="data\DataManager.cpp">
+    <ClCompile Include="game\WorldMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="util\MousePicking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -152,7 +155,10 @@
     <ClInclude Include="states\DeathState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="data\DataManager.h">
+    <ClInclude Include="game\WorldMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="util\MousePicking.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

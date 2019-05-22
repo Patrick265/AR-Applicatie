@@ -1,6 +1,7 @@
 #include "StateHandler.h"
 #include "GameState.h"
 #include "DeathState.h"
+#include "WorldMapState.h"
 
 StateHandler::StateHandler()
 {
@@ -27,7 +28,7 @@ void StateHandler::setState(const States state)
 	switch (state)
 	{
 	case States::MENU:
-		// TODO: MenuState
+		current = new WorldMapState();
 		break;
 	case States::GAME:
 		current = new GameState();
