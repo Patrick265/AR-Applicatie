@@ -21,6 +21,7 @@ public:
 
 	// Mouse position
 	Point2D mousePos;
+	float scaleLoading;
 
 	// Key positions (true is pressed)
 	std::vector<bool> keys;
@@ -33,6 +34,7 @@ public:
 	std::map<std::string, Graphics::mesh> meshes;
 	std::map<std::string, uint16_t> textures;
 	int cursorId;
+	int loadingId;
 
 	// Camera struct and instance (rendering position)
 	struct Camera

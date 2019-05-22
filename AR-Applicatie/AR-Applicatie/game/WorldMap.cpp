@@ -40,6 +40,8 @@ void WorldMap::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std:
 			c->draw(meshes, textures);
 		}
 	}
+	
+
 	this->mousePicking->update(x, y, this->height, this->deltatime);
 }
 

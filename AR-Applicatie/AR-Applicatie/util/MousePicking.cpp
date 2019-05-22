@@ -1,4 +1,5 @@
 #include "../util/MousePicking.h"
+#include "../data/DataManager.h"
 
 MousePicking::MousePicking(GameObject *objects, int height, int x, int y)
 {
@@ -80,16 +81,21 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 		if (abs(cursorX - lastX) <= 5 && abs(cursorY - lastY) <= 5) {
 			std::cout << "entered" << time << std::endl;
 			timePassed += time;
+			
 			if (timePassed >= 3.0f && timePassed <= 3.1f) {
+				
 				std::cout << "selected the game!!" << std::endl;
 				isCounting = false;
 				timePassed = 0;
+				
 			}
+			
 		}
 		else {
 			isCounting = false;
 			this->timePassed = 0;
 		}
+		DataManager::getInstance().scaleLoading = timePassed * 10;
 	}
 	lastX = cursorX;
 	lastY = cursorY;

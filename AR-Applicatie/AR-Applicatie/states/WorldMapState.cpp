@@ -1,4 +1,5 @@
 #include "WorldMapState.h"
+#include "../data/DataManager.h"
 
 WorldMapState::WorldMapState() = default;
 
@@ -11,5 +12,5 @@ void WorldMapState::draw(std::map<std::string, Graphics::mesh>& meshes, std::map
 
 void WorldMapState::update(float elapsedTime)
 {
-	map.update(elapsedTime , 0, 0, 1080);
+	map.update(elapsedTime , DataManager::getInstance().mousePos.x, DataManager::getInstance().mousePos.y, DataManager::getInstance().height);
 }

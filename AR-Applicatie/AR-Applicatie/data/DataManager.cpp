@@ -9,9 +9,10 @@ extern float deltaTime;
 extern float lastFrameTime;
 
 DataManager::DataManager()
-	: width(1280), height(720), mousePos(), mouseControl(true), cursorId()
+	: width(1280), height(720), mousePos(), mouseControl(true), cursorId(), scaleLoading()
 {
 	keys.resize(255);
+
 }
 
 /*
@@ -166,6 +167,20 @@ void DataManager::displayInfo() const
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, this->loadingId);
+	glEnable(GL_TEXTURE_2D);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0, 0); glVertex2f(mousePos.x - scaleLoading, mousePos.y - scaleLoading);
+	glTexCoord2f(0, 1); glVertex2f(mousePos.x - scaleLoading, mousePos.y + scaleLoading);
+	glTexCoord2f(1, 1); glVertex2f(mousePos.x + scaleLoading, mousePos.y + scaleLoading);
+	glTexCoord2f(1, 0); glVertex2f(mousePos.x + scaleLoading, mousePos.y - scaleLoading);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, cursorId);
 	glEnable(GL_TEXTURE_2D);
 	glBegin(GL_QUADS);
@@ -231,6 +246,8 @@ void DataManager::initResources()
 
 	//Cursor image
 	cursorId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png", textures.size());
+	//Loading ID
+	this->loadingId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon_loading.png", textures.size());
 	glutSetCursor(GLUT_CURSOR_NONE);
 }
 
