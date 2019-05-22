@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
 	glutInitWindowSize(width, height);
 	glutCreateWindow("Game Of Thrones: AR");
 
-	stateHandler.setState(StateHandler::States::GAME);
+	stateHandler.setState(StateHandler::States::MENU);
 
 	glutIdleFunc(onIdle);
 	glutDisplayFunc(onDisplay);
@@ -372,6 +372,14 @@ void initGameLogicModels()
 	meshes["packet"] = ObjLoader::loadObj("Resources/Pakketje/Pakketje.obj");
 }
 
+void initWorldMapModels()
+{
+	meshes["map"] = ObjLoader::loadObj("Resources/Map/Map.obj");
+	textures["map"] = TextureHandler::addTexture("Resources/Map/map.jpg", textures.size());
+
+	meshes["icon"] = ObjLoader::loadObj("Resources/Map/Castleblack icon.obj");
+}
+
 void initResources()
 {
 	//To prevent the map from throwing an exception
@@ -380,4 +388,5 @@ void initResources()
 
 	initRigParts();
 	initGameLogicModels();
+	initWorldMapModels();
 }
