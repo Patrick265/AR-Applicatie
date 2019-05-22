@@ -133,6 +133,7 @@
     <ClCompile Include="util\ObjLoader.cpp" />
     <ClCompile Include="util\TextureHandler.cpp" />
     <ClCompile Include="vision\markerdetection.cpp" />
+    <ClCompile Include="states\WorldMapState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="components\AnimationComponent.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="util\stb_image.h" />
     <ClInclude Include="util\TextureHandler.h" />
     <ClInclude Include="vision\markerdetection.h" />
+    <ClInclude Include="states\WorldMapState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

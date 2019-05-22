@@ -75,6 +75,9 @@
     <ClCompile Include="components\AnimationComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="states\WorldMapState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="states\DeathState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -141,6 +144,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="components\AnimationComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="states\WorldMapState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="states\DeathState.h">
