@@ -30,7 +30,7 @@ void Wildling::update(float deltaTime)
 
 bool Wildling::isHit(float xProjectile, float yProjectile)
 {
-	if (abs(xProjectile - position.x) < 2 && abs(yProjectile - position.y) < 2)
+	if (abs(xProjectile - position.x ) < 2 && abs(yProjectile - position.y -6 ) < 2)
 	{
 		isDead = true;
 		return true;

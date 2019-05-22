@@ -17,9 +17,19 @@ bool canThrow = true;
 GameLogic::GameLogic()
 {
 	wall = new GameObject();
-	wall->addComponent(new StaticComponent("cube", "wall"));
-	wall->setPosition({ 0, 10, -2 });
-	wall->setScale({ 20, 20, 2 });
+	wall->addComponent(new StaticComponent("wall", "wall"));
+	wall->setPosition({ 0, -9, 0 });
+	wall->setScale({ 0.5, 0.5, 0.5 });
+
+	wallTop = new GameObject();
+	wallTop->addComponent(new StaticComponent("wall_top", "wall_top"));
+	wallTop->setPosition({ 0, -9, 0 });
+	wallTop->setScale({ 0.5, 0.5, 0.5 });
+
+	skybox = new GameObject();
+	skybox->addComponent(new StaticComponent("skybox","skybox"));
+	skybox->setPosition({0,0,0});
+	skybox->setScale({1,1,1});
 
 	player = new Player();
 	//player->addComponent(new StaticComponent("cube", "none"));
@@ -97,7 +107,7 @@ void GameLogic::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std
 void GameLogic::throwProjectile(float xVelocity, float yVelocity)
 {
 	Projectile *p = new Projectile(player->getPosition().x, xVelocity, yVelocity);
-	p->addComponent(new StaticComponent("cube", "brick"));
+	p->addComponent(new StaticComponent("packet", "packet"));
 	p->setScale(Math::vec3d{ 0.5,0.5,0.5 });
 	projectiles.push_back(p);
 }
@@ -107,7 +117,9 @@ std::vector<GameObject *> GameLogic::getGameObjects()
 	std::vector<GameObject *> gameObjects;
 	gameObjects.clear();
 	gameObjects.push_back(wall);
+	gameObjects.push_back(wallTop);
 	gameObjects.push_back(player);
+	gameObjects.push_back(skybox);
 	for (Wildling* wildling : wildlings)
 		gameObjects.push_back(wildling);
 	for (Projectile* projectile : projectiles)
