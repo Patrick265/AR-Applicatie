@@ -1,9 +1,10 @@
 #include "StateHandler.h"
 #include "GameState.h"
+#include "DeathState.h"
 
 StateHandler::StateHandler()
 {
-	current = new GameState;
+	current = nullptr;
 }
 
 StateHandler::~StateHandler()
@@ -32,7 +33,7 @@ void StateHandler::setState(const States state)
 		current = new GameState();
 		break;
 	case States::DEATH:
-		// TODO: DeathState
+		current = new DeathState();
 		break;
 	}
 }

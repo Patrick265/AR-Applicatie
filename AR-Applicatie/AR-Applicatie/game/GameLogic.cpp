@@ -31,7 +31,12 @@ GameLogic::GameLogic()
 
 GameLogic::~GameLogic()
 {
-	// TODO: Free stuff
+	delete wall;
+	delete player;
+	for (auto &&p : projectiles)
+		delete p;
+	for (auto &&p : wildlings)
+		delete p;
 }
 
 void GameLogic::start()

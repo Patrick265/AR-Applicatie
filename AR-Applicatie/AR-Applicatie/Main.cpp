@@ -9,6 +9,7 @@
 #include "objects/GameObject.h"
 #include "game/GameLogic.h"
 #include "vision/markerdetection.h"
+#include "states/StateHandler.h"
 
 float width = 1280;
 float height = 720;
@@ -18,7 +19,7 @@ float lastFrameTime;
 
 Point2D mousePos;
 
-GameLogic gameLogic;
+StateHandler stateHandler;
 
 struct Camera
 {
@@ -63,6 +64,8 @@ int main(int argc, char** argv) {
 	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - width) / 2, (glutGet(GLUT_SCREEN_HEIGHT) - height) / 2);
 	glutInitWindowSize(width, height);
 	glutCreateWindow("Game Of Thrones: AR");
+
+	stateHandler.setState(StateHandler::States::GAME);
 
 	glutIdleFunc(onIdle);
 	glutDisplayFunc(onDisplay);
@@ -113,7 +116,7 @@ void onIdle()
 	if (keys[int('e')]) camera.posZ += deltaTime * speed;
 	if (keys[int('q')]) camera.posZ -= deltaTime * speed;
 
-	gameLogic.update(deltaTime);
+	stateHandler.update(deltaTime);
 
 	//runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
 
@@ -128,7 +131,7 @@ void runOpenCVThread()
 void onDisplay()
 {
 	standardRenderOperations();
-	gameLogic.draw(meshes, textures);
+	stateHandler.draw(meshes, textures);
 	displayText();
 
 	glutSwapBuffers();
@@ -218,9 +221,7 @@ void onKey(unsigned char keyId, int x, int y)
 	if (keyId == VK_ESCAPE)
 		exit(1);
 	if (keyId == 'c')
-		mouseControl = !mouseControl;
-	if (keyId == 't')
-		gameLogic.throwProjectile(rand() % 10 - 5, -1);	keys[keyId] = true;
+		mouseControl = !mouseControl;	keys[keyId] = true;
 }
 
 void onKeyUp(unsigned char keyId, int, int)
