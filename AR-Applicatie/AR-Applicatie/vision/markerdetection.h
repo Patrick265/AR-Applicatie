@@ -1,11 +1,12 @@
+#pragma once
 
-	//Global defines
-	const int MARKERDETECTION_WITH_OPENCV = 0;
-	const int MARKERDETECTION_WITH_MOUSE = 1;
+//Global defines
+const int MARKERDETECTION_WITH_OPENCV = 0;
+const int MARKERDETECTION_WITH_MOUSE = 1;
 
-	struct Point2D {
-		float x, y;
-	};
+struct Point2D {
+	float x, y;
+};
 
 //Global functions
 

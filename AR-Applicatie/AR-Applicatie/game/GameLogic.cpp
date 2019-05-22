@@ -1,12 +1,9 @@
 #include "GameLogic.h"
 #include "../util/ObjLoader.h"
-#include "../vision/markerdetection.h"
 #include <queue>
 #include "../components/StaticComponent.h"
 #include "../components/AnimationComponent.h"
-
-extern Point2D mousePos;
-extern float width;
+#include "../data/DataManager.h"
 
 float counter = 0;
 
@@ -119,6 +116,10 @@ std::vector<GameObject *> GameLogic::getGameObjects()
 
 void GameLogic::handleMouse()
 {
+	// Get mousePos and screen width
+	const auto mousePos = DataManager::getInstance().mousePos;
+	const auto width = DataManager::getInstance().width;
+
 	// Move player to mouse X position
 	player->targetX = mousePos.x / float(width) * 20.0f - 10.0f;
 
@@ -129,8 +130,8 @@ void GameLogic::handleMouse()
 	if (mouseHistory.size() > 5)
 		mouseHistory.pop();
 
-	Point2D first = mouseHistory.front();
-	Point2D last = mouseHistory.back();
+	const auto first = mouseHistory.front();
+	const auto last = mouseHistory.back();
 
 	// If downwards movement is large enough, throw a projectiles
 	if (canThrow && first.y - last.y < -Y_TRIGGER_DISTANCE)

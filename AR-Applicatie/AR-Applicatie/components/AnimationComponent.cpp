@@ -2,9 +2,7 @@
 #include "../vision/markerdetection.h"
 #include <GL/freeglut.h>
 #include "../objects/GameObject.h"
-
-extern Point2D mousePos;
-extern float height;
+#include "../data/DataManager.h"
 
 AnimationComponent::AnimationComponent(Rig rig)
 {
@@ -112,6 +110,10 @@ void AnimationComponent::idle(float elapsedTime)
 
 void AnimationComponent::attack(float elapsedTime)
 {
+	// Get mousePos and screen height
+	const auto mousePos = DataManager::getInstance().mousePos;
+	const auto height = DataManager::getInstance().height;
+
 	positionToRotation(mousePos.y - height / 2);
 
 	if (current_rotation <= 0.0f)
