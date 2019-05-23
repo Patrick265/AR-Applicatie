@@ -5,13 +5,13 @@
 
 class StateHandler
 {
+	State *current;
+public:
 	enum class States
 	{
 		MENU, GAME, DEATH
 	};
 
-	State *current;
-public:
 	StateHandler();
 	~StateHandler();
 

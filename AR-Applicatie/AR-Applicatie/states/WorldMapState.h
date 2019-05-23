@@ -1,16 +1,18 @@
 #pragma once
-
 #include "State.h"
-#include "../game/GameLogic.h"
+#include "../game/WorldMap.h"
 
-class GameState : public State
+class WorldMapState : public State
 {
-	GameLogic gameLogic;
+private:
+	WorldMap map;
 
 public:
-	GameState();
-	virtual ~GameState();
+
+	WorldMapState();
+	virtual ~WorldMapState();
 
 	void draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std::string, uint16_t>& textures) override;
 	void update(float elapsedTime) override;
 };
+

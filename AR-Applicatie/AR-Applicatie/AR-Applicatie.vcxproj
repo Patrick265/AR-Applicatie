@@ -118,6 +118,9 @@
     <ClCompile Include="calculations\Graphics.cpp" />
     <ClCompile Include="calculations\Math.cpp" />
     <ClCompile Include="components\Component.cpp" />
+    <ClCompile Include="game\WorldMap.cpp" />
+    <ClCompile Include="data\DataManager.cpp" />
+    <ClCompile Include="states\DeathState.cpp" />
     <ClCompile Include="states\GameState.cpp" />
     <ClCompile Include="game\GameLogic.cpp" />
     <ClCompile Include="objects\Player.cpp" />
@@ -129,9 +132,11 @@
     <ClCompile Include="components\StaticComponent.cpp" />
     <ClCompile Include="states\State.cpp" />
     <ClCompile Include="states\StateHandler.cpp" />
+    <ClCompile Include="util\MousePicking.cpp" />
     <ClCompile Include="util\ObjLoader.cpp" />
     <ClCompile Include="util\TextureHandler.cpp" />
     <ClCompile Include="vision\markerdetection.cpp" />
+    <ClCompile Include="states\WorldMapState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="components\AnimationComponent.h" />
@@ -140,6 +145,9 @@
     <ClInclude Include="calculations\Graphics.h" />
     <ClInclude Include="calculations\Math.h" />
     <ClInclude Include="components\Component.h" />
+    <ClInclude Include="game\WorldMap.h" />
+    <ClInclude Include="data\DataManager.h" />
+    <ClInclude Include="states\DeathState.h" />
     <ClInclude Include="states\GameState.h" />
     <ClInclude Include="game\GameLogic.h" />
     <ClInclude Include="objects\Player.h" />
@@ -150,10 +158,12 @@
     <ClInclude Include="components\StaticComponent.h" />
     <ClInclude Include="states\State.h" />
     <ClInclude Include="states\StateHandler.h" />
+    <ClInclude Include="util\MousePicking.h" />
     <ClInclude Include="util\ObjLoader.h" />
     <ClInclude Include="util\stb_image.h" />
     <ClInclude Include="util\TextureHandler.h" />
     <ClInclude Include="vision\markerdetection.h" />
+    <ClInclude Include="states\WorldMapState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
