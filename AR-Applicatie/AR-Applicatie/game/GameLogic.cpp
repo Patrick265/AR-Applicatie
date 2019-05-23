@@ -17,15 +17,25 @@ bool canThrow = true;
 GameLogic::GameLogic()
 {
 	wall = new GameObject();
-	wall->addComponent(new StaticComponent("cube", "none"));
-	wall->setPosition({ 0, 10, -1 });
-	wall->setScale({ 20, 20, 1 });
+	wall->addComponent(new StaticComponent("wall", "wall"));
+	wall->setPosition({ 0, -9, 0 });
+	wall->setScale({ 0.5, 0.5, 0.5 });
+
+	wallTop = new GameObject();
+	wallTop->addComponent(new StaticComponent("wall_top", "wall_top"));
+	wallTop->setPosition({ 0, -9, 0 });
+	wallTop->setScale({ 0.5, 0.5, 0.5 });
+
+	skybox = new GameObject();
+	skybox->addComponent(new StaticComponent("skybox","skybox"));
+	skybox->setPosition({0,0,0});
+	skybox->setScale({1,1,1});
 
 	player = new Player();
 	//player->addComponent(new StaticComponent("cube", "none"));
 	player->addComponent(new AnimationComponent(Rig("elf", Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 })));
-	player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::ATTACK);
-	player->setPosition(Math::vec3d{10,20,0});
+	player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK);
+	player->setPosition(Math::vec3d{10,19.8,-2});
 
 }
 
@@ -57,7 +67,9 @@ void GameLogic::update(float deltaTime)
 	if (counter > 0.5 && wildlings.size() < 5)
 	{
 		Wildling *wildling = new Wildling(rand() % 20 - 10);
-		wildling->addComponent(new StaticComponent("giant", "giant"));
+		wildling->addComponent(new AnimationComponent(Rig("goblin", Math::vec3d{ 0,0,0 }, Math::vec3d{0.5,0.5,0.5})));//new StaticComponent("giant", "giant"));
+		wildling->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::CLIMB);
+		
 		wildlings.push_back(wildling);
 		counter = 0;
 	}
@@ -96,6 +108,7 @@ void GameLogic::throwProjectile(float xVelocity, float yVelocity)
 {
 	Projectile *p = new Projectile(player->getPosition().x, xVelocity, yVelocity);
 	p->addComponent(new StaticComponent("packet", "packet"));
+	p->setScale(Math::vec3d{ 0.5,0.5,0.5 });
 	projectiles.push_back(p);
 }
 
@@ -104,7 +117,9 @@ std::vector<GameObject *> GameLogic::getGameObjects()
 	std::vector<GameObject *> gameObjects;
 	gameObjects.clear();
 	gameObjects.push_back(wall);
+	gameObjects.push_back(wallTop);
 	gameObjects.push_back(player);
+	gameObjects.push_back(skybox);
 	for (Wildling* wildling : wildlings)
 		gameObjects.push_back(wildling);
 	for (Projectile* projectile : projectiles)

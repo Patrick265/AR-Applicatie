@@ -179,6 +179,8 @@ void Rig::rigGoblin()
 	Math::vec3d leg_left_bottom = { 0.5619f, 0.169499f, 3.51627f };
 	Math::vec3d leg_right_top = { -0.562285f, 0.449695f, 5.47866f };
 	Math::vec3d leg_right_bottom = { -0.582013f, 0.280366f, 3.42471f };
+	Math::vec3d icicle_left = {1.93501f,0.399071f,3.80603f};
+	Math::vec3d icicle_right = {-2.0828f,0.399071f,3.80603f};
 
 	//Torso
 	_pos = convertCoordinates(torso);
@@ -234,11 +236,27 @@ void Rig::rigGoblin()
 		"goblin_rl_l",
 		_pos, _rot);
 
+	_pos = convertCoordinates(icicle_left, arm_left_bottom);
+		Node goblin_icicle_left("la_l_icicle", "goblin_la_icicle",
+		"goblin_la_icicle",
+		_pos, _rot);
+
+		_pos = convertCoordinates(icicle_right, arm_right_bottom);
+		Node goblin_icicle_right("ra_l_icicle", "goblin_ra_icicle",
+		"goblin_ra_icicle",
+		_pos, _rot);
+
+
+		
 	//Setting parent/child relations
+	goblin_arm_left_bottom.addChild("la_l_icicle");
+	goblin_arm_right_bottom.addChild("ra_l_icicle");
+
 	goblin_arm_left_top.addChild("la_l");
 	goblin_arm_right_top.addChild("ra_l");
 	goblin_leg_left_top.addChild("ll_l");
 	goblin_leg_right_top.addChild("rl_l");
+
 
 	goblin_torso.addChild("la_u");
 	goblin_torso.addChild("ra_u");
@@ -250,6 +268,9 @@ void Rig::rigGoblin()
 
 	//Adding nodes to map
 	nodes["torso"] = goblin_torso;
+
+	nodes["la_l_icicle"] = goblin_icicle_left;
+	nodes["ra_l_icicle"] = goblin_icicle_right;
 
 	nodes["la_u"] = goblin_arm_left_top;
 	nodes["la_l"] = goblin_arm_left_bottom;

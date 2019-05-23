@@ -3,7 +3,7 @@
 
 Projectile::Projectile(float x, float xVelocity, float yVelocity)
 {
-	position = {x, 20, 1};
+	position = {x, 22, 1};
 	velocity = {xVelocity, yVelocity, 0};
 	gravity = 10;
 	isActive = true;

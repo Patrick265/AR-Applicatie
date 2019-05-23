@@ -8,7 +8,7 @@ extern float height;
 
 AnimationComponent::AnimationComponent(Rig rig)
 {
-	current_animation = IDLE;
+	current_animation = Animation::IDLE;
 	current_rotation = 0.0f;
 	ani_forward = true;
 	this->rig = rig;
@@ -22,13 +22,15 @@ AnimationComponent::AnimationComponent(const AnimationComponent &ani)
 
 void AnimationComponent::update(float elapsedTime)
 {
-	if (current_animation == RUN)
-		run(elapsedTime);
-	else if (current_animation == IDLE)
+	if (current_animation == Animation::RUN_LEFT)
+		runLeft(elapsedTime);
+	else if (current_animation == Animation::RUN_RIGHT)
+		runRight(elapsedTime);
+	else if (current_animation == Animation::IDLE)
 		idle(elapsedTime);
-	else if (current_animation == ATTACK)
+	else if (current_animation == Animation::ATTACK)
 		attack(elapsedTime);
-	else if (current_animation == CLIMB)
+	else if (current_animation == Animation::CLIMB)
 		climb(elapsedTime);
 }
 
@@ -47,8 +49,12 @@ void AnimationComponent::draw(std::map<std::string, Graphics::mesh> &meshes, std
 	glPopMatrix();
 }
 
-void AnimationComponent::setAnimation(int animation)
+void AnimationComponent::setAnimation(Animation animation)
 {
+	//To prevent past animations from affecting the new one
+	rig.setRotation({ 0,0,0 });
+
+	//Starting the animation over
 	current_rotation = 0.0f;
 
 	current_animation = animation;
@@ -81,6 +87,18 @@ void AnimationComponent::run(float elapsedTime)
 	rig.getNode("ll_l").setRotation({ current_rotation,0, 0 });
 	rig.getNode("rl_u").setRotation({ 90 - current_rotation - 45,0, 0 });
 	rig.getNode("rl_l").setRotation({ 90 - current_rotation,0, 0 });
+}
+
+void AnimationComponent::runLeft(float elapsedTime)
+{
+	run(elapsedTime);
+	rig.setRotation({ 0,-90,0 });
+}
+
+void AnimationComponent::runRight(float elapsedTime)
+{
+	run(elapsedTime);
+	rig.setRotation({ 0,90,0 });
 }
 
 void AnimationComponent::idle(float elapsedTime)
@@ -136,6 +154,8 @@ void AnimationComponent::attack(float elapsedTime)
 
 void AnimationComponent::climb(float elapsedTime)
 {
+	rig.setRotation({ 0,180,0 });
+
 	if (ani_forward)
 		current_rotation += 150.0f * elapsedTime;
 	else

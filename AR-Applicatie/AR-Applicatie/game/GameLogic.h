@@ -9,6 +9,8 @@
 class GameLogic
 {
 	GameObject *wall;
+	GameObject *wallTop;
+	GameObject *skybox;
 	Player* player;
 	std::vector<Projectile *> projectiles;
 	std::vector<Wildling *> wildlings;

@@ -358,17 +358,34 @@ void initRigParts()
 
 	textures["goblin_rl_l"] = TextureHandler::addTexture("Resources/Enemy/goblin_leg_right_bottom.png", textures.size());
 	meshes["goblin_rl_l"] = ObjLoader::loadObj("Resources/Enemy/Goblin_leg_right_bottom.obj");
+
+	textures["goblin_la_icicle"] = TextureHandler::addTexture("Resources/Enemy/icicle.png", textures.size());
+	meshes["goblin_la_icicle"] = ObjLoader::loadObj("Resources/Enemy/icicle.obj");
+
+	textures["goblin_ra_icicle"] = TextureHandler::addTexture("Resources/Enemy/icicle.png", textures.size());
+	meshes["goblin_ra_icicle"] = ObjLoader::loadObj("Resources/Enemy/icicle.obj");
+
 }
 
 void initGameLogicModels()
 {
-	meshes["cube"] = ObjLoader::loadObj("Resources/Cube/cube.obj");
+	textures["wall"] = TextureHandler::addTexture("Resources/Wall/Glacier.jpg",textures.size());
+	meshes["wall"] = ObjLoader::loadObj("Resources/Wall/Glacier_bottom.obj");
 
+	textures["wall_top"] = TextureHandler::addTexture("Resources/Wall/wood.jpg",textures.size());
+	meshes["wall_top"] = ObjLoader::loadObj("Resources/Wall/Glacier_top.obj");
+	
 	textures["giant"] = TextureHandler::addTexture("Resources/Rune/giant.png", textures.size());
 	meshes["giant"] = ObjLoader::loadObj("Resources/Rune/giant.obj");
 
+	
+	textures["skybox"] = TextureHandler::addTexture("Resources/Skybox/skybox.jpg", textures.size());
+	meshes["skybox"] = ObjLoader::loadObj("Resources/Skybox/skybox.obj");
+
 	textures["packet"] = TextureHandler::addTexture("Resources/Pakketje/Pakketje.png", textures.size());
 	meshes["packet"] = ObjLoader::loadObj("Resources/Pakketje/Pakketje.obj");
+
+	textures["brick"] = TextureHandler::addTexture("Resources/Weapons/Brick.png", textures.size());
 }
 
 void initResources()
