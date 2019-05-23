@@ -279,8 +279,8 @@ void DataManager::initRigParts()
 	textures["elf_sack"] = TextureHandler::addTexture("Resources/Rigid_NPC/NPC_big_sack.png", textures.size());
 	meshes["elf_sack"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_big_sack.obj");
 
-	textures["elf_la_l_log"] = TextureHandler::addTexture("Resources/Weapons/weapon_log.png", textures.size());
-	meshes["elf_la_l_log"] = ObjLoader::loadObj("Resources/Weapons/weapon_log.obj");
+	textures["log"] = TextureHandler::addTexture("Resources/Weapons/weapon_log.png", textures.size());
+	meshes["log"] = ObjLoader::loadObj("Resources/Weapons/weapon_log.obj");
 
 	/*
 	GOBLIN

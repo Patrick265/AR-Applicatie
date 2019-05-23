@@ -81,4 +81,7 @@ public:
 	*/
 	void setPosition(Math::vec3d pos);
 
+	void setMesh(const std::string &mesh) { this->mesh = mesh; }
+	void setTexture(const std::string &texture) { this->texture = texture; }
+
 };

@@ -3,6 +3,9 @@
 #include <GL/freeglut.h>
 #include "../objects/GameObject.h"
 #include "../data/DataManager.h"
+#include "../game/GameLogic.h"
+
+extern int y_trigger_distance;
 
 AnimationComponent::AnimationComponent(Rig rig)
 {
@@ -60,8 +63,18 @@ void AnimationComponent::setAnimation(Animation animation)
 
 void AnimationComponent::positionToRotation(int y)
 {
+	const auto height = DataManager::getInstance().height;
+
 	//With 100 pixels away from the centre it reaches maximum rotation, 160 degrees
-	current_rotation = -y * 1.6f;
+	
+	//int numer = Y_TRIGGER_DISTANCE;
+	//Ensures the rotation is 160 at the top trigger area of the screen, and 0 at the bottom trigger area of the screen
+	//current_rotation = -y * 1.6f;
+	float rotation_per_pixel = ATTACK_MAX_ROTATION / (height - (y_trigger_distance * 2));
+
+	//Inverse, because 0 == 160 degrees rotation
+	// -Y_TRIGGER_DISTANCE, because the rotation has to end when entering the trigger area
+	current_rotation = ATTACK_MAX_ROTATION - ((y-y_trigger_distance) * rotation_per_pixel);
 }
 
 void AnimationComponent::run(float elapsedTime)
@@ -132,12 +145,22 @@ void AnimationComponent::attack(float elapsedTime)
 	const auto mousePos = DataManager::getInstance().mousePos;
 	const auto height = DataManager::getInstance().height;
 
-	positionToRotation(mousePos.y - height / 2);
+	positionToRotation(mousePos.y);
 
-	if (current_rotation <= 0.0f)
+	if (current_rotation <= 0.0f) 
+	{
+		rig.getNode("la_weapon").setMesh("none");
+		rig.getNode("la_weapon").setTexture("none");
 		current_rotation = 0.0f;
-	else if (current_rotation >= 160.0f)
-		current_rotation = 160.0f;
+	}
+		
+	else if (current_rotation >= ATTACK_MAX_ROTATION)
+	{
+		current_rotation = ATTACK_MAX_ROTATION;
+		rig.getNode("la_weapon").setMesh("log");
+		rig.getNode("la_weapon").setTexture("log");
+	}
+		
 
 	rig.getNode("la_u").setRotation({ -current_rotation,0, 0 });
 	rig.getNode("la_l").setRotation({ -current_rotation,0, 0 });

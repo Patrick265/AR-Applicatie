@@ -125,15 +125,15 @@ void Rig::rigFemaleElf()
 		_pos, _rot);
 
 		_pos = convertCoordinates(weapon_log, arm_left_bottom);
-	Node elf_weapon_log("la_l_log", "elf_la_l_log",
-		"elf_la_l_log",
+	Node elf_weapon_log("la_weapon", "log",
+		"log",
 		_pos, _rot);
 
 
 	//Setting the parent/child relations
 	elf_neck.addChild("head");
 
-	elf_leftarm_lower.addChild("la_l_log");
+	elf_leftarm_lower.addChild("la_weapon");
 
 	elf_leftarm_upper.addChild("la_l");
 	elf_rightarm_upper.addChild("ra_l");
@@ -152,7 +152,7 @@ void Rig::rigFemaleElf()
 
 
 	//Storing the nodes
-	nodes["la_l_log"] = elf_weapon_log;
+	nodes["la_weapon"] = elf_weapon_log;
 
 	nodes["neck"] = elf_neck;
 	nodes["head"] = elf_head;

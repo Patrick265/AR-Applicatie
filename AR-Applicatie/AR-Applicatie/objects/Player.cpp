@@ -74,7 +74,7 @@ void Player::kill()
 void Player::onIdle(float velocity)
 {
 	//If outside the idle distance
-	if (abs(position.x - targetX) >= velocity * 20)
+	if (abs(position.x - targetX) >= 2)
 	{
 		//To the left of the target
 		if (position.x < targetX)
@@ -91,6 +91,16 @@ void Player::onIdle(float velocity)
 
 		}
 
+	}
+	//If in idle
+	else 
+	{
+		if (currentAction == Action::IDLE)
+		{
+			currentAction = Action::ATTACK;
+			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK);
+
+		}
 	}
 }
 

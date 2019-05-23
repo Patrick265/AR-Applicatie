@@ -7,12 +7,13 @@ class Player : public GameObject
 	float maxSpeed;
 	Math::vec3d velocity;
 
+	
 
-	enum class Action {IDLE, RUNLEFT, RUNRIGHT, ATTACK};
-
-	Action currentAction;
+	const float IDLE_RANGE = 2.0f;
 
 public:
+	enum class Action { IDLE, RUNLEFT, RUNRIGHT, ATTACK };
+
 	bool isDead;
 	float targetX;
 
@@ -23,7 +24,13 @@ public:
 	void kill();
 
 
+	const Action &getCurrentAction() { return currentAction; }
+	const float &getIdleRange() { return IDLE_RANGE; }
+
 private:
+
+	Action currentAction;
+	
 	/*
 		What the player does when Idle
 
