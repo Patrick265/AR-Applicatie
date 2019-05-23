@@ -6,8 +6,7 @@
 class AnimationComponent : public Component
 {
 	// The rig that performs the animations
-	Rig rig;
-	
+	Rig rig;	
 
 	// The current rotation, which the animation is based on
 	float current_rotation;
@@ -17,7 +16,7 @@ class AnimationComponent : public Component
 public:
 
 	// The animations that can be chosen
-	enum class Animations { RUN, IDLE, ATTACK, CLIMB };
+	enum class Animations { RUN_LEFT, RUN_RIGHT, IDLE, ATTACK, CLIMB };
 
 	AnimationComponent(Rig rig);
 	AnimationComponent(const AnimationComponent &animation_handler);
@@ -48,6 +47,9 @@ private:
 
 	// The animations
 	void run(float elapsedTime);
+	void runLeft(float elapsedTime);
+	void runRight(float elapsedTime);
+
 	void idle(float elapsedTime);
 	void attack(float elapsedTime);
 	void climb(float elapsedTime);

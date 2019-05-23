@@ -7,6 +7,8 @@ class Player : public GameObject
 	float maxSpeed;
 	Math::vec3d velocity;
 
+	bool isMoving;
+
 public:
 	bool isDead;
 	float targetX;

@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "../util/ObjLoader.h"
+#include "../components/AnimationComponent.h"
 #include <string>
 
 Player::Player()
@@ -8,6 +9,7 @@ Player::Player()
 	maxSpeed = 10;
 	targetX = 0;
 	isDead = false;
+	isMoving = false;
 }
 
 void Player::spawn()
@@ -24,12 +26,39 @@ void Player::update(float deltaTime)
 
 	float travel = deltaTime * maxSpeed;
 
-	if (abs(position.x - targetX) < travel)
-		position.x = targetX;
-	else if (position.x < targetX)
+	if (position.x == targetX) 
+	{
+	}
+	if (abs(position.x - targetX) < travel) 
+	{
+		if (isMoving)
+		{
+			isMoving = false;
+			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animations::IDLE);
+		}
+		//position.x = targetX;
+	}		
+	else if (position.x < targetX) 
+	{
+		if (!isMoving)
+		{
+			isMoving = true;
+			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animations::RUN_RIGHT);
+
+		}
 		position.x += travel;
-	else
+	}		
+	else 
+	{
+		if (!isMoving)
+		{
+			isMoving = true;
+			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animations::RUN_LEFT);
+
+		}
 		position.x -= travel;
+	}
+		
 
 	/*if (!moveRight && position.x > 10 || moveRight && position.x < -10)
 		moveRight = !moveRight;

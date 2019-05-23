@@ -22,8 +22,10 @@ AnimationComponent::AnimationComponent(const AnimationComponent &ani)
 
 void AnimationComponent::update(float elapsedTime)
 {
-	if (current_animation == Animations::RUN)
-		run(elapsedTime);
+	if (current_animation == Animations::RUN_LEFT)
+		runLeft(elapsedTime);
+	else if (current_animation == Animations::RUN_RIGHT)
+		runRight(elapsedTime);
 	else if (current_animation == Animations::IDLE)
 		idle(elapsedTime);
 	else if (current_animation == Animations::ATTACK)
@@ -49,6 +51,10 @@ void AnimationComponent::draw(std::map<std::string, Graphics::mesh> &meshes, std
 
 void AnimationComponent::setAnimation(Animations animation)
 {
+	//To prevent past animations from affecting the new one
+	rig.setRotation({ 0,0,0 });
+
+	//Starting the animation over
 	current_rotation = 0.0f;
 
 	current_animation = animation;
@@ -81,6 +87,18 @@ void AnimationComponent::run(float elapsedTime)
 	rig.getNode("ll_l").setRotation({ current_rotation,0, 0 });
 	rig.getNode("rl_u").setRotation({ 90 - current_rotation - 45,0, 0 });
 	rig.getNode("rl_l").setRotation({ 90 - current_rotation,0, 0 });
+}
+
+void AnimationComponent::runLeft(float elapsedTime)
+{
+	run(elapsedTime);
+	rig.setRotation({ 0,-90,0 });
+}
+
+void AnimationComponent::runRight(float elapsedTime)
+{
+	run(elapsedTime);
+	rig.setRotation({ 0,90,0 });
 }
 
 void AnimationComponent::idle(float elapsedTime)
