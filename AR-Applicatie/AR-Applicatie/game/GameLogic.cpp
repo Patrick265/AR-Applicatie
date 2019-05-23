@@ -72,6 +72,7 @@ void GameLogic::update(float deltaTime)
 		for (Projectile* projectile : projectiles)
 			if (projectile->isActive && wildling->isHit(projectile->getPosition().x, projectile->getPosition().y))
 				projectile->hasHit();
+
 }
 
 void GameLogic::throwProjectile(float xVelocity, float yVelocity)

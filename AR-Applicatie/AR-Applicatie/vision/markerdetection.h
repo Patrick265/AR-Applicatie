@@ -13,8 +13,10 @@ class markerdetection {
 	 void excecuteOpenCVDetection();
 
 public:
+	// typesafe enums
 	enum class DetectionMode {opencv,mouse};
 
+	//struct for passing the x and y
 	struct Point2D {
 		float x, y;
 	};
@@ -27,7 +29,7 @@ public:
 	//	@param int input is for switching the mode between mouse and openCV
 	//
 	*/
-	 void runMarkerDetection(DetectionMode mode);
+	void runMarkerDetection(DetectionMode mode);
 
 	/*
 	//	This function is used for terminating the OpenCV windows.

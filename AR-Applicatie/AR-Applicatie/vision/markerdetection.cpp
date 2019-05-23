@@ -183,7 +183,6 @@ void markerdetection::drawBounds(cv::Mat drawImg)
 	//Draw Vertical raster
 	cv::line(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO, height), CV_RGB(255, 255, 255), 2);
 	cv::line(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height), CV_RGB(255, 255, 255), 2);
-
 }
 
 /*
@@ -272,7 +271,6 @@ void markerdetection::calibrate()
 		lowS -= 2;
 	}
 	lowS = (upperS + lowerS) / 2;
-	
 }
 
 /*
@@ -281,12 +279,9 @@ void markerdetection::calibrate()
 */
 void markerdetection::excecuteMouseDetection() 
 {
-
 	originalBlobImg = cv::imread("Resources/Vision/Black_Picture.jpg");
 
 	blobImg = originalBlobImg;
-
-	cv::imshow("binair beeld", blobImg);
 
 	cv::setMouseCallback("binair beeld", mouseCallback);
 
@@ -294,21 +289,16 @@ void markerdetection::excecuteMouseDetection()
 	height = 480;
 
 	blobImg = originalBlobImg.clone();
-	drawBounds(blobImg);
-
-	checkAllBounds(blobImg);
-
+	
 	//Showing the text
 	cv::imshow("binair beeld", blobImg);
 	cv::resizeWindow("binair beeld", 640, 480);
 
-
-		if (cv::waitKey(5) == 32) {
+		if (cv::waitKey(1) == 32) {
 			terminateDetection();
 			changeDetectionMode();
 			runMarkerDetection(getDetectionMode());
 		}
-	
 }
 
 /*
@@ -317,7 +307,7 @@ void markerdetection::excecuteMouseDetection()
 */
 void markerdetection::excecuteOpenCVDetection() 
 {
-		cap >> frame;
+		cap.read(frame);
 		if (frame.empty()) {
 			try
 			{
@@ -347,8 +337,7 @@ void markerdetection::excecuteOpenCVDetection()
 		//Showing the text
 		cv::imshow("binair beeld", blobImg);
 
-
-		if (cv::waitKey(5) == 32) {
+		if (cv::waitKey(1) == 32) {
 			terminateDetection();
 			changeDetectionMode();
 			runMarkerDetection(getDetectionMode());
@@ -364,26 +353,25 @@ void markerdetection::excecuteOpenCVDetection()
 void markerdetection::runMarkerDetection(markerdetection::DetectionMode mode)
 {
 	if (mode == markerdetection::DetectionMode::opencv) {
+			resetBlobDetector();
 
-		resetBlobDetector();
-
-		if (!cap.isOpened()) {
-			try
-			{
-				exception.noCameraDetected();
+			if (!cap.isOpened()) {
+				try
+				{
+					exception.noCameraDetected();
+				}
+				catch (Exceptions e)
+				{
+					std::cout << "Exception: " << e.getExceptionMessage() << std::endl;
+				}
 			}
-			catch (Exceptions e)
-			{
-				std::cout << "Exception: " << e.getExceptionMessage() << std::endl;
-			}
-		}
 
-		width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
-		height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+			width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
+			height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
 
-		//calibrate();
+			calibrate();
 
-		excecuteOpenCVDetection();
+			excecuteOpenCVDetection();
 	}
 	if (mode == markerdetection::DetectionMode::mouse) {
 		excecuteMouseDetection();

@@ -109,9 +109,7 @@ int main(int argc, char** argv) {
 
 	glutWarpPointer(width / 2, height / 2);
 
-	//std::thread openCV(runOpencCVThread);
-	//openCV.join();
-	
+	std::thread openv(runOpencCVThread);
 
 	glutMainLoop();
 
@@ -150,14 +148,14 @@ void onIdle()
 
 	gameLogic.update(deltaTime);
 
-	m.runMarkerDetection(markerdetection::DetectionMode::opencv);
-
 	glutPostRedisplay();
 }
 
 void runOpencCVThread()
 {
-	//runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
+	while (true) {
+		m.runMarkerDetection(markerdetection::DetectionMode::opencv);
+	}	
 }
 
 void onDisplay()
