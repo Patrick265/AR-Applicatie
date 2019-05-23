@@ -16,11 +16,11 @@ int main(int argc, char** argv)
 	data->initGlut(argc, argv, onIdle, onDisplay);
 	data->initResources();
 
-	stateHandler.setState(StateHandler::States::MENU);
+	stateHandler.setState(StateHandler::States::GAME);
 
 	//std::thread openCV(runOpenCVThread);
 	//openCV.join();
-	runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
+	// runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
 
 	glutMainLoop();
 }
