@@ -13,6 +13,10 @@ class AnimationComponent : public Component
 	// Animations loop forward and backward, this tracks whether they are going forward or backward.
 	bool ani_forward;
 
+	//The maximum rotation for the attack animation
+	const float ATTACK_MAX_ROTATION = 160.0f;
+
+
 public:
 
 	// The animations that can be chosen
@@ -39,6 +43,11 @@ public:
 		@param animation - The given animation
 	*/
 	void setAnimation(Animation animation);
+
+	/*
+		Returns the currently selected animation
+	*/
+	const Animation &getCurrentAnimation() { return current_animation; }
 
 private:
 

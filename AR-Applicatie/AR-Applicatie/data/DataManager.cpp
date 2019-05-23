@@ -279,6 +279,9 @@ void DataManager::initRigParts()
 	textures["elf_sack"] = TextureHandler::addTexture("Resources/Rigid_NPC/NPC_big_sack.png", textures.size());
 	meshes["elf_sack"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_big_sack.obj");
 
+	textures["log"] = TextureHandler::addTexture("Resources/Weapons/weapon_log.png", textures.size());
+	meshes["log"] = ObjLoader::loadObj("Resources/Weapons/weapon_log.obj");
+
 	/*
 	GOBLIN
 	*/
@@ -312,6 +315,7 @@ void DataManager::initRigParts()
 
 	textures["goblin_ra_icicle"] = TextureHandler::addTexture("Resources/Enemy/icicle.png", textures.size());
 	meshes["goblin_ra_icicle"] = ObjLoader::loadObj("Resources/Enemy/icicle.obj");
+
 }
 
 void DataManager::initGameLogicModels()
