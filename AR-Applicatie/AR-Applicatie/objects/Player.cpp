@@ -5,11 +5,11 @@
 
 Player::Player()
 {
-	position = {0, 21, -0.5};
+	position = { 0, 21, -0.5 };
 	maxSpeed = 10;
 	targetX = 0;
 	isDead = false;
-	isMoving = false;
+	currentAction = Action::IDLE;
 }
 
 void Player::spawn()
@@ -24,41 +24,39 @@ void Player::update(float deltaTime)
 	if (isDead)
 		return;
 
-	float travel = deltaTime * maxSpeed;
+	float velocity = deltaTime * maxSpeed;
 
-	if (position.x == targetX) 
+	//Currently running
+	if (currentAction == Action::RUNLEFT || currentAction == Action::RUNRIGHT)
 	{
+		//Close to cursor
+		if (abs(position.x - targetX) < velocity)
+		{
+			if (currentAction != Action::IDLE)
+			{
+				//Set action to idle
+				currentAction = Action::IDLE;
+				getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::IDLE);
+				position.x = targetX;
+			}
+		}
+		//To the left of the target
+		else if (position.x < targetX)
+		{
+			toRight(velocity);
+		}
+		//To the right of the target
+		else if (position.x > targetX)
+		{
+			toLeft(velocity);
+		}
 	}
-	if (abs(position.x - targetX) < travel) 
+	//If Idle/Attacking
+	else
 	{
-		if (isMoving)
-		{
-			isMoving = false;
-			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animations::IDLE);
-		}
-		//position.x = targetX;
-	}		
-	else if (position.x < targetX) 
-	{
-		if (!isMoving)
-		{
-			isMoving = true;
-			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animations::RUN_RIGHT);
-
-		}
-		position.x += travel;
-	}		
-	else 
-	{
-		if (!isMoving)
-		{
-			isMoving = true;
-			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animations::RUN_LEFT);
-
-		}
-		position.x -= travel;
+		onIdle(velocity);
 	}
-		
+
 
 	/*if (!moveRight && position.x > 10 || moveRight && position.x < -10)
 		moveRight = !moveRight;
@@ -71,4 +69,61 @@ void Player::update(float deltaTime)
 void Player::kill()
 {
 	// TODO: Add kill logic
+}
+
+void Player::onIdle(float velocity)
+{
+	//If outside the idle distance
+	if (abs(position.x - targetX) >= velocity * 20)
+	{
+		//To the left of the target
+		if (position.x < targetX)
+		{
+			currentAction = Action::RUNRIGHT;
+			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_RIGHT);
+
+		}
+		//To the right of the target
+		else if (position.x > targetX)
+		{
+			currentAction = Action::RUNLEFT;
+			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_LEFT);
+
+		}
+
+	}
+}
+
+void Player::toLeft(float velocity)
+{
+	//If currently moving left
+	if (currentAction == Action::RUNLEFT)
+	{
+		//Keep moving
+		position.x -= velocity;
+	}
+	//If not currently moving left
+	else
+	{
+		//Start moving right
+		currentAction = Action::RUNLEFT;
+		getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_LEFT);
+	}
+}
+
+void Player::toRight(float velocity)
+{
+	//If currently moving right
+	if (currentAction == Action::RUNRIGHT)
+	{
+		//Keep moving
+		position.x += velocity;
+	}
+	//If not currently moving right
+	else
+	{
+		//Start moving right
+		currentAction = Action::RUNRIGHT;
+		getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_RIGHT);
+	}
 }

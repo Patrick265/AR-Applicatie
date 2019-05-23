@@ -16,7 +16,7 @@ class AnimationComponent : public Component
 public:
 
 	// The animations that can be chosen
-	enum class Animations { RUN_LEFT, RUN_RIGHT, IDLE, ATTACK, CLIMB };
+	enum class Animation { RUN_LEFT, RUN_RIGHT, IDLE, ATTACK, CLIMB };
 
 	AnimationComponent(Rig rig);
 	AnimationComponent(const AnimationComponent &animation_handler);
@@ -38,12 +38,12 @@ public:
 
 		@param animation - The given animation
 	*/
-	void setAnimation(Animations animation);
+	void setAnimation(Animation animation);
 
 private:
 
 	// The currently selected animation
-	Animations current_animation;
+	Animation current_animation;
 
 	// The animations
 	void run(float elapsedTime);
