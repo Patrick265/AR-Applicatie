@@ -33,6 +33,12 @@ public:
 	// Storage for all game meshes and textures
 	std::map<std::string, Graphics::mesh> meshes;
 	std::map<std::string, uint16_t> textures;
+
+	std::vector<std::string> weaponList;
+	std::map<std::string, Math::vec3d> weaponMap;
+	std::string currentWeapon = "log";
+	void determineNextWeapon();
+
 	int cursorId;
 	int loadingId;
 

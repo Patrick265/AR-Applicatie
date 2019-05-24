@@ -63,6 +63,8 @@ private:
 	void attack(float elapsedTime);
 	void climb(float elapsedTime);
 
+	Math::vec3d convertCoordinates(Math::vec3d posCords, Math::vec3d parent);
+
 	// For the attack animation, it matches the rotation of the character with the position of the cursor
 	void positionToRotation(int y);
 };

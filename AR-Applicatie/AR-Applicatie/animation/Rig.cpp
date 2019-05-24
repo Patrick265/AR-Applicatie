@@ -44,6 +44,7 @@ void Rig::rigFemaleElf()
 	Math::vec3d big_sack = { 0.0f,0.0f, 0.32386f };
 
 	Math::vec3d weapon_log = {0.667523f,-0.030498f, 0.71092f};
+	Math::vec3d weapon_weights = {0.0f,0.0f,0.820919f};
 
 
 	/* HEAD
@@ -125,9 +126,14 @@ void Rig::rigFemaleElf()
 		_pos, _rot);
 
 		_pos = convertCoordinates(weapon_log, arm_left_bottom);
-	Node elf_weapon_log("la_weapon", "log",
-		"log",
+	Node elf_weapon("la_weapon", "none",
+		"none",
 		_pos, _rot);
+
+	//_pos = convertCoordinates(weapon_weights, arm_left_bottom);
+	//Node elf_weapon_weights("la_weapon_2", "weights",
+	//	"weights",
+	//	_pos, _rot);
 
 
 	//Setting the parent/child relations
@@ -152,7 +158,7 @@ void Rig::rigFemaleElf()
 
 
 	//Storing the nodes
-	nodes["la_weapon"] = elf_weapon_log;
+	nodes["la_weapon"] = elf_weapon;
 
 	nodes["neck"] = elf_neck;
 	nodes["head"] = elf_head;

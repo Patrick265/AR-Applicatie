@@ -281,6 +281,11 @@ void DataManager::initRigParts()
 
 	textures["log"] = TextureHandler::addTexture("Resources/Weapons/weapon_log.png", textures.size());
 	meshes["log"] = ObjLoader::loadObj("Resources/Weapons/weapon_log.obj");
+	weaponMap["log"] = { 0.667523f,-0.030498f, 0.71092f };
+
+	textures["weights"] = TextureHandler::addTexture("Resources/Weapons/weights.png", textures.size());
+	meshes["weights"] = ObjLoader::loadObj("Resources/Weapons/weights.obj");
+	weaponMap["weights"] = { 0.0f,0.0f,0.820919f };
 
 	/*
 	GOBLIN
@@ -336,6 +341,21 @@ void DataManager::initGameLogicModels()
 	meshes["packet"] = ObjLoader::loadObj("Resources/Pakketje/Pakketje.obj");
 
 	textures["brick"] = TextureHandler::addTexture("Resources/Weapons/Brick.png", textures.size());
+}
+
+void DataManager::determineNextWeapon()
+{
+	int number = rand() % weaponMap.size();
+	int pos = 0;
+	for (auto const& x : weaponMap)
+	{
+		if (number == pos)
+		{
+			currentWeapon = x.first;
+			break;
+		}
+		pos += 1;
+	}
 }
 
 void DataManager::initWorldMapModels()

@@ -110,7 +110,7 @@ void GameLogic::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std
 void GameLogic::throwProjectile(float xVelocity, float yVelocity)
 {
 	Projectile *p = new Projectile(player->getPosition().x, xVelocity, yVelocity);
-	p->addComponent(new StaticComponent("log", "log"));
+	p->addComponent(new StaticComponent(DataManager::getInstance().currentWeapon, DataManager::getInstance().currentWeapon));
 	p->setScale(Math::vec3d{ 1.0,1.0,1.0 });
 	projectiles.push_back(p);
 }
@@ -171,6 +171,7 @@ void GameLogic::handleMouse()
 		{
 			throwProjectile((last.x - first.x) * 0.1, (first.y - last.y) * 0.1);
 			canThrow = false;
+			DataManager::getInstance().determineNextWeapon();
 		}
 	}
 }

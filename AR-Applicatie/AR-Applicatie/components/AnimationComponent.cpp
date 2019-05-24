@@ -149,6 +149,7 @@ void AnimationComponent::attack(float elapsedTime)
 
 	if (current_rotation <= 0.0f) 
 	{
+
 		rig.getNode("la_weapon").setMesh("none");
 		rig.getNode("la_weapon").setTexture("none");
 		current_rotation = 0.0f;
@@ -157,8 +158,12 @@ void AnimationComponent::attack(float elapsedTime)
 	else if (current_rotation >= ATTACK_MAX_ROTATION)
 	{
 		current_rotation = ATTACK_MAX_ROTATION;
-		rig.getNode("la_weapon").setMesh("log");
-		rig.getNode("la_weapon").setTexture("log");
+		rig.getNode("la_weapon").setMesh(DataManager::getInstance().currentWeapon);
+		rig.getNode("la_weapon").setTexture(DataManager::getInstance().currentWeapon);
+		Math::vec3d arm_left= { 0.61229f , 0.068894f ,1.45316f };
+		Math::vec3d arm_right = { -0.605497f, 0.112396f, 1.48285f };
+
+		rig.getNode("la_weapon").setPosition(convertCoordinates(DataManager::getInstance().weaponMap[DataManager::getInstance().currentWeapon],arm_left));
 	}
 		
 
@@ -203,3 +208,14 @@ void AnimationComponent::climb(float elapsedTime)
 	rig.getNode("rl_u").setRotation({ -90 + current_rotation,0, 0 });
 	rig.getNode("rl_l").setRotation({ 90 - current_rotation,0, 0 });
 }
+
+Math::vec3d AnimationComponent::convertCoordinates(Math::vec3d posCords, Math::vec3d parent)
+{
+	Math::vec3d convertedCords;
+	convertedCords.x = posCords.x - parent.x;
+	convertedCords.y = posCords.z - parent.z;
+	convertedCords.z = -posCords.y - (-parent.y);
+
+	return convertedCords;
+}
+
