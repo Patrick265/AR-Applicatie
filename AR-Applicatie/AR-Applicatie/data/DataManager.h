@@ -48,7 +48,7 @@ public:
 		float
 			posX = 0,
 			posY = 15,
-			posZ = 20,
+			posZ = 21,
 			rotX = 20,
 			rotY = 0;
 	} camera;

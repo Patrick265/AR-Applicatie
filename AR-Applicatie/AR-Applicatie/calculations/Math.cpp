@@ -5,7 +5,7 @@
 
 
 
-Math::vec3d Math::vector_add(vec3d vec1, vec3d vec2)
+Math::vec3d Math::vector_add(const vec3d &vec1, const vec3d &vec2)
 {
 	vec3d new_vec;
 	new_vec.x = vec1.x + vec2.x;
@@ -15,7 +15,7 @@ Math::vec3d Math::vector_add(vec3d vec1, vec3d vec2)
 	return new_vec;
 }
 
-Math::vec3d Math::vector_sub(vec3d vec1, vec3d vec2)
+Math::vec3d Math::vector_sub(const vec3d &vec1, const vec3d &vec2)
 {
 	vec3d new_vec;
 	new_vec.x = vec1.x - vec2.x;
@@ -25,7 +25,18 @@ Math::vec3d Math::vector_sub(vec3d vec1, vec3d vec2)
 	return new_vec;
 }
 
-Math::vec3d Math::matrix_multiplyVector(mat4x4 mat, vec3d vec)
+Math::vec3d Math::vector_getInverse(const vec3d & vec)
+{
+	vec3d inv_vec;
+
+	inv_vec.x = vec.x * -1;
+	inv_vec.y = vec.y * -1;
+	inv_vec.z = vec.z * -1;
+
+	return inv_vec;
+}
+
+Math::vec3d Math::matrix_multiplyVector(const mat4x4 &mat, const vec3d &vec)
 {
 	vec3d new_vec;
 	new_vec.x = vec.x * mat.m[0][0] + vec.y * mat.m[1][0] + vec.z * mat.m[2][0] + vec.w * mat.m[3][0];
@@ -36,7 +47,7 @@ Math::vec3d Math::matrix_multiplyVector(mat4x4 mat, vec3d vec)
 	return new_vec;
 }
 
-Math::mat4x4 Math::matrix_multiplyMatrix(mat4x4 mat1, mat4x4 mat2)
+Math::mat4x4 Math::matrix_multiplyMatrix(const mat4x4 &mat1, const mat4x4 &mat2)
 {
 	mat4x4 new_mat;
 
@@ -52,7 +63,7 @@ Math::mat4x4 Math::matrix_multiplyMatrix(mat4x4 mat1, mat4x4 mat2)
 	return new_mat;
 }
 
-Math::vec3d Math::normalize(vec3d v)
+Math::vec3d Math::normalize(const vec3d &v)
 {
 	vec3d new_vec;
 	float l = sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
@@ -64,12 +75,12 @@ Math::vec3d Math::normalize(vec3d v)
 	return new_vec;
 }
 
-float Math::dotProduct(vec3d v1, vec3d v2)
+float Math::dotProduct(const vec3d &v1, const vec3d &v2)
 {
 	return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
 }
 
-Math::vec3d Math::crossProduct(vec3d v1, vec3d v2)
+Math::vec3d Math::crossProduct(const vec3d &v1, const vec3d &v2)
 {
 	vec3d new_vec;
 	new_vec.x = v1.y*v2.z - v1.z*v2.y;

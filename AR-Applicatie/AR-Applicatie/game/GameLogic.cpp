@@ -33,7 +33,7 @@ GameLogic::GameLogic()
 	//player->addComponent(new StaticComponent("cube", "none"));
 	player->addComponent(new AnimationComponent(Rig("elf", Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 })));
 	player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK);
-	player->setPosition(Math::vec3d{ 10,19.8,-2 });
+	player->setPosition(Math::vec3d{ 10,20.2,-2 });
 
 }
 

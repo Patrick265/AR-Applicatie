@@ -120,7 +120,8 @@ void DataManager::standardRenderOperations() const
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-
+		
+	
 	//Lighting
 	glEnable(GL_LIGHT0);
 	glEnable(GL_LIGHTING);
@@ -334,8 +335,9 @@ void DataManager::initGameLogicModels()
 	textures["giant"] = TextureHandler::addTexture("Resources/Rune/giant.png", textures.size());
 	meshes["giant"] = ObjLoader::loadObj("Resources/Rune/giant.obj");
 	
-	textures["skybox"] = TextureHandler::addTexture("Resources/Skybox/skybox.jpg", textures.size());
+	textures["skybox"] = TextureHandler::addTexture("Resources/Skybox/stars.jpg", textures.size());
 	meshes["skybox"] = ObjLoader::loadObj("Resources/Skybox/skybox.obj");
+	Graphics::inverseNormals(meshes["skybox"]);
 	
 	textures["packet"] = TextureHandler::addTexture("Resources/Pakketje/Pakketje.png", textures.size());
 	meshes["packet"] = ObjLoader::loadObj("Resources/Pakketje/Pakketje.obj");
