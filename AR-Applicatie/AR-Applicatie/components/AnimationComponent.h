@@ -20,7 +20,7 @@ class AnimationComponent : public Component
 public:
 
 	// The animations that can be chosen
-	enum class Animation { RUN_LEFT, RUN_RIGHT, IDLE, ATTACK, CLIMB };
+	enum class Animation { RUN_LEFT, RUN_RIGHT, IDLE, ATTACK_MOUSE, FALL, CLIMB, PULL_UP, ATTACK_LEFT, ATTACK_RIGHT, CHEER };
 
 	AnimationComponent(Rig rig);
 	AnimationComponent(const AnimationComponent &animation_handler);
@@ -34,7 +34,7 @@ public:
 		@param deltaTime - The amount of time that has passed since the last frame
 		@param cursor_pos_y - The y axis of the cursor, used for the attack animation
 	*/
-	void update(float elapsedTime) override;
+	void update(const float elapsedTime) override;
 
 	/*
 		Sets the current animation
@@ -42,7 +42,7 @@ public:
 
 		@param animation - The given animation
 	*/
-	void setAnimation(Animation animation);
+	void setAnimation(const Animation &animation);
 
 	/*
 		Returns the currently selected animation
@@ -55,16 +55,22 @@ private:
 	Animation current_animation;
 
 	// The animations
-	void run(float elapsedTime);
-	void runLeft(float elapsedTime);
-	void runRight(float elapsedTime);
+	void run(const float elapsedTime);
+	void runLeft(const float elapsedTime);
+	void runRight(const float elapsedTime);
 
-	void idle(float elapsedTime);
-	void attack(float elapsedTime);
-	void climb(float elapsedTime);
+	void idle(const float elapsedTime);
+	void attackMouse(const float elapsedTime);
+	void climb(const float elapsedTime);
 
-	Math::vec3d convertCoordinates(Math::vec3d posCords, Math::vec3d parent);
+	void attack(const float elapsedTime);
+	void attackLeft(const float elapsedTime);
+	void attackRight(const float elapsedTime);
+
+	void cheer(const float elapsedTime);
+
+	Math::vec3d convertCoordinates(const Math::vec3d &posCords, const Math::vec3d &parent);
 
 	// For the attack animation, it matches the rotation of the character with the position of the cursor
-	void positionToRotation(int y);
+	void positionToRotation(const int y);
 };

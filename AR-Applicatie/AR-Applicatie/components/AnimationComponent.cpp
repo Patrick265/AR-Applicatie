@@ -21,7 +21,7 @@ AnimationComponent::AnimationComponent(const AnimationComponent &ani)
 {
 }
 
-void AnimationComponent::update(float elapsedTime)
+void AnimationComponent::update(const float elapsedTime)
 {
 	if (current_animation == Animation::RUN_LEFT)
 		runLeft(elapsedTime);
@@ -29,8 +29,12 @@ void AnimationComponent::update(float elapsedTime)
 		runRight(elapsedTime);
 	else if (current_animation == Animation::IDLE)
 		idle(elapsedTime);
-	else if (current_animation == Animation::ATTACK)
-		attack(elapsedTime);
+	else if (current_animation == Animation::ATTACK_MOUSE)
+		attackMouse(elapsedTime);
+	else if (current_animation == Animation::ATTACK_LEFT)
+		attackLeft(elapsedTime);
+	else if (current_animation == Animation::ATTACK_RIGHT)
+		attackRight(elapsedTime);
 	else if (current_animation == Animation::CLIMB)
 		climb(elapsedTime);
 }
@@ -50,10 +54,13 @@ void AnimationComponent::draw(std::map<std::string, Graphics::mesh> &meshes, std
 	glPopMatrix();
 }
 
-void AnimationComponent::setAnimation(Animation animation)
+void AnimationComponent::setAnimation(const Animation &animation)
 {
 	//To prevent past animations from affecting the new one
 	rig.setRotation({ 0,0,0 });
+
+	//Idem
+	rig.getNode("torso").setRotation({ 0,0,0 });
 
 	//Starting the animation over
 	current_rotation = 0.0f;
@@ -61,23 +68,21 @@ void AnimationComponent::setAnimation(Animation animation)
 	current_animation = animation;
 }
 
-void AnimationComponent::positionToRotation(int y)
+void AnimationComponent::positionToRotation(const int y)
 {
 	const auto height = DataManager::getInstance().height;
 
-	//With 100 pixels away from the centre it reaches maximum rotation, 160 degrees
-	
+		
 	//int numer = Y_TRIGGER_DISTANCE;
 	//Ensures the rotation is 160 at the top trigger area of the screen, and 0 at the bottom trigger area of the screen
-	//current_rotation = -y * 1.6f;
 	float rotation_per_pixel = ATTACK_MAX_ROTATION / (height - (y_trigger_distance * 2));
 
 	//Inverse, because 0 == 160 degrees rotation
-	// -Y_TRIGGER_DISTANCE, because the rotation has to end when entering the trigger area
+	// -y_trigger_distance, because the rotation has to end when entering the trigger area
 	current_rotation = ATTACK_MAX_ROTATION - ((y-y_trigger_distance) * rotation_per_pixel);
 }
 
-void AnimationComponent::run(float elapsedTime)
+void AnimationComponent::run(const float elapsedTime)
 {
 	if (ani_forward)
 		current_rotation += 150.0f * elapsedTime;
@@ -100,19 +105,19 @@ void AnimationComponent::run(float elapsedTime)
 	rig.getNode("rl_l").setRotation({ 90 - current_rotation,0, 0 });
 }
 
-void AnimationComponent::runLeft(float elapsedTime)
+void AnimationComponent::runLeft(const float elapsedTime)
 {
 	run(elapsedTime);
 	rig.setRotation({ 0,-90,0 });
 }
 
-void AnimationComponent::runRight(float elapsedTime)
+void AnimationComponent::runRight(const float elapsedTime)
 {
 	run(elapsedTime);
 	rig.setRotation({ 0,90,0 });
 }
 
-void AnimationComponent::idle(float elapsedTime)
+void AnimationComponent::idle(const float elapsedTime)
 {
 	if (ani_forward)
 		current_rotation += 5.0f * elapsedTime;
@@ -139,7 +144,7 @@ void AnimationComponent::idle(float elapsedTime)
 	rig.getNode("rl_l").setRotation({ 10 - current_rotation,0, 0 });
 }
 
-void AnimationComponent::attack(float elapsedTime)
+void AnimationComponent::attackMouse(const float elapsedTime)
 {
 	// Get mousePos and screen height
 	const auto mousePos = DataManager::getInstance().mousePos;
@@ -182,7 +187,7 @@ void AnimationComponent::attack(float elapsedTime)
 	rig.getNode("rl_l").setRotation({ leg_rotation,0, 0 });
 }
 
-void AnimationComponent::climb(float elapsedTime)
+void AnimationComponent::climb(const float elapsedTime)
 {
 	rig.setRotation({ 0,180,0 });
 
@@ -196,6 +201,7 @@ void AnimationComponent::climb(float elapsedTime)
 	else if (current_rotation >= 90.0f)
 		ani_forward = false;
 
+//	rig.addRotation({ -30, 0, 0 });
 	rig.getNode("torso").setRotation({ -30,0,0 });
 
 	rig.getNode("la_u").setRotation({ -current_rotation - 30, 0, 0 });
@@ -209,7 +215,67 @@ void AnimationComponent::climb(float elapsedTime)
 	rig.getNode("rl_l").setRotation({ 90 - current_rotation,0, 0 });
 }
 
-Math::vec3d AnimationComponent::convertCoordinates(Math::vec3d posCords, Math::vec3d parent)
+
+extern Player *player;
+void AnimationComponent::attack(const float elapsedTime)
+{
+	if (ani_forward)
+		current_rotation += 150.0f * elapsedTime;
+	else
+		current_rotation -= 150.0f * elapsedTime;
+
+	if (current_rotation <= 0.0f)
+		ani_forward = true;
+	else if (current_rotation >= 160.0f)
+		ani_forward = false;
+
+	//After one rotation of the animation, switch to the cheer animation
+	if (current_rotation <= 0.0f)
+	{
+		current_rotation = 0.0f;
+
+		setAnimation(Animation::CHEER);
+	}
+
+	else if (current_rotation >= ATTACK_MAX_ROTATION)
+	{
+		current_rotation = ATTACK_MAX_ROTATION;
+	}
+	
+	
+	rig.getNode("la_u").setRotation({ -current_rotation,0, 0 });
+	rig.getNode("la_l").setRotation({ -current_rotation,0, 0 });
+	rig.getNode("ra_u").setRotation({ -current_rotation,0, 0 });
+	rig.getNode("ra_l").setRotation({ -current_rotation,0, 0 });
+
+	float leg_rotation = current_rotation / 30.0f;
+
+	rig.getNode("torso").setPosition({ 0,5.5f+leg_rotation*0.01f, 0 });
+
+	rig.getNode("ll_u").setRotation({ -20,0, 0 });
+	rig.getNode("ll_l").setRotation({ leg_rotation + 10,0, 0 });
+	rig.getNode("rl_u").setRotation({ leg_rotation - 10,0, 0 });
+	rig.getNode("rl_l").setRotation({ leg_rotation,0, 0 });
+	
+}
+
+void AnimationComponent::attackLeft(const float elapsedTime)
+{
+	rig.setRotation({ 0,-90,0 });
+	attack(elapsedTime);
+}
+
+void AnimationComponent::attackRight(const float elapsedTime)
+{
+	rig.setRotation({ 0,90,0 });
+	attack(elapsedTime);
+}
+
+void AnimationComponent::cheer(const float elapsedTime)
+{
+}
+
+Math::vec3d AnimationComponent::convertCoordinates(const Math::vec3d &posCords, const Math::vec3d &parent)
 {
 	Math::vec3d convertedCords;
 	convertedCords.x = posCords.x - parent.x;

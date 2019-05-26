@@ -30,9 +30,8 @@ GameLogic::GameLogic()
 	skybox->setScale({ 1,1,1 });
 
 	player = new Player();
-	//player->addComponent(new StaticComponent("cube", "none"));
 	player->addComponent(new AnimationComponent(Rig("elf", Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 })));
-	player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK);
+	player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_MOUSE);
 	player->setPosition(Math::vec3d{ 10,20.2,-2 });
 
 }
@@ -69,10 +68,10 @@ void GameLogic::update(float deltaTime)
 	counter += deltaTime;
 	if (counter > 0.5 && wildlings.size() < 5)
 	{
-		Wildling *wildling = new Wildling(rand() % 20 - 10);
+		Wildling *wildling = new Wildling(player, rand() % 20 - 10);
 		wildling->addComponent(new AnimationComponent(Rig("goblin", Math::vec3d{ 0,0,0 }, Math::vec3d{ 0.5,0.5,0.5 })));//new StaticComponent("giant", "giant"));
 		wildling->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::CLIMB);
-
+	
 		wildlings.push_back(wildling);
 		counter = 0;
 	}
@@ -111,6 +110,9 @@ void GameLogic::throwProjectile(float xVelocity, float yVelocity)
 {
 	Projectile *p = new Projectile(player->getPosition().x, xVelocity, yVelocity);
 	p->addComponent(new StaticComponent(DataManager::getInstance().currentWeapon, DataManager::getInstance().currentWeapon));
+
+
+	
 	p->setScale(Math::vec3d{ 1.0,1.0,1.0 });
 	projectiles.push_back(p);
 }
