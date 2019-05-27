@@ -87,6 +87,12 @@
     <ClCompile Include="util\MousePicking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="data\DataManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="calculations\Math.h">
@@ -159,6 +165,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="util\MousePicking.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="data\DataManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\Settings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

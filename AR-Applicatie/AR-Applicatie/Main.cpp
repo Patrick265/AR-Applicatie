@@ -16,6 +16,7 @@ int main(int argc, char** argv)
 	data->initResources();
 
 	data->stateHandler.setState(StateHandler::States::MENU);
+	
 
 	//std::thread openCV(runOpenCVThread);
 	//openCV.join();

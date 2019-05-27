@@ -12,6 +12,7 @@ MousePicking::MousePicking(GameObject *objects, int height, int x, int y)
 	this->cursorCounter = 0;
 	this->isCounting = false;
 	this->isSettingsScreen = false;
+	this->isChanges = false;
 	this->timePassed = 0;
 	this->cursorCounter = 0;
 }
@@ -21,10 +22,19 @@ MousePicking::~MousePicking()
 	
 }
 
-void MousePicking::checkSettings(int x, int y) {
-	if (y >= 20 && y <= 30 && x>=30 && x <= 170) {
+void MousePicking::checkSettings(int x, int y) 
+{
+	if ((y >= 20 && y <= 30 && x>=30 && x <= 190)||(y >= 250 && y <= 260 && x >= 580 && x <= 660)) {
 		this->isCounting = true;
 		this->isSettingsScreen = true;
+	}
+}
+
+void MousePicking::checkChanges(int x, int y)
+{
+	if (y >= 350 && y <= 360 && x >= 580 && x <= 660) {
+		this->isCounting = true;
+		this->isChanges = true;
 	}
 }
 
@@ -72,6 +82,7 @@ void MousePicking::searchObject(int cursorX, int cursorY)
 
 void MousePicking::update(int cursorX, int cursorY, int height, float time) 
 {
+	//std::cout << "x,y: " << cursorX << " : " << cursorY << std::endl;
 	if (!isCounting) {
 		this->windowHeight = height;
 		if (abs(cursorX - lastX) <= 2 && abs(cursorY - lastY) <= 2) {
@@ -79,6 +90,9 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 			if (cursorCounter >= 1.5f && timePassed <= 1.6f) {
 				searchObject(cursorX, cursorY);
 				checkSettings(cursorX, cursorY);
+				if (dataMP->settingsActive == true) {
+					checkChanges(cursorX, cursorY);
+				}
 				cursorCounter = 0;
 			}
 		}
@@ -89,18 +103,26 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 	else {
 		if (abs(cursorX - lastX) <= 5 && abs(cursorY - lastY) <= 5) {
 			timePassed += time;
-			
 			if (timePassed >= 3.0f && timePassed <= 3.1f) {
 				if (isSettingsScreen) {
-					std::cout << "settings screen selected" << std::endl;
-					if (dataMP->settingsActive == true) {
-						dataMP->settingsActive = false;
-					}
-					else {
-						dataMP->settingsActive = true;
-					}
+					
+						std::cout << "settings screen selected" << std::endl;
+						if (dataMP->settingsActive == true) {
+							dataMP->settingsActive = false;
+						}
+						else {
+							dataMP->settingsActive = true;
+						}
+						isCounting = false;
+						isSettingsScreen = false;
+						timePassed = 0;
+					
+				}
+				else if (isChanges) {
+					std::cout << "changes activated" << std::endl;
+					dataMP->settings.changeDifficulty();
 					isCounting = false;
-					isSettingsScreen = false;
+					isChanges = false;
 					timePassed = 0;
 				}
 				else {

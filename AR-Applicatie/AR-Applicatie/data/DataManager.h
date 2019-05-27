@@ -2,6 +2,7 @@
 
 #include "../vision/markerdetection.h"
 #include "../states/StateHandler.h"
+#include "../game/Settings.h"
 
 class DataManager
 {
@@ -17,6 +18,9 @@ class DataManager
 public:
 	// State handler
 	StateHandler stateHandler;
+
+	// Settings
+	Settings settings;
 
 	// Screen dimensions
 	float width;
@@ -39,6 +43,7 @@ public:
 	std::map<std::string, uint16_t> textures;
 	int cursorId;
 	int loadingId;
+	int settingsId;
 
 	// Camera struct and instance (rendering position)
 	struct Camera

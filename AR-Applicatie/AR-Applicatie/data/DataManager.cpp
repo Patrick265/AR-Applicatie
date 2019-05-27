@@ -130,7 +130,7 @@ void DataManager::displayInfo() const
 {
 	// Create a string that displays the fps, current camera location and rotation
 	auto text =
-		"->SELECT SETTINGS\nfps " + std::to_string(int(1 / deltaTime)) +
+		"->SELECT SETTINGS<-\nfps " + std::to_string(int(1 / deltaTime)) +
 		"\nx " + std::to_string(camera.posX) +
 		"\ny " + std::to_string(camera.posY) +
 		"\nz " + std::to_string(camera.posZ) +
@@ -164,6 +164,10 @@ void DataManager::displayInfo() const
 		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
 	}
 
+	if (settingsActive) {
+		displaySettings();
+	}
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, this->loadingId);
@@ -192,9 +196,7 @@ void DataManager::displayInfo() const
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
 
-	if (settingsActive) {
-		displaySettings();
-	}
+	
 
 }
 
@@ -252,6 +254,7 @@ void DataManager::initResources()
 	cursorId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png", textures.size());
 	//Loading ID
 	this->loadingId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon_loading.png", textures.size());
+	this->settingsId = TextureHandler::addTexture("Resources/Settings/SettingsBackground.png", textures.size());
 	glutSetCursor(GLUT_CURSOR_NONE);
 }
 
@@ -355,15 +358,36 @@ void DataManager::displaySettings() const
 	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glBindTexture(GL_TEXTURE_2D, cursorId);
+	glBindTexture(GL_TEXTURE_2D, settingsId);
 	glEnable(GL_TEXTURE_2D);
 	glBegin(GL_QUADS);
 
-	glTexCoord2f(0, 0); glVertex2f(400, 100);
-	glTexCoord2f(0, 1); glVertex2f(400, 600);
-	glTexCoord2f(1, 1); glVertex2f(900, 600);
-	glTexCoord2f(1, 0); glVertex2f(900, 100);
+	glTexCoord2f(0, 0); glVertex2f(1100, 100);
+	glTexCoord2f(0, 1); glVertex2f(1100, 700);
+	glTexCoord2f(1, 1); glVertex2f(-100, 700);
+	glTexCoord2f(1, 0); glVertex2f(-100, 100);
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
+
+	std::string dif = settings.getDifficultyString();
+	auto settingsInfo =
+		"                         ->RETURN<-"
+		"\n\n\nWidth:        " + std::to_string(settings.resX) +
+		"\nHeight:       " + std::to_string(settings.resY) +
+		"\nDifficulty:   " + dif + "     ->CHANGE<-";
+
+	glRasterPos2f(350, 260);
+	const int len = settingsInfo.length();
+	auto yPosSettings = 260;
+	for (auto i = 0; i < len; i++)
+	{
+		if (settingsInfo[i] == '\n')
+		{
+			yPosSettings += 20;
+			glRasterPos2f(350, yPosSettings);
+			continue;
+		}
+		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, settingsInfo[i]);
+	}
 }

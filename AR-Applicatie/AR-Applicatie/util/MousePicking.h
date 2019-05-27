@@ -20,6 +20,7 @@ private:
 	//Variable which determines if the mousepicker counts how long the mouse is on the object
 	bool isCounting;
 	bool isSettingsScreen;
+	bool isChanges;
 	
 
 public:
@@ -37,6 +38,7 @@ public:
 	void searchObject(int cursorX, int cursorY);
 
 	void checkSettings(int x, int y);
+	void checkChanges(int x, int y);
 
 	/*
 	The method is called from main to check if the position of the cursor has changed and updates the time which has passed since the last change
