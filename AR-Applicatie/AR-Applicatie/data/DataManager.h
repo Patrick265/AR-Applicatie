@@ -15,6 +15,9 @@ class DataManager
 	void initWorldMapModels();
 
 public:
+	// State handler
+	StateHandler stateHandler;
+
 	// Screen dimensions
 	float width;
 	float height;

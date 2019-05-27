@@ -2,7 +2,6 @@
 #include <GL/freeglut.h>
 
 DataManager *data = &DataManager::getInstance();
-StateHandler stateHandler;
 
 float deltaTime;
 float lastFrameTime;
@@ -16,7 +15,7 @@ int main(int argc, char** argv)
 	data->initGlut(argc, argv, onIdle, onDisplay);
 	data->initResources();
 
-	stateHandler.setState(StateHandler::States::GAME);
+	data->stateHandler.setState(StateHandler::States::GAME);
 
 	//std::thread openCV(runOpenCVThread);
 	//openCV.join();
@@ -35,7 +34,7 @@ void onIdle()
 	if (deltaTime < 0 || deltaTime > 1)
 		return;
 
-	stateHandler.update(deltaTime);
+	data->stateHandler.update(deltaTime);
 	data->updateCamera();
 
 	// // Check for vision mouse updates
@@ -50,7 +49,7 @@ void onIdle()
 void onDisplay()
 {
 	data->standardRenderOperations();
-	stateHandler.draw(data->meshes, data->textures);
+	data->stateHandler.draw(data->meshes, data->textures);
 	data->displayInfo();
 
 	glutSwapBuffers();

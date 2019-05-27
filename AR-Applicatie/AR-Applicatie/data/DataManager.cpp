@@ -9,10 +9,9 @@ extern float deltaTime;
 extern float lastFrameTime;
 
 DataManager::DataManager()
-	: width(1280), height(720), mousePos(), mouseControl(true), cursorId(), scaleLoading()
+	: width(1280), height(720), mousePos(), scaleLoading(), mouseControl(true), cursorId(), loadingId(0)
 {
 	keys.resize(255);
-
 }
 
 /*
