@@ -304,7 +304,10 @@ void DataManager::initRigParts()
 	meshes["fish"] = ObjLoader::loadObj("Resources/Weapons/weapon_fish.obj");
 	weaponMap["fish"] = { 0.811473f,0.14979f,-0.108852f};
 
-
+	///Secret weapon
+	//textures["go"] = TextureHandler::addTexture("Resources/Weapons/weapon_go.png", textures.size());
+	//meshes["go"] = ObjLoader::loadObj("Resources/Weapons/weapon_go.obj");
+	//weaponMap["go"] = { 0.716873f,0.053516f,-0.114973 };
 
 	textures["weapon_elf"] = TextureHandler::addTexture("Resources/Weapons/weapon_elf.png", textures.size());
 	meshes["weapon_elf"] = ObjLoader::loadObj("Resources/Weapons/weapon_elf.obj");

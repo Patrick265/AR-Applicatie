@@ -373,7 +373,25 @@ void AnimationComponent::cheer(const float elapsedTime)
 
 void AnimationComponent::fall(const float elapsedTime)
 {
+	if (ani_forward)
+		current_rotation += 80.0f * elapsedTime;
+	else
+		current_rotation -= 80.0f * elapsedTime;
 
+	if (current_rotation <= 0.0f)
+		ani_forward = true;
+
+	rig.getNode("torso").setRotation({ current_rotation,0,2.5f - current_rotation });
+
+	rig.getNode("la_u").setRotation({ -current_rotation *4 - 90, 0, current_rotation });
+	rig.getNode("la_l").setRotation({ current_rotation *4 / 3 - 100 ,0, -current_rotation });
+	rig.getNode("ra_u").setRotation({ -current_rotation *4 + 90,0, -current_rotation });
+	rig.getNode("ra_l").setRotation({ current_rotation *4 / 3 - 100  ,0, current_rotation });
+
+	rig.getNode("ll_u").setRotation({ -current_rotation * 2 - 90, 0, 0 });
+	rig.getNode("ll_l").setRotation({ current_rotation * 2 / 3 - 100 ,0, 0 });
+	rig.getNode("rl_u").setRotation({ -current_rotation * 2 + 90,0, 0 });
+	rig.getNode("rl_l").setRotation({ current_rotation * 2 / 3 - 100  ,0, 0 });
 }
 
 Math::vec3d AnimationComponent::convertCoordinates(const Math::vec3d &posCords, const Math::vec3d &parent)

@@ -99,6 +99,7 @@ void Wildling::update(float deltaTime)
 					getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_RIGHT);
 
 				player->setCurrentAction(Player::Action::FALLING);
+				player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::FALL);
 				player->setPosition({ player->getPosition().x, player->getPosition().y, 1 });
 			}
 		}
