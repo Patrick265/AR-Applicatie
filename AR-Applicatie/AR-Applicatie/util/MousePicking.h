@@ -19,6 +19,7 @@ private:
 	float timePassed;
 	//Variable which determines if the mousepicker counts how long the mouse is on the object
 	bool isCounting;
+	//DataManager *data;
 	
 
 public:

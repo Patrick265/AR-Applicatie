@@ -1,6 +1,8 @@
 #include "../util/MousePicking.h"
 #include "../data/DataManager.h"
 
+DataManager *dataMP = &DataManager::getInstance();
+
 MousePicking::MousePicking(GameObject *objects, int height, int x, int y)
 {
 	this->objectsToCheck = objects;
@@ -11,6 +13,7 @@ MousePicking::MousePicking(GameObject *objects, int height, int x, int y)
 	this->isCounting = false;
 	this->timePassed = 0;
 	this->cursorCounter = 0;
+	//this->data = &DataManager::getInstance();
 }
 
 MousePicking::~MousePicking()
@@ -87,7 +90,7 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 				std::cout << "selected the game!!" << std::endl;
 				isCounting = false;
 				timePassed = 0;
-				
+				dataMP->stateHandler.setState(StateHandler::States::GAME);
 			}
 			
 		}
