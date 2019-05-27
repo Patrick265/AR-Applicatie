@@ -362,10 +362,10 @@ void DataManager::displaySettings() const
 	glEnable(GL_TEXTURE_2D);
 	glBegin(GL_QUADS);
 
-	glTexCoord2f(0, 0); glVertex2f(1100, 100);
-	glTexCoord2f(0, 1); glVertex2f(1100, 700);
-	glTexCoord2f(1, 1); glVertex2f(-100, 700);
-	glTexCoord2f(1, 0); glVertex2f(-100, 100);
+	glTexCoord2f(0, 0); glVertex2f(1100, 150);
+	glTexCoord2f(0, 1); glVertex2f(1100, 500);
+	glTexCoord2f(1, 1); glVertex2f(-100, 500);
+	glTexCoord2f(1, 0); glVertex2f(-100, 150);
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);

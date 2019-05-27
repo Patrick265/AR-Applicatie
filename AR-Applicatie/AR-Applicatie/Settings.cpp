@@ -5,6 +5,9 @@ Settings::Settings() {
 	resY = 720;
 	currentDifficulty = Difficulty::Medium;
 	currentInput = Input::Mouse;
+	isChangeDif = false;
+	isChangeInput = false;
+	isSettingsScreen = false;
 }
 
 std::string Settings::getDifficultyString()const
