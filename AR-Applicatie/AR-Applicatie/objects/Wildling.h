@@ -14,7 +14,7 @@ private:
 	// Reference to the player
 	Player *player;
 
-	enum class Action { CLIMB, RUNLEFT, RUNRIGHT, ATTACK, FALLING };
+	enum class Action { CLIMB, RUNLEFT, RUNRIGHT, PULL_UP, ATTACK, FALLING, CHEER };
 	Action currentAction;
 
 public:

@@ -23,20 +23,39 @@ AnimationComponent::AnimationComponent(const AnimationComponent &ani)
 
 void AnimationComponent::update(const float elapsedTime)
 {
-	if (current_animation == Animation::RUN_LEFT)
+	switch (current_animation) 
+	{
+	case Animation::RUN_LEFT:
 		runLeft(elapsedTime);
-	else if (current_animation == Animation::RUN_RIGHT)
+		break;
+	case Animation::RUN_RIGHT:
 		runRight(elapsedTime);
-	else if (current_animation == Animation::IDLE)
+		break;
+	case Animation::IDLE:
 		idle(elapsedTime);
-	else if (current_animation == Animation::ATTACK_MOUSE)
+		break;
+	case Animation::ATTACK_MOUSE:
 		attackMouse(elapsedTime);
-	else if (current_animation == Animation::ATTACK_LEFT)
+		break;
+	case Animation::ATTACK_LEFT:
 		attackLeft(elapsedTime);
-	else if (current_animation == Animation::ATTACK_RIGHT)
+		break;
+	case Animation::ATTACK_RIGHT:
 		attackRight(elapsedTime);
-	else if (current_animation == Animation::CLIMB)
+		break;
+	case Animation::CLIMB:
 		climb(elapsedTime);
+		break;
+	case Animation::FALL:
+		fall(elapsedTime);
+		break;
+	case Animation::PULL_UP:
+		pullUp(elapsedTime);
+		break;
+	case Animation::CHEER:
+		cheer(elapsedTime);
+		break;
+	}
 }
 
 void AnimationComponent::draw(std::map<std::string, Graphics::mesh> &meshes, std::map<std::string, uint16_t> &textures)
@@ -201,7 +220,6 @@ void AnimationComponent::climb(const float elapsedTime)
 	else if (current_rotation >= 90.0f)
 		ani_forward = false;
 
-//	rig.addRotation({ -30, 0, 0 });
 	rig.getNode("torso").setRotation({ -30,0,0 });
 
 	rig.getNode("la_u").setRotation({ -current_rotation - 30, 0, 0 });
@@ -215,10 +233,20 @@ void AnimationComponent::climb(const float elapsedTime)
 	rig.getNode("rl_l").setRotation({ 90 - current_rotation,0, 0 });
 }
 
-
-extern Player *player;
 void AnimationComponent::attack(const float elapsedTime)
 {
+	//Making sure the goblin stops wielding icepicks after the climb is done
+	if (rig.getNode("la_weapon").getMesh() != "none")
+	{
+		rig.getNode("la_weapon").setMesh("none");
+		rig.getNode("la_weapon").setTexture("none");
+
+		rig.getNode("ra_weapon").setMesh("none");
+		rig.getNode("ra_weapon").setTexture("none");
+	}
+
+
+
 	if (ani_forward)
 		current_rotation += 150.0f * elapsedTime;
 	else
@@ -241,8 +269,7 @@ void AnimationComponent::attack(const float elapsedTime)
 	{
 		current_rotation = ATTACK_MAX_ROTATION;
 	}
-	
-	
+		
 	rig.getNode("la_u").setRotation({ -current_rotation,0, 0 });
 	rig.getNode("la_l").setRotation({ -current_rotation,0, 0 });
 	rig.getNode("ra_u").setRotation({ -current_rotation,0, 0 });
@@ -271,8 +298,82 @@ void AnimationComponent::attackRight(const float elapsedTime)
 	attack(elapsedTime);
 }
 
+void AnimationComponent::pullUp(const float elapsedTime)
+{
+	rig.setRotation({ 0,180,0 });
+
+	if (ani_forward)
+		current_rotation += 150.0f * elapsedTime;
+	else
+		current_rotation -= 150.0f * elapsedTime;
+
+	if (current_rotation <= 0.0f)
+		ani_forward = true;
+	else if (current_rotation >= 160.0f)
+		ani_forward = false;
+
+	//After one rotation of the animation, switch to the cheer animation
+	if (current_rotation <= 0.0f)
+	{
+		current_rotation = 0.0f;
+
+		setAnimation(Animation::RUN_LEFT);
+	}
+
+	else if (current_rotation >= ATTACK_MAX_ROTATION)
+	{
+		current_rotation = ATTACK_MAX_ROTATION;
+	}
+
+	rig.getNode("la_u").setRotation({ -current_rotation,0, 0 });
+	rig.getNode("la_l").setRotation({ -current_rotation,0, 0 });
+	rig.getNode("ra_u").setRotation({ -current_rotation,0, 0 });
+	rig.getNode("ra_l").setRotation({ -current_rotation,0, 0 });
+
+	float leg_rotation = current_rotation / 30.0f;
+
+	rig.getNode("torso").setPosition({ 0,5.5f + leg_rotation * 0.01f, 0 });
+
+	rig.getNode("ll_u").setRotation({ -20,0, 0 });
+	rig.getNode("ll_l").setRotation({ leg_rotation + 10,0, 0 });
+	rig.getNode("rl_u").setRotation({ leg_rotation - 10,0, 0 });
+	rig.getNode("rl_l").setRotation({ leg_rotation,0, 0 });
+
+}
+
 void AnimationComponent::cheer(const float elapsedTime)
 {
+	
+
+
+	if (ani_forward)
+		current_rotation += 80.0f * elapsedTime;
+	else
+		current_rotation -= 80.0f * elapsedTime;
+
+	if (current_rotation <= 0.0f)
+		ani_forward = true;
+	else if (current_rotation >= 100.0f)
+		ani_forward = false;
+
+	rig.getNode("torso").setRotation({ 0,0,2.5f-current_rotation/20 });
+
+	rig.getNode("la_u").setRotation({ -current_rotation - 30, 0, current_rotation/2 });
+	rig.getNode("la_l").setRotation({ current_rotation / 5 - 100 ,0, -current_rotation / 2 });
+	rig.getNode("ra_u").setRotation({ -90 + current_rotation ,0, -current_rotation/2 });
+	rig.getNode("ra_l").setRotation({ current_rotation / 5 - 100  ,0, current_rotation / 2 });
+
+	
+	rig.getNode("ll_u").setRotation({ -current_rotation, 0, 0 });
+	rig.getNode("ll_l").setRotation({ current_rotation, 0, 0 });
+	rig.getNode("rl_u").setRotation({ -100 + current_rotation,0, 0 });
+	rig.getNode("rl_l").setRotation({ 100 - current_rotation,0, 0 });
+	
+}
+
+void AnimationComponent::fall(const float elapsedTime)
+{
+
 }
 
 Math::vec3d AnimationComponent::convertCoordinates(const Math::vec3d &posCords, const Math::vec3d &parent)

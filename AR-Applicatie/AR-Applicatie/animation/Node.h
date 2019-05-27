@@ -73,6 +73,8 @@ public:
 
 	Math::vec3d getPosition();
 
+	const std::string &getMesh() { return mesh; }
+
 	/*
 		Sets the rotation of the Node
 

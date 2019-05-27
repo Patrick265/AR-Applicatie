@@ -67,7 +67,9 @@ private:
 	void attackLeft(const float elapsedTime);
 	void attackRight(const float elapsedTime);
 
+	void pullUp(const float elapsedTime);
 	void cheer(const float elapsedTime);
+	void fall(const float elapsedTime);
 
 	Math::vec3d convertCoordinates(const Math::vec3d &posCords, const Math::vec3d &parent);
 

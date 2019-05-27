@@ -8,7 +8,7 @@ Wildling::Wildling(Player *player, float x)
 	this->player = player;
 
 	position.x = x;
-	position.y = 5; //--8
+	position.y = 7; //--8
 	position.z = 1;
 	velocity.y = 1;
 	currentAction = Action::CLIMB;
@@ -34,22 +34,36 @@ void Wildling::update(float deltaTime)
 	{
 		position.y += deltaTime * velocity.y;
 
-		if (position.y >= 17.5) {
-			if (position.x > player->getPosition().x)
-			{
-				currentAction = Action::RUNLEFT;
-				getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_LEFT);
-				velocity.x = -1.0f;
-			}
-			else
-			{
-				currentAction = Action::RUNRIGHT;
-				getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_RIGHT);
-				velocity.x = 1.0f;
-			}
-			//Putting the goblin on the wall
-			position.z = -0.5f;
+		if (position.y >= 14.5) 
+		{
+			currentAction = Action::PULL_UP;
+			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::PULL_UP);
+					
 		}
+	}
+	//Pulling up
+	else if (currentAction == Action::PULL_UP) 
+	{
+		//Do not go further until the pull-up animation is finished
+		if (getComponent<AnimationComponent>()->getCurrentAnimation() == AnimationComponent::Animation::PULL_UP)
+			return;
+
+		position.y = 17.5;
+
+		if (position.x > player->getPosition().x)
+		{
+			currentAction = Action::RUNLEFT;
+			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_LEFT);
+			velocity.x = -1.0f;
+		}
+		else
+		{
+			currentAction = Action::RUNRIGHT;
+			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_RIGHT);
+			velocity.x = 1.0f;
+		}
+		//Putting the goblin on the wall
+		position.z = -0.5f;
 	}
 	//Move left or right
 	else if (currentAction == Action::RUNLEFT || currentAction == Action::RUNRIGHT)
@@ -57,6 +71,7 @@ void Wildling::update(float deltaTime)
 		//If the player is falling, all goblins start to cheer when they are on the wall
 		if (player->getCurrentAction() == Player::Action::FALLING)
 		{
+			currentAction = Action::CHEER;
 			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::CHEER);
 		}
 		else
