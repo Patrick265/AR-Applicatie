@@ -29,6 +29,7 @@ GameLogic::GameLogic()
 	skybox->addComponent(new StaticComponent("skybox", "skybox"));
 	skybox->setPosition({ 0,0,0 });
 	skybox->setScale({ 1,1,1 });
+	skybox->setPosition({-160,0,0});
 
 	player = new Player();
 	player->addComponent(new AnimationComponent(Rig("elf", Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 })));
