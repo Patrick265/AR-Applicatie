@@ -130,7 +130,7 @@ void DataManager::displayInfo() const
 {
 	// Create a string that displays the fps, current camera location and rotation
 	auto text =
-		"fps " + std::to_string(int(1 / deltaTime)) +
+		"->SELECT SETTINGS\nfps " + std::to_string(int(1 / deltaTime)) +
 		"\nx " + std::to_string(camera.posX) +
 		"\ny " + std::to_string(camera.posY) +
 		"\nz " + std::to_string(camera.posZ) +

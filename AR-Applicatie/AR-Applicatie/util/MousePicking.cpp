@@ -11,14 +11,21 @@ MousePicking::MousePicking(GameObject *objects, int height, int x, int y)
 	this->lastY = y;
 	this->cursorCounter = 0;
 	this->isCounting = false;
+	this->isSettingsScreen = false;
 	this->timePassed = 0;
 	this->cursorCounter = 0;
-	//this->data = &DataManager::getInstance();
 }
 
 MousePicking::~MousePicking()
 {
 	
+}
+
+void MousePicking::checkSettings(int x, int y) {
+	if (y >= 20 && y <= 30 && x>=30 && x <= 170) {
+		this->isCounting = true;
+		this->isSettingsScreen = true;
+	}
 }
 
 void MousePicking::searchObject(int cursorX, int cursorY)
@@ -46,7 +53,7 @@ void MousePicking::searchObject(int cursorX, int cursorY)
 		&y,
 		&z
 	);
-	std::cout << "xyz: " << x << ", " << y << ", " << z << std::endl;
+	//std::cout << "xyz: " << x << ", " << y << ", " << z << std::endl;
 	const double xIcon = objectsToCheck->getPosition().x;
 	const double yIcon = objectsToCheck->getPosition().y;
 	const double zIcon = objectsToCheck->getPosition().z;
@@ -62,7 +69,6 @@ void MousePicking::searchObject(int cursorX, int cursorY)
 	{
 		
 	}
-	
 }
 
 void MousePicking::update(int cursorX, int cursorY, int height, float time) 
@@ -73,6 +79,7 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 			cursorCounter += time;
 			if (cursorCounter >= 1.5f && timePassed <= 1.6f) {
 				searchObject(cursorX, cursorY);
+				checkSettings(cursorX, cursorY);
 				cursorCounter = 0;
 			}
 		}
@@ -82,15 +89,22 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 	}
 	else {
 		if (abs(cursorX - lastX) <= 5 && abs(cursorY - lastY) <= 5) {
-			std::cout << "entered" << time << std::endl;
+			//std::cout << "entered" << time << std::endl;
 			timePassed += time;
 			
 			if (timePassed >= 3.0f && timePassed <= 3.1f) {
-				
-				std::cout << "selected the game!!" << std::endl;
-				isCounting = false;
-				timePassed = 0;
-				dataMP->stateHandler.setState(StateHandler::States::GAME);
+				if (isSettingsScreen) {
+					std::cout << "settings screen selected" << std::endl;
+					isCounting = false;
+					isSettingsScreen = false;
+					timePassed = 0;
+				}
+				else {
+					//std::cout << "selected the game!!" << std::endl;
+					isCounting = false;
+					timePassed = 0;
+					dataMP->stateHandler.setState(StateHandler::States::GAME);
+				}
 			}
 			
 		}
@@ -100,6 +114,7 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 		}
 		DataManager::getInstance().scaleLoading = timePassed * 10;
 	}
+	
 	lastX = cursorX;
 	lastY = cursorY;
 }
