@@ -20,7 +20,7 @@ class AnimationComponent : public Component
 public:
 
 	// The animations that can be chosen
-	enum class Animation { RUN_LEFT, RUN_RIGHT, IDLE, ATTACK_MOUSE, FALL, CLIMB, PULL_UP, ATTACK_LEFT, ATTACK_RIGHT, CHEER };
+	enum class Animation { RUN_LEFT, RUN_RIGHT, IDLE, ATTACK_MOUSE, FALL, CLIMB, PULL_UP, ATTACK_LEFT, ATTACK_RIGHT, CHEER, PAUSE };
 
 	AnimationComponent(Rig rig);
 	AnimationComponent(const AnimationComponent &animation_handler);
@@ -70,6 +70,8 @@ private:
 	void pullUp(const float elapsedTime);
 	void cheer(const float elapsedTime);
 	void fall(const float elapsedTime);
+
+	void pause(const float elapsedTime);
 
 	Math::vec3d convertCoordinates(const Math::vec3d &posCords, const Math::vec3d &parent);
 

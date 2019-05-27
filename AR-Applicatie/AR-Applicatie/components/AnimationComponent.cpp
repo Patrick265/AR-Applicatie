@@ -55,6 +55,10 @@ void AnimationComponent::update(const float elapsedTime)
 	case Animation::CHEER:
 		cheer(elapsedTime);
 		break;
+	case Animation::PAUSE:
+		pause(elapsedTime);
+		break;
+
 	}
 }
 
@@ -238,22 +242,12 @@ void AnimationComponent::climb(const float elapsedTime)
 
 void AnimationComponent::attack(const float elapsedTime)
 {
-	//Making sure the goblin stops wielding icepicks after the climb is done
-	if (rig.getNode("la_weapon").getMesh() != "none")
-	{
-		rig.getNode("la_weapon").setMesh("none");
-		rig.getNode("la_weapon").setTexture("none");
-
-		rig.getNode("ra_weapon").setMesh("none");
-		rig.getNode("ra_weapon").setTexture("none");
-	}
-
-
-
+	
+	   
 	if (ani_forward)
-		current_rotation += 150.0f * elapsedTime;
+		current_rotation += 250.0f * elapsedTime;
 	else
-		current_rotation -= 150.0f * elapsedTime;
+		current_rotation -= 250.0f * elapsedTime;
 
 	if (current_rotation <= 0.0f)
 		ani_forward = true;
@@ -303,16 +297,19 @@ void AnimationComponent::attackRight(const float elapsedTime)
 
 void AnimationComponent::pullUp(const float elapsedTime)
 {
+	//Making sure the goblin stops wielding icepicks after the climb is done
+	if (rig.getNode("la_weapon").getMesh() != "none")
+	{
+		rig.getNode("la_weapon").setMesh("none");
+		rig.getNode("la_weapon").setTexture("none");
+
+		rig.getNode("ra_weapon").setMesh("none");
+		rig.getNode("ra_weapon").setTexture("none");
+	}
+
 	rig.setRotation({ 0,180,0 });
 
-//	if (ani_forward)
 	current_rotation += 80.0f * elapsedTime;
-	//else
-	//	current_rotation -= 80.0f * elapsedTime;
-
-	//if (current_rotation <= 0.0f)
-		
-	//else if (current_rotation >= 140.0f)
 		
 
 	//After one rotation of the animation, switch to the cheer animation
@@ -320,19 +317,10 @@ void AnimationComponent::pullUp(const float elapsedTime)
 	{
 		ani_forward = true;
 		current_rotation = 0.0f;
-
-		//rig.getNode("torso").setPosition({ 0, 5.5f }); //5.5f + leg_rotation * 0.01f
-
-		//setAnimation(Animation::IDLE);
-		//setAnimation(Animation::IDLE);
 	}
 	else if (current_rotation > 140 && current_rotation < 280)
 	{
 		ani_forward = false;
-		//current_rotation = 140;
-
-		
-		//rig.getNode("torso").setPosition({ 0, 5.5f + 5 * 0.01f });
 	}
 	else if (current_rotation > 280)
 	{
@@ -351,9 +339,7 @@ void AnimationComponent::pullUp(const float elapsedTime)
 		float leg_rotation = current_rotation / 30.0f;
 		rig.getNode("torso").setRotation({ -30 + current_rotation / 5, 0, 0 });
 
-		rig.getNode("torso").setPosition({ 0, 5.5f + current_rotation / 19, current_rotation / 70 }); //5.5f + leg_rotation * 0.01f
-		//rig.getNode("torso").setPosition({ 0, 5.5f + leg_rotation * 0.01f });
-
+		rig.getNode("torso").setPosition({ 0, 5.5f + current_rotation / 19, current_rotation / 70 });
 
 		rig.getNode("ll_u").setRotation({ -current_rotation, 0, 0 });
 		rig.getNode("ll_l").setRotation({ current_rotation, 0, 0 });
@@ -363,36 +349,21 @@ void AnimationComponent::pullUp(const float elapsedTime)
 	//Second part of the pull-up
 	else
 	{
-		//Omhoog
-		//Minder ver draaien om x as
-
-		rig.getNode("la_u").setRotation({ 0, 0, 0 });
-		rig.getNode("la_l").setRotation({ 0, 0, 0 });
-		rig.getNode("ra_u").setRotation({ 0, 0, 0 });
-		rig.getNode("ra_l").setRotation({ 0, 0, 0 });
+		rig.getNode("la_u").setRotation({ (140 - ((current_rotation - 140) / 2)) - 90, 0, 0 });
+		rig.getNode("la_l").setRotation({ (140 - ((current_rotation - 140) / 2)) / 2 - 90, 0, 0 });
+		rig.getNode("ra_u").setRotation({ (140 - ((current_rotation - 140) / 2)) - 90 ,0, 0 });
+		rig.getNode("ra_l").setRotation({ (140 - ((current_rotation - 140) / 2)) / 2 - 90, 0, 0 });
 
 		float leg_rotation = current_rotation / 30.0f;
-		//rig.getNode("torso").setRotation({ -30 + current_rotation / 5 }); //-30 + current_rotation / 10
 
-	//	rig.getNode("torso").setPosition({ 0, 15.0f + 1 -leg_rotation/2, 5 - leg_rotation/2 }); //5.5f + leg_rotation * 0.01f
-		
-		//rig.setRotation({ 0,360 - ((140 / (current_rotation)) * 180) ,0 });
 		rig.getNode("torso").setRotation({ -30 + ((140 / (current_rotation)) * 140) / 5, 0, 0 });
-
 		rig.getNode("torso").setPosition({ 0, 5.5f + ((2-(140 / current_rotation)) * 140) / 19, current_rotation / 70 }); //5.5f + leg_rotation * 0.01f
-		//rig.getNode("torso").setPosition({ 0, 5.5f + leg_rotation * 0.01f });
-
-	
-	
-	//rig.getNode("torso").setPosition({ 0, 5.5f + leg_rotation * 0.01f });
-
+		
 		rig.getNode("ll_u").setRotation({-140 + (((current_rotation/140) - 1)*140), 0, 0 });
 		rig.getNode("ll_l").setRotation({140 - (((current_rotation / 140) - 1) * 140), 0, 0 });
 		rig.getNode("rl_u").setRotation({ -90 + ((140 / (current_rotation)) * 140),0, 0 });
 		rig.getNode("rl_l").setRotation({ 90 - ((140 / (current_rotation)) * 140),0, 0 });
 	}
-	
-
 }
 
 void AnimationComponent::cheer(const float elapsedTime)
@@ -413,13 +384,11 @@ void AnimationComponent::cheer(const float elapsedTime)
 	rig.getNode("la_l").setRotation({ current_rotation / 5 - 100 ,0, -current_rotation / 2 });
 	rig.getNode("ra_u").setRotation({ -90 + current_rotation ,0, -current_rotation/2 });
 	rig.getNode("ra_l").setRotation({ current_rotation / 5 - 100  ,0, current_rotation / 2 });
-
-	
+		
 	rig.getNode("ll_u").setRotation({ -current_rotation, 0, 0 });
 	rig.getNode("ll_l").setRotation({ current_rotation, 0, 0 });
 	rig.getNode("rl_u").setRotation({ -100 + current_rotation,0, 0 });
-	rig.getNode("rl_l").setRotation({ 100 - current_rotation,0, 0 });
-	
+	rig.getNode("rl_l").setRotation({ 100 - current_rotation,0, 0 });	
 }
 
 void AnimationComponent::fall(const float elapsedTime)
@@ -443,6 +412,11 @@ void AnimationComponent::fall(const float elapsedTime)
 	rig.getNode("ll_l").setRotation({ current_rotation * 2 / 3 - 100 ,0, 0 });
 	rig.getNode("rl_u").setRotation({ -current_rotation * 2 + 90,0, 0 });
 	rig.getNode("rl_l").setRotation({ current_rotation * 2 / 3 - 100  ,0, 0 });
+}
+
+void AnimationComponent::pause(const float elapsedTime)
+{
+	rig.setRotation({ 0,180,0 });
 }
 
 Math::vec3d AnimationComponent::convertCoordinates(const Math::vec3d &posCords, const Math::vec3d &parent)

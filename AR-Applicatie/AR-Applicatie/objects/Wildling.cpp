@@ -8,7 +8,7 @@ Wildling::Wildling(Player *player, std::vector<Wildling *> *wildlings, float x)
 	this->wildlings = wildlings;
 
 	position.x = x;
-	position.y = 7; //--8
+	position.y = -8;
 	position.z = 1;
 	velocity.y = 1;
 	currentAction = Action::CLIMB;
@@ -36,17 +36,22 @@ void Wildling::update(float deltaTime)
 
 		if (position.y >= 12.5) 
 		{
-			/*
+			
 			// Check for wildling above
 			for (auto && other : *wildlings)
 			{
 				if (other != this && other->position.y > 14.5 && abs(other->position.x - position.x) < 2)
 				{
 					position.y -= deltaTime * velocity.y;
+
+					//Make them use no animation until the way is clear
+					getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::PAUSE);
+
+
 					return;
 				}
 			}
-			*/
+			
 			currentAction = Action::PULL_UP;
 			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::PULL_UP);
 		}
@@ -64,13 +69,13 @@ void Wildling::update(float deltaTime)
 		{
 			currentAction = Action::RUNLEFT;
 			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_LEFT);
-			velocity.x = -1.0f;
+			velocity.x = -2.0f;
 		}
 		else
 		{
 			currentAction = Action::RUNRIGHT;
 			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_RIGHT);
-			velocity.x = 1.0f;
+			velocity.x = 2.0f;
 		}
 		//Putting the goblin on the wall
 		position.z = -0.5f;
