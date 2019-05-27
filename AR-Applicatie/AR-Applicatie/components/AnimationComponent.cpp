@@ -84,6 +84,9 @@ void AnimationComponent::setAnimation(const Animation &animation)
 	//Starting the animation over
 	current_rotation = 0.0f;
 
+	//Making sure the animation starts off going forward
+	ani_forward = true;
+
 	current_animation = animation;
 }
 
@@ -150,7 +153,7 @@ void AnimationComponent::idle(const float elapsedTime)
 
 	float idle_rotation = current_rotation * 0.003f;
 
-	rig.getNode("torso").setPosition({ 0,-idle_rotation, 0 });
+	//rig.getNode("torso").setPosition({ 0,-idle_rotation, 0 });
 
 	rig.getNode("la_u").setRotation({ -current_rotation * 0.5f, 0, 0 });
 	rig.getNode("la_l").setRotation({ -current_rotation,0, 0 });
@@ -302,50 +305,98 @@ void AnimationComponent::pullUp(const float elapsedTime)
 {
 	rig.setRotation({ 0,180,0 });
 
-	if (ani_forward)
-		current_rotation += 150.0f * elapsedTime;
-	else
-		current_rotation -= 150.0f * elapsedTime;
+//	if (ani_forward)
+	current_rotation += 80.0f * elapsedTime;
+	//else
+	//	current_rotation -= 80.0f * elapsedTime;
 
-	if (current_rotation <= 0.0f)
-		ani_forward = true;
-	else if (current_rotation >= 160.0f)
-		ani_forward = false;
+	//if (current_rotation <= 0.0f)
+		
+	//else if (current_rotation >= 140.0f)
+		
 
 	//After one rotation of the animation, switch to the cheer animation
-	if (current_rotation <= 0.0f)
+	if (current_rotation < 0.0f)
 	{
+		ani_forward = true;
 		current_rotation = 0.0f;
 
-		setAnimation(Animation::RUN_LEFT);
-	}
+		//rig.getNode("torso").setPosition({ 0, 5.5f }); //5.5f + leg_rotation * 0.01f
 
-	else if (current_rotation >= ATTACK_MAX_ROTATION)
+		//setAnimation(Animation::IDLE);
+		//setAnimation(Animation::IDLE);
+	}
+	else if (current_rotation > 140 && current_rotation < 280)
 	{
-		current_rotation = ATTACK_MAX_ROTATION;
+		ani_forward = false;
+		//current_rotation = 140;
+
+		
+		//rig.getNode("torso").setPosition({ 0, 5.5f + 5 * 0.01f });
+	}
+	else if (current_rotation > 280)
+	{
+		setAnimation(Animation::IDLE);
 	}
 
-	rig.getNode("la_u").setRotation({ -current_rotation,0, 0 });
-	rig.getNode("la_l").setRotation({ -current_rotation,0, 0 });
-	rig.getNode("ra_u").setRotation({ -current_rotation,0, 0 });
-	rig.getNode("ra_l").setRotation({ -current_rotation,0, 0 });
 
-	float leg_rotation = current_rotation / 30.0f;
+	//First part of the pull-up
+	if(ani_forward)
+	{
+		rig.getNode("la_u").setRotation({ current_rotation - 90, 0, 0 });
+		rig.getNode("la_l").setRotation({ current_rotation / 2 - 90, 0, 0 });
+		rig.getNode("ra_u").setRotation({ current_rotation - 90 ,0, 0 });
+		rig.getNode("ra_l").setRotation({ current_rotation / 2 - 90, 0, 0 });
 
-	rig.getNode("torso").setPosition({ 0,5.5f + leg_rotation * 0.01f, 0 });
+		float leg_rotation = current_rotation / 30.0f;
+		rig.getNode("torso").setRotation({ -30 + current_rotation / 5, 0, 0 });
 
-	rig.getNode("ll_u").setRotation({ -20,0, 0 });
-	rig.getNode("ll_l").setRotation({ leg_rotation + 10,0, 0 });
-	rig.getNode("rl_u").setRotation({ leg_rotation - 10,0, 0 });
-	rig.getNode("rl_l").setRotation({ leg_rotation,0, 0 });
+		rig.getNode("torso").setPosition({ 0, 5.5f + current_rotation / 19, current_rotation / 70 }); //5.5f + leg_rotation * 0.01f
+		//rig.getNode("torso").setPosition({ 0, 5.5f + leg_rotation * 0.01f });
+
+
+		rig.getNode("ll_u").setRotation({ -current_rotation, 0, 0 });
+		rig.getNode("ll_l").setRotation({ current_rotation, 0, 0 });
+		rig.getNode("rl_u").setRotation({ -90 + current_rotation,0, 0 });
+		rig.getNode("rl_l").setRotation({ 90 - current_rotation,0, 0 });
+	}
+	//Second part of the pull-up
+	else
+	{
+		//Omhoog
+		//Minder ver draaien om x as
+
+		rig.getNode("la_u").setRotation({ 0, 0, 0 });
+		rig.getNode("la_l").setRotation({ 0, 0, 0 });
+		rig.getNode("ra_u").setRotation({ 0, 0, 0 });
+		rig.getNode("ra_l").setRotation({ 0, 0, 0 });
+
+		float leg_rotation = current_rotation / 30.0f;
+		//rig.getNode("torso").setRotation({ -30 + current_rotation / 5 }); //-30 + current_rotation / 10
+
+	//	rig.getNode("torso").setPosition({ 0, 15.0f + 1 -leg_rotation/2, 5 - leg_rotation/2 }); //5.5f + leg_rotation * 0.01f
+		
+		//rig.setRotation({ 0,360 - ((140 / (current_rotation)) * 180) ,0 });
+		rig.getNode("torso").setRotation({ -30 + ((140 / (current_rotation)) * 140) / 5, 0, 0 });
+
+		rig.getNode("torso").setPosition({ 0, 5.5f + ((2-(140 / current_rotation)) * 140) / 19, current_rotation / 70 }); //5.5f + leg_rotation * 0.01f
+		//rig.getNode("torso").setPosition({ 0, 5.5f + leg_rotation * 0.01f });
+
+	
+	
+	//rig.getNode("torso").setPosition({ 0, 5.5f + leg_rotation * 0.01f });
+
+		rig.getNode("ll_u").setRotation({-140 + (((current_rotation/140) - 1)*140), 0, 0 });
+		rig.getNode("ll_l").setRotation({140 - (((current_rotation / 140) - 1) * 140), 0, 0 });
+		rig.getNode("rl_u").setRotation({ -90 + ((140 / (current_rotation)) * 140),0, 0 });
+		rig.getNode("rl_l").setRotation({ 90 - ((140 / (current_rotation)) * 140),0, 0 });
+	}
+	
 
 }
 
 void AnimationComponent::cheer(const float elapsedTime)
 {
-	
-
-
 	if (ani_forward)
 		current_rotation += 80.0f * elapsedTime;
 	else

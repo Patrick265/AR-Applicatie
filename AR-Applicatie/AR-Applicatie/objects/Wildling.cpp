@@ -36,6 +36,7 @@ void Wildling::update(float deltaTime)
 
 		if (position.y >= 12.5) 
 		{
+			/*
 			// Check for wildling above
 			for (auto && other : *wildlings)
 			{
@@ -45,10 +46,9 @@ void Wildling::update(float deltaTime)
 					return;
 				}
 			}
-
+			*/
 			currentAction = Action::PULL_UP;
 			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::PULL_UP);
-					
 		}
 	}
 	//Pulling up
