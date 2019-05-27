@@ -246,10 +246,11 @@ void DataManager::initResources()
 
 	//Cursor image
 	cursorId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png", textures.size());
-	//Loading ID
+		//Loading ID
 	this->loadingId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon_loading.png", textures.size());
 	this->backgroundImgId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetBackground.png", 0);
 	this->backgroundTextId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetText.png", 1);
+	this->fonttextId = TextureHandler::addTexture("Resources/Font/ExportedTest.png", textures.size());
 	glutSetCursor(GLUT_CURSOR_NONE);
 }
 
@@ -389,4 +390,41 @@ void DataManager::drawBackgroundScreen()
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
 }
+
+void DataManager::DrawScreenText() {
+	GLuint characterlist = glGenLists(256);
+	glTranslated(0, 20, 0);
+	for (int i = 0; i < 256; i++)
+	{
+		float characterx = (float)(i % 32) / 32.0f;
+		float charactery = (float)(i / 32) / 32.0f;
+		float size = 1 / 32.0f;
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBindTexture(GL_TEXTURE_2D, this->fonttextId);
+		glNewList(characterlist + i, GL_COMPILE);
+		glBegin(GL_QUADS);
+		glTexCoord2f(characterx, charactery);
+		glVertex2d(0, 1);
+		glTexCoord2f(characterx, charactery + size);
+		glVertex2i(0, 0);
+		glTexCoord2f(characterx + size, charactery + size);
+		glVertex2i(1, 0);
+		glTexCoord2f(characterx + size, charactery);
+		glVertex2i(1, 1);
+
+		
+		glEnd();
+		glTranslated(2, 0, 0);
+		glEndList();
+
+	}
+	
+	int size = 6;
+	glScalef(25.0f, 25.0f, 25.0f);
+	glListBase(characterlist);
+	glCallLists(6, GL_UNSIGNED_BYTE, "Lekker");
+}
+
 

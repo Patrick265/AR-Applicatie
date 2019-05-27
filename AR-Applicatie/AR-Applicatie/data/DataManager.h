@@ -37,6 +37,7 @@ public:
 	int loadingId;
 	int backgroundTextId;
 	int backgroundImgId;
+	int fonttextId;
 
 	// Camera struct and instance (rendering position)
 	struct Camera
@@ -76,4 +77,6 @@ public:
 	void initResources();
 
 	void drawBackgroundScreen();
+	void DrawScreenText();
+
 };
