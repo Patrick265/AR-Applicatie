@@ -7,7 +7,7 @@
 
 float counter = 0;
 
-std::queue<Point2D> mouseHistory;
+std::queue<markerdetection::Point2D> mouseHistory;
 const auto height = DataManager::getInstance().height;
 int y_trigger_distance = height / 4;
 bool canThrow = false;

@@ -23,7 +23,8 @@ public:
 	float height;
 
 	// Mouse position
-	Point2D mousePos;
+	markerdetection::Point2D mousePos;
+	markerdetection m;
 	float scaleLoading;
 
 	// Key positions (true is pressed)

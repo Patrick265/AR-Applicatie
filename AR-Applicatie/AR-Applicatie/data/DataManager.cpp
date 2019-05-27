@@ -55,6 +55,12 @@ void DataManager::onMotionData(int x, int y)
 {
 	if (mouseControl)
 		mousePos = { float(x), float(y) };
+	else if(!mouseControl)
+	{
+		markerdetection::Point2D normalized = m.getCoordinates();
+		mousePos = { normalized.x * width, normalized.y * height };
+	}
+
 	/*
 	 cursorX = x;
 	 cursorY = y;
