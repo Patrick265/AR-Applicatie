@@ -5,9 +5,10 @@
 #include "../components/AnimationComponent.h"
 #include "../data/DataManager.h"
 
+int sHeight;
+int yTriggerDistance;
+
 std::queue<Point2D> mouseHistory;
-const auto height = DataManager::getInstance().height;
-int y_trigger_distance = height / 4;
 bool canThrow = false;
 
 float counter = 0;
@@ -58,7 +59,7 @@ void GameLogic::update(float deltaTime)
 {
 	// Add elapsedTime
 	elapsedTime += std::chrono::milliseconds(static_cast<int>(deltaTime * 1000.0f));
-	spawnRate = std::min(elapsedTime.count() / 1000.0f, 10.0f);
+	spawnRate = std::min(elapsedTime.count() / 5000.0f, 10.0f);
 
 	// Check if game has been won
 	if (elapsedTime >= gameDuration)
@@ -82,7 +83,7 @@ void GameLogic::update(float deltaTime)
 
 	// Add wildling if there are too few
 	counter += deltaTime;
-	if (counter > (15.0f - spawnRate) * 0.1f)
+	if (counter > (13.0f - spawnRate) * 0.5f)
 	{
 		auto xPos = 0;
 		auto exit = false;
@@ -196,11 +197,14 @@ void GameLogic::handleMouse()
 	if (player->getCurrentAction() != Player::Action::ATTACK)
 		return;
 
+	sHeight = DataManager::getInstance().height;
+	yTriggerDistance = sHeight / 3.0f;
+
 	//If a weapon is not ready
 	if (!canThrow)
 	{
 		//If the mouse is within the trigger area at the top
-		if (mousePos.y - y_trigger_distance <= 0.0f) {
+		if (mousePos.y - yTriggerDistance <= 0.0f) {
 			//Throw
 			canThrow = true;
 		}
@@ -209,7 +213,7 @@ void GameLogic::handleMouse()
 	if (canThrow)
 	{
 		//If the mouse is within the trigger area at the bottom
-		if (mousePos.y + y_trigger_distance >= height)
+		if (mousePos.y + yTriggerDistance >= sHeight)
 		{
 			throwProjectile((last.x - first.x) * 0.1, (first.y - last.y) * 0.1);
 			canThrow = false;

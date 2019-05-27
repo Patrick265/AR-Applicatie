@@ -5,7 +5,7 @@
 #include "../data/DataManager.h"
 #include "../game/GameLogic.h"
 
-extern int y_trigger_distance;
+extern int yTriggerDistance;
 
 AnimationComponent::AnimationComponent(Rig rig)
 {
@@ -101,11 +101,11 @@ void AnimationComponent::positionToRotation(const int y)
 		
 	//int numer = Y_TRIGGER_DISTANCE;
 	//Ensures the rotation is 160 at the top trigger area of the screen, and 0 at the bottom trigger area of the screen
-	float rotation_per_pixel = ATTACK_MAX_ROTATION / (height - (y_trigger_distance * 2));
+	float rotation_per_pixel = ATTACK_MAX_ROTATION / (height - (yTriggerDistance * 2));
 
 	//Inverse, because 0 == 160 degrees rotation
 	// -y_trigger_distance, because the rotation has to end when entering the trigger area
-	current_rotation = ATTACK_MAX_ROTATION - ((y-y_trigger_distance) * rotation_per_pixel);
+	current_rotation = ATTACK_MAX_ROTATION - ((y-yTriggerDistance) * rotation_per_pixel);
 }
 
 void AnimationComponent::run(const float elapsedTime)
