@@ -1,7 +1,6 @@
 #pragma once
 #include "../objects/GameObject.h"
 #include "../objects/Player.h"
-#include <string>
 
 class Wildling: public GameObject
 {
@@ -11,8 +10,9 @@ private:
 
 	const float GRAVITY = 10.0f;
 
-	// Reference to the player
+	// Reference to the player and wildlings
 	Player *player;
+	std::vector<Wildling *> *wildlings;
 
 	enum class Action { CLIMB, RUNLEFT, RUNRIGHT, PULL_UP, ATTACK, FALLING, CHEER };
 	Action currentAction;
@@ -26,7 +26,7 @@ public:
 		@param x - The x position on which the wildling spawns
 
 	*/
-	Wildling(Player *player, float x);
+	Wildling(Player *player, std::vector<Wildling *> *wildlings, float x);
 
 	void spawn();
 	void update(float deltaTime);

@@ -5,12 +5,13 @@
 #include "../components/AnimationComponent.h"
 #include "../data/DataManager.h"
 
-float counter = 0;
-
 std::queue<Point2D> mouseHistory;
 const auto height = DataManager::getInstance().height;
 int y_trigger_distance = height / 4;
 bool canThrow = false;
+
+float counter = 0;
+float spawnRate = 0;
 
 GameLogic::GameLogic()
 {
@@ -34,6 +35,8 @@ GameLogic::GameLogic()
 	player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_MOUSE);
 	player->setPosition(Math::vec3d{ wallWidth / 2.0f,20.2,-2 });
 
+	gameDuration = std::chrono::duration<float, std::milli>(1 * 60 * 1000);
+	elapsedTime = std::chrono::duration<float, std::milli>(0);
 }
 
 GameLogic::~GameLogic()
@@ -52,6 +55,18 @@ void GameLogic::start()
 
 void GameLogic::update(float deltaTime)
 {
+	// Add elapsedTime
+	elapsedTime += std::chrono::milliseconds(static_cast<int>(deltaTime * 1000.0f));
+	spawnRate = std::min(elapsedTime.count() / 1000.0f, 10.0f);
+
+	// Check if game has been won
+	if (elapsedTime >= gameDuration)
+	{
+		// Game has been won!
+		// TODO: Win logic
+		// exit(1);
+	}
+
 	// Mouse logic
 	handleMouse();
 
@@ -66,9 +81,9 @@ void GameLogic::update(float deltaTime)
 
 	// Add wildling if there are too few
 	counter += deltaTime;
-	if (counter > 0.5 && wildlings.size() < 5)
+	if (counter > (15.0f - spawnRate) * 0.5f)
 	{
-		Wildling *wildling = new Wildling(player, rand() % wallWidth - wallWidth / 2.0f);
+		Wildling *wildling = new Wildling(player, &wildlings, rand() % wallWidth - wallWidth / 2.0f);
 		wildling->addComponent(new AnimationComponent(Rig("goblin", Math::vec3d{ 0,0,0 }, Math::vec3d{ 0.5,0.5,0.5 })));//new StaticComponent("giant", "giant"));
 		wildling->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::CLIMB);
 	

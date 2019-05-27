@@ -1,11 +1,11 @@
 #include "Wildling.h"
 #include "../util/ObjLoader.h"
 #include "../components/AnimationComponent.h"
-#include <string>
 
-Wildling::Wildling(Player *player, float x)
+Wildling::Wildling(Player *player, std::vector<Wildling *> *wildlings, float x)
 {
 	this->player = player;
+	this->wildlings = wildlings;
 
 	position.x = x;
 	position.y = 7; //--8
@@ -34,8 +34,18 @@ void Wildling::update(float deltaTime)
 	{
 		position.y += deltaTime * velocity.y;
 
-		if (position.y >= 14.5) 
+		if (position.y >= 12.5) 
 		{
+			// Check for wildling above
+			for (auto && other : *wildlings)
+			{
+				if (other != this && other->position.y > 14.5 && abs(other->position.x - position.x) < 2)
+				{
+					position.y -= deltaTime * velocity.y;
+					return;
+				}
+			}
+
 			currentAction = Action::PULL_UP;
 			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::PULL_UP);
 					
