@@ -35,6 +35,8 @@ public:
 	std::map<std::string, uint16_t> textures;
 	int cursorId;
 	int loadingId;
+	int backgroundTextId;
+	int backgroundImgId;
 
 	// Camera struct and instance (rendering position)
 	struct Camera
@@ -72,4 +74,6 @@ public:
 	// Init methods
 	void initGlut(int argc, char** argv, void(*onIdle)(), void(*onDisplay)()) const;
 	void initResources();
+
+	void drawBackgroundScreen();
 };

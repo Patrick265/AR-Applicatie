@@ -248,6 +248,8 @@ void DataManager::initResources()
 	cursorId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png", textures.size());
 	//Loading ID
 	this->loadingId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon_loading.png", textures.size());
+	this->backgroundImgId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetBackground.png", 0);
+	this->backgroundTextId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetText.png", 1);
 	glutSetCursor(GLUT_CURSOR_NONE);
 }
 
@@ -345,3 +347,46 @@ void DataManager::initWorldMapModels()
 
 	meshes["icon"] = ObjLoader::loadObj("Resources/Map/Castleblack icon.obj");
 }
+
+void DataManager::drawBackgroundScreen()
+{
+	int centerX = this->width / 2;
+	int centerY = this->height / 2;
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
+	glClearDepth(GL_DEPTH_BUFFER_BIT);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0.0, this->width, this->height, 0.0, 0.0, 1.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, this->backgroundImgId);
+	glEnable(GL_TEXTURE_2D);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0, 0); glVertex2f(centerX - centerX, centerY - centerY);
+	glTexCoord2f(0, 1); glVertex2f(centerX - centerX, centerY + centerY);
+	glTexCoord2f(1, 1); glVertex2f(centerX + centerX, centerY + centerY);
+	glTexCoord2f(1, 0); glVertex2f(centerX + centerX, centerY - centerY);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, this->backgroundTextId);
+	glEnable(GL_TEXTURE_2D);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0, 0); glVertex2f(centerX - centerX, centerY - centerY);
+	glTexCoord2f(0, 1); glVertex2f(centerX - centerX, centerY + centerY);
+	glTexCoord2f(1, 1); glVertex2f(centerX + centerX, centerY + centerY);
+	glTexCoord2f(1, 0); glVertex2f(centerX + centerX, centerY - centerY);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+}
+

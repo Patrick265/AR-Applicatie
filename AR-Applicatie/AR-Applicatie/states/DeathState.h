@@ -3,6 +3,9 @@
 
 class DeathState : public State
 {
+private:
+
+	std::vector<std::string> text;
 public:
 	DeathState();
 	virtual ~DeathState();
