@@ -5,6 +5,11 @@
 class Settings
 {
 public:
+	// Booleans for mouse/marker checking
+	bool isSettingsScreen;
+	bool isChangeDif;
+	bool isChangeInput;
+
 	// Enums
 	enum class Difficulty { Hard, Medium, Easy};
 	enum class Input { Mouse, Marker};

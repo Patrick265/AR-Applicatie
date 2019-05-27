@@ -11,9 +11,6 @@ MousePicking::MousePicking(GameObject *objects, int height, int x, int y)
 	this->lastY = y;
 	this->cursorCounter = 0;
 	this->isCounting = false;
-	this->isSettingsScreen = false;
-	this->isChangeDif = false;
-	this->isChangeInput = false;
 	this->timePassed = 0;
 	this->cursorCounter = 0;
 }
@@ -27,7 +24,7 @@ void MousePicking::checkSettings(int x, int y)
 {
 	if ((y >= 20 && y <= 30 && x>=30 && x <= 190)||(y >= 250 && y <= 260 && x >= 580 && x <= 660)) {
 		this->isCounting = true;
-		this->isSettingsScreen = true;
+		dataMP->settings.isSettingsScreen = true;
 	}
 }
 
@@ -35,11 +32,11 @@ void MousePicking::checkChanges(int x, int y)
 {
 	if (y >= 350 && y <= 360 && x >= 580 && x <= 660) {
 		this->isCounting = true;
-		this->isChangeDif = true;
+		dataMP->settings.isChangeDif = true;
 	}
 	else if (y >= 370 && y <= 380 && x >= 580 && x <= 660) {
 		this->isCounting = true;
-		this->isChangeInput = true;
+		dataMP->settings.isChangeInput = true;
 	}
 }
 
@@ -109,24 +106,30 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 		if (abs(cursorX - lastX) <= 5 && abs(cursorY - lastY) <= 5) {
 			timePassed += time;
 			if (timePassed >= 3.0f && timePassed <= 3.1f) {
-				if (isSettingsScreen) {
+				// Check for the setting screen to apear or disapear
+				if (dataMP->settings.isSettingsScreen) {
 					if (dataMP->settingsActive == true) {
 						dataMP->settingsActive = false;
 					}
 					else {
 						dataMP->settingsActive = true;
 					}						
-					isSettingsScreen = false;
+					dataMP->settings.isSettingsScreen = false;
 					
 				}
-				else if (isChangeDif) {
+				// Check for difficulty change
+				else if (dataMP->settings.isChangeDif) {
 					dataMP->settings.changeDifficulty();
-					isChangeDif = false;
+					dataMP->settings.isChangeDif = false;
+					// Change difficulty via the datamanager when possible
 				}
-				else if (isChangeInput) {
+				// Check for input change
+				else if (dataMP->settings.isChangeInput) {
 					dataMP->settings.changeInput();
-					isChangeInput = false;
+					dataMP->settings.isChangeInput = false;
+					// Change the input via the datamanager when possible
 				}
+				// If nothing else castle black is selected and the game state is started
 				else {
 					dataMP->stateHandler.setState(StateHandler::States::GAME);
 				}
