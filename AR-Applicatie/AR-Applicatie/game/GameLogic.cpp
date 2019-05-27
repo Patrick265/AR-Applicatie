@@ -32,7 +32,7 @@ GameLogic::GameLogic()
 	player = new Player();
 	player->addComponent(new AnimationComponent(Rig("elf", Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 })));
 	player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_MOUSE);
-	player->setPosition(Math::vec3d{ 10,20.2,-2 });
+	player->setPosition(Math::vec3d{ wallWidth / 2.0f,20.2,-2 });
 
 }
 
@@ -68,7 +68,7 @@ void GameLogic::update(float deltaTime)
 	counter += deltaTime;
 	if (counter > 0.5 && wildlings.size() < 5)
 	{
-		Wildling *wildling = new Wildling(player, rand() % 20 - 10);
+		Wildling *wildling = new Wildling(player, rand() % wallWidth - wallWidth / 2.0f);
 		wildling->addComponent(new AnimationComponent(Rig("goblin", Math::vec3d{ 0,0,0 }, Math::vec3d{ 0.5,0.5,0.5 })));//new StaticComponent("giant", "giant"));
 		wildling->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::CLIMB);
 	
@@ -136,10 +136,17 @@ void GameLogic::handleMouse()
 {
 	// Get mousePos and screen width
 	const auto mousePos = DataManager::getInstance().mousePos;
-	const auto width = DataManager::getInstance().width;
+	auto xPos = mousePos.x / DataManager::getInstance().width;
+	const auto padding = 0.2f;
 
 	// Move player to mouse X position
-	player->targetX = mousePos.x / float(width) * 20.0f - 10.0f;
+	if (xPos < padding)
+		xPos = padding;
+	if (xPos > 1.0f - padding)
+		xPos = 1.0f - padding;
+
+	xPos = (xPos - padding) * (1.0f / (1.0f - padding * 2.0f));
+	player->targetX = xPos * wallWidth - wallWidth / 2.0f;
 
 	// Throw the projectiles
 	mouseHistory.push(mousePos);
