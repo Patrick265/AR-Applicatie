@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 	data->initGlut(argc, argv, onIdle, onDisplay);
 	data->initResources();
 
-	data->stateHandler.setState(StateHandler::States::GAME);
+	data->stateHandler.setState(StateHandler::States::MENU);
 
 	std::thread openCV(runOpenCVThread);
 
