@@ -81,10 +81,29 @@ void GameLogic::update(float deltaTime)
 
 	// Add wildling if there are too few
 	counter += deltaTime;
-	if (counter > (15.0f - spawnRate) * 0.5f)
+	if (counter > (15.0f - spawnRate) * 0.1f)
 	{
-		Wildling *wildling = new Wildling(player, &wildlings, rand() % wallWidth - wallWidth / 2.0f);
-		wildling->addComponent(new AnimationComponent(Rig("goblin", Math::vec3d{ 0,0,0 }, Math::vec3d{ 0.5,0.5,0.5 })));//new StaticComponent("giant", "giant"));
+		auto xPos = 0;
+		auto exit = false;
+		for (auto i = 0; i < 10; ++i)
+		{
+			xPos = rand() % wallWidth - wallWidth / 2.0f;
+			exit = false;
+			for (auto && wildling : wildlings)
+			{
+				if (wildling->getPosition().y < 10 && abs(wildling->getPosition().x - xPos) < 2)
+				{
+					exit = true;
+					break;
+				}
+			}
+			if (!exit)
+				break;
+		}
+
+		auto wildling = new Wildling(player, &wildlings, xPos);
+		wildling->addComponent(new AnimationComponent(Rig("goblin",
+			Math::vec3d{ 0,0,0 }, Math::vec3d{ 0.5,0.5,0.5 })));
 		wildling->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::CLIMB);
 	
 		wildlings.push_back(wildling);
