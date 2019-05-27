@@ -257,14 +257,14 @@ void DataManager::initRigParts()
 	/*
 		FEMALE ELF
 	*/
-	textures["elf_head"] = TextureHandler::addTexture("Resources/Weapons/weapon_elf.png", textures.size());
+	textures["elf_head"] = TextureHandler::addTexture("Resources/Rune/npc_head.png", textures.size());
 	meshes["elf_head"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_head.obj");
 	meshes["elf_neck"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_head_neck.obj");
 
-	textures["elf_torso"] = TextureHandler::addTexture("Resources/Weapons/weapon_elf.png", textures.size());
+	textures["elf_torso"] = TextureHandler::addTexture("Resources/Rune/npc_torso.png", textures.size());
 	meshes["elf_torso"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_torso.obj");
 
-	textures["elf_legs"] = TextureHandler::addTexture("Resources/Weapons/weapon_elf.png", textures.size());
+	textures["elf_legs"] = TextureHandler::addTexture("Resources/Rune/npc_legs.png", textures.size());
 	meshes["elf_lowerbod"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_skirt.obj");
 	meshes["elf_ll_u"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_top_left.obj");
 	meshes["elf_ll_l"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_bottom_left.obj");
@@ -299,6 +299,11 @@ void DataManager::initRigParts()
 	textures["scythe"] = TextureHandler::addTexture("Resources/Weapons/weapon_scythe.png", textures.size());
 	meshes["scythe"] = ObjLoader::loadObj("Resources/Weapons/weapon_scythe.obj");
 	weaponMap["scythe"] = { 0.213286f,-0.106202f,0.998531f };
+
+	textures["fish"] = TextureHandler::addTexture("Resources/Weapons/weapon_fish.png", textures.size());
+	meshes["fish"] = ObjLoader::loadObj("Resources/Weapons/weapon_fish.obj");
+	weaponMap["fish"] = { 0.811473f,0.14979f,-0.108852f};
+
 
 
 	textures["weapon_elf"] = TextureHandler::addTexture("Resources/Weapons/weapon_elf.png", textures.size());
