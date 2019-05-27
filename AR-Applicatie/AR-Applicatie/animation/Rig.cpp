@@ -130,12 +130,6 @@ void Rig::rigFemaleElf()
 		"none",
 		_pos, _rot);
 
-	//_pos = convertCoordinates(weapon_weights, arm_left_bottom);
-	//Node elf_weapon_weights("la_weapon_2", "weights",
-	//	"weights",
-	//	_pos, _rot);
-
-
 	//Setting the parent/child relations
 	elf_neck.addChild("head");
 

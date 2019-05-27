@@ -257,14 +257,14 @@ void DataManager::initRigParts()
 	/*
 		FEMALE ELF
 	*/
-	textures["elf_head"] = TextureHandler::addTexture("Resources/Rune/npc_head.png", textures.size());
+	textures["elf_head"] = TextureHandler::addTexture("Resources/Weapons/weapon_elf.png", textures.size());
 	meshes["elf_head"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_head.obj");
 	meshes["elf_neck"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_head_neck.obj");
 
-	textures["elf_torso"] = TextureHandler::addTexture("Resources/Rune/npc_torso.png", textures.size());
+	textures["elf_torso"] = TextureHandler::addTexture("Resources/Weapons/weapon_elf.png", textures.size());
 	meshes["elf_torso"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_torso.obj");
 
-	textures["elf_legs"] = TextureHandler::addTexture("Resources/Rune/npc_legs.png", textures.size());
+	textures["elf_legs"] = TextureHandler::addTexture("Resources/Weapons/weapon_elf.png", textures.size());
 	meshes["elf_lowerbod"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_skirt.obj");
 	meshes["elf_ll_u"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_top_left.obj");
 	meshes["elf_ll_l"] = ObjLoader::loadObj("Resources/Rigid_NPC/NPC_leg_bottom_left.obj");
@@ -287,6 +287,23 @@ void DataManager::initRigParts()
 	textures["weights"] = TextureHandler::addTexture("Resources/Weapons/weights.png", textures.size());
 	meshes["weights"] = ObjLoader::loadObj("Resources/Weapons/weights.obj");
 	weaponMap["weights"] = { 0.0f,0.0f,0.820919f };
+
+	textures["godsword"] = TextureHandler::addTexture("Resources/Weapons/weapon_godsword.png", textures.size());
+	meshes["godsword"] = ObjLoader::loadObj("Resources/Weapons/weapon_godsword.obj");
+	weaponMap["godsword"] = { 0.0f,0.119117f,0.81344f };
+
+	textures["cattleprod"] = TextureHandler::addTexture("Resources/Weapons/weapon_cattleprod.png", textures.size());
+	meshes["cattleprod"] = ObjLoader::loadObj("Resources/Weapons/weapon_cattleprod.obj");
+	weaponMap["cattleprod"] = { 0.661686f,0.014448f,0.698785f };
+
+	textures["scythe"] = TextureHandler::addTexture("Resources/Weapons/weapon_scythe.png", textures.size());
+	meshes["scythe"] = ObjLoader::loadObj("Resources/Weapons/weapon_scythe.obj");
+	weaponMap["scythe"] = { 0.213286f,-0.106202f,0.998531f };
+
+
+	textures["weapon_elf"] = TextureHandler::addTexture("Resources/Weapons/weapon_elf.png", textures.size());
+	meshes["weapon_elf"] = ObjLoader::loadObj("Resources/Weapons/weapon_elf.obj");
+	weaponMap["weapon_elf"] = { 0.213286f,-0.106202f,0.998531f };
 
 	/*
 	GOBLIN
