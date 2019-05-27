@@ -53,7 +53,6 @@ void MousePicking::searchObject(int cursorX, int cursorY)
 		&y,
 		&z
 	);
-	//std::cout << "xyz: " << x << ", " << y << ", " << z << std::endl;
 	const double xIcon = objectsToCheck->getPosition().x;
 	const double yIcon = objectsToCheck->getPosition().y;
 	const double zIcon = objectsToCheck->getPosition().z;
@@ -89,18 +88,22 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 	}
 	else {
 		if (abs(cursorX - lastX) <= 5 && abs(cursorY - lastY) <= 5) {
-			//std::cout << "entered" << time << std::endl;
 			timePassed += time;
 			
 			if (timePassed >= 3.0f && timePassed <= 3.1f) {
 				if (isSettingsScreen) {
 					std::cout << "settings screen selected" << std::endl;
+					if (dataMP->settingsActive == true) {
+						dataMP->settingsActive = false;
+					}
+					else {
+						dataMP->settingsActive = true;
+					}
 					isCounting = false;
 					isSettingsScreen = false;
 					timePassed = 0;
 				}
 				else {
-					//std::cout << "selected the game!!" << std::endl;
 					isCounting = false;
 					timePassed = 0;
 					dataMP->stateHandler.setState(StateHandler::States::GAME);

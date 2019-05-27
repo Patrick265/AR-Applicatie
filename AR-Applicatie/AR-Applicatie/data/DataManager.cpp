@@ -191,6 +191,11 @@ void DataManager::displayInfo() const
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
+
+	if (settingsActive) {
+		displaySettings();
+	}
+
 }
 
 void DataManager::updateCamera()
@@ -343,4 +348,22 @@ void DataManager::initWorldMapModels()
 	textures["map"] = TextureHandler::addTexture("Resources/Map/map.jpg", textures.size());
 
 	meshes["icon"] = ObjLoader::loadObj("Resources/Map/Castleblack icon.obj");
+}
+
+void DataManager::displaySettings() const 
+{
+	
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, cursorId);
+	glEnable(GL_TEXTURE_2D);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0, 0); glVertex2f(400, 100);
+	glTexCoord2f(0, 1); glVertex2f(400, 600);
+	glTexCoord2f(1, 1); glVertex2f(900, 600);
+	glTexCoord2f(1, 0); glVertex2f(900, 100);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
 }

@@ -32,6 +32,7 @@ public:
 	// Whether OpenCV control is enabled or not
 	bool mouseControl;
 	bool justMovedMouse = false;
+	bool settingsActive = false;
 
 	// Storage for all game meshes and textures
 	std::map<std::string, Graphics::mesh> meshes;
@@ -71,6 +72,7 @@ public:
 	void standardRenderOperations() const;
 	void displayInfo() const;
 	void updateCamera();
+	void displaySettings() const;
 
 	// Init methods
 	void initGlut(int argc, char** argv, void(*onIdle)(), void(*onDisplay)()) const;
