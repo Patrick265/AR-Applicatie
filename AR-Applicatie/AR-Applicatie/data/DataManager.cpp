@@ -371,11 +371,13 @@ void DataManager::displaySettings() const
 	glDisable(GL_BLEND);
 
 	std::string dif = settings.getDifficultyString();
+	std::string inp = settings.getInputString();
 	auto settingsInfo =
 		"                         ->RETURN<-"
 		"\n\n\nWidth:        " + std::to_string(settings.resX) +
 		"\nHeight:       " + std::to_string(settings.resY) +
-		"\nDifficulty:   " + dif + "     ->CHANGE<-";
+		"\nDifficulty:   " + dif + "     ->CHANGE<-" +
+		"\nInput:        " + inp + "     ->CHANGE<-";
 
 	glRasterPos2f(350, 260);
 	const int len = settingsInfo.length();

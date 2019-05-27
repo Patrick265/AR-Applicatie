@@ -4,6 +4,7 @@ Settings::Settings() {
 	resX = 1280;
 	resY = 720;
 	currentDifficulty = Difficulty::Medium;
+	currentInput = Input::Mouse;
 }
 
 std::string Settings::getDifficultyString()const
@@ -30,5 +31,24 @@ void Settings::changeDifficulty()
 	case Difficulty::Hard:
 		this->currentDifficulty = Difficulty::Easy;
 		break;
+	}
+}
+
+std::string Settings::getInputString()const 
+{
+	if (this->currentInput == Input::Marker) {
+		return "Marker";
+	}
+	else {
+		return "Mouse ";
+	}
+}
+
+void Settings::changeInput() {
+	if (this->currentInput == Input::Marker) {
+		this->currentInput = Input::Mouse;
+	}
+	else {
+		this->currentInput = Input::Marker;
 	}
 }

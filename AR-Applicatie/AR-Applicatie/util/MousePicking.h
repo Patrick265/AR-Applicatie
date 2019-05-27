@@ -20,7 +20,8 @@ private:
 	//Variable which determines if the mousepicker counts how long the mouse is on the object
 	bool isCounting;
 	bool isSettingsScreen;
-	bool isChanges;
+	bool isChangeDif;
+	bool isChangeInput;
 	
 
 public:

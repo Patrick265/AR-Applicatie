@@ -12,7 +12,8 @@ MousePicking::MousePicking(GameObject *objects, int height, int x, int y)
 	this->cursorCounter = 0;
 	this->isCounting = false;
 	this->isSettingsScreen = false;
-	this->isChanges = false;
+	this->isChangeDif = false;
+	this->isChangeInput = false;
 	this->timePassed = 0;
 	this->cursorCounter = 0;
 }
@@ -34,7 +35,11 @@ void MousePicking::checkChanges(int x, int y)
 {
 	if (y >= 350 && y <= 360 && x >= 580 && x <= 660) {
 		this->isCounting = true;
-		this->isChanges = true;
+		this->isChangeDif = true;
+	}
+	else if (y >= 370 && y <= 380 && x >= 580 && x <= 660) {
+		this->isCounting = true;
+		this->isChangeInput = true;
 	}
 }
 
@@ -82,7 +87,7 @@ void MousePicking::searchObject(int cursorX, int cursorY)
 
 void MousePicking::update(int cursorX, int cursorY, int height, float time) 
 {
-	//std::cout << "x,y: " << cursorX << " : " << cursorY << std::endl;
+	std::cout << "x,y: " << cursorX << " : " << cursorY << std::endl;
 	if (!isCounting) {
 		this->windowHeight = height;
 		if (abs(cursorX - lastX) <= 2 && abs(cursorY - lastY) <= 2) {
@@ -105,31 +110,28 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 			timePassed += time;
 			if (timePassed >= 3.0f && timePassed <= 3.1f) {
 				if (isSettingsScreen) {
-					
-						std::cout << "settings screen selected" << std::endl;
-						if (dataMP->settingsActive == true) {
-							dataMP->settingsActive = false;
-						}
-						else {
-							dataMP->settingsActive = true;
-						}
-						isCounting = false;
-						isSettingsScreen = false;
-						timePassed = 0;
+					if (dataMP->settingsActive == true) {
+						dataMP->settingsActive = false;
+					}
+					else {
+						dataMP->settingsActive = true;
+					}						
+					isSettingsScreen = false;
 					
 				}
-				else if (isChanges) {
-					std::cout << "changes activated" << std::endl;
+				else if (isChangeDif) {
 					dataMP->settings.changeDifficulty();
-					isCounting = false;
-					isChanges = false;
-					timePassed = 0;
+					isChangeDif = false;
+				}
+				else if (isChangeInput) {
+					dataMP->settings.changeInput();
+					isChangeInput = false;
 				}
 				else {
-					isCounting = false;
-					timePassed = 0;
 					dataMP->stateHandler.setState(StateHandler::States::GAME);
 				}
+				isCounting = false;
+				timePassed = 0;
 			}
 			
 		}
