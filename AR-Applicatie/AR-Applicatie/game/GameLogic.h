@@ -10,6 +10,7 @@ class GameLogic
 {
 	GameObject *wall;
 	GameObject *wallTop;
+	const int wallWidth = 26;
 	GameObject *skybox;
 	Player* player;
 	std::vector<Projectile *> projectiles;
