@@ -418,11 +418,24 @@ void DataManager::DrawScreenText() {
 		glEndList();
 
 	}
-	
+
 	int size = 6;
 	glScalef(100, 100, 0);
 	glListBase(characterlist);
 	glCallLists(6, GL_UNSIGNED_BYTE, "012345");
+}
+
+void DataManager::drawDefaultText(int x, int y, std::string string, void *font)
+{
+	int length;
+	const char *cstr = string.c_str();
+	length = (int)strlen(cstr);
+	glRasterPos2f(x, y);
+
+	for (int i = 0; i < length; i++)
+	{
+		 glutBitmapCharacter(font,string[i]);
+	}
 }
 
 
