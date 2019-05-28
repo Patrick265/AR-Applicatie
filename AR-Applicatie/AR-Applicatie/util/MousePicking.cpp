@@ -12,7 +12,6 @@ MousePicking::MousePicking(GameObject *objects, int height, int x, int y)
 	this->cursorCounter = 0;
 	this->isCounting = false;
 	this->timePassed = 0;
-	this->cursorCounter = 0;
 }
 
 MousePicking::~MousePicking()
@@ -84,7 +83,7 @@ void MousePicking::searchObject(int cursorX, int cursorY)
 
 void MousePicking::update(int cursorX, int cursorY, int height, float time) 
 {
-	std::cout << "x,y: " << cursorX << " : " << cursorY << std::endl;
+	//std::cout << "x,y: " << cursorX << " : " << cursorY << std::endl;
 	if (!isCounting) {
 		this->windowHeight = height;
 		if (abs(cursorX - lastX) <= 2 && abs(cursorY - lastY) <= 2) {
@@ -129,7 +128,7 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 					dataMP->settings.isChangeInput = false;
 					// Change the input via the datamanager when possible
 				}
-				// If nothing else castle black is selected and the game state is started
+				// If nothing else is selected then castle black is selected and the game state will start
 				else {
 					dataMP->stateHandler.setState(StateHandler::States::GAME);
 				}
@@ -144,7 +143,6 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 		}
 		DataManager::getInstance().scaleLoading = timePassed * 10;
 	}
-	
 	lastX = cursorX;
 	lastY = cursorY;
 }

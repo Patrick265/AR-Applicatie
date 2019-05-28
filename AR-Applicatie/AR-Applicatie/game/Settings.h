@@ -5,7 +5,7 @@
 class Settings
 {
 public:
-	// Booleans for mouse/marker checking
+	// Booleans for mouse/marker checking in the settings screen
 	bool isSettingsScreen;
 	bool isChangeDif;
 	bool isChangeInput;
@@ -30,5 +30,6 @@ public:
 	void changeDifficulty();
 	void changeInput();
 
+	//Constructor
 	Settings();
 };

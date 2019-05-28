@@ -22,6 +22,7 @@ std::string Settings::getDifficultyString()const
 	}
 }
 
+// Checks the current difficulty and changes it to the next
 void Settings::changeDifficulty()
 {
 	switch (this->currentDifficulty) {
