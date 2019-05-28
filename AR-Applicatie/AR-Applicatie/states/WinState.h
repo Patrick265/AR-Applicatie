@@ -1,14 +1,11 @@
 #pragma once
 #include "State.h"
 
-class DeathState : public State
+class WinState : public State
 {
-private:
-
-	std::vector<std::string> text;
 public:
-	DeathState();
-	virtual ~DeathState();
+	WinState();
+	virtual ~WinState();
 
 	void draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std::string, uint16_t>& textures) override;
 	void update(float elapsedTime) override;

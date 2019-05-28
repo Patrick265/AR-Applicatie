@@ -45,6 +45,9 @@ public:
 
 	int cursorId;
 	int loadingId;
+	int backgroundTextId;
+	int backgroundImgId;
+	int fonttextId;
 
 	// Camera struct and instance (rendering position)
 	struct Camera
@@ -82,4 +85,11 @@ public:
 	// Init methods
 	void initGlut(int argc, char** argv, void(*onIdle)(), void(*onDisplay)()) const;
 	void initResources();
+
+	void drawBackgroundScreen();
+	void DrawScreenText();
+
+	void drawDefaultText(int x, int y, std::string string, void * font);
+
+
 };
