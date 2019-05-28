@@ -251,7 +251,7 @@ void AnimationComponent::attack(const float elapsedTime)
 		rig.getNode("la_weapon").setTexture("icicle");
 	}	   
 
-	if (current_rotation <= 0.0f)
+	if (current_rotation < 0.0f)
 		ani_forward = true;
 	else if (current_rotation >= 100.0f)
 		ani_forward = false;
@@ -268,7 +268,7 @@ void AnimationComponent::attack(const float elapsedTime)
 	{
 		
 	}
-	else if (current_rotation > 100)
+	else if (current_rotation >= 100)
 	{
 		setAnimation(Animation::CHEER);
 		current_rotation = ATTACK_MAX_ROTATION;		
