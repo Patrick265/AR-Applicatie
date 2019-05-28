@@ -120,7 +120,7 @@
     <ClCompile Include="components\Component.cpp" />
     <ClCompile Include="game\WorldMap.cpp" />
     <ClCompile Include="data\DataManager.cpp" />
-    <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="game\Settings.cpp" />
     <ClCompile Include="states\DeathState.cpp" />
     <ClCompile Include="states\GameState.cpp" />
     <ClCompile Include="game\GameLogic.cpp" />

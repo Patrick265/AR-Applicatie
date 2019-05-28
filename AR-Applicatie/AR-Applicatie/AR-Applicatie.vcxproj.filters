@@ -96,7 +96,7 @@
     <ClCompile Include="states\WinState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Settings.cpp">
+    <ClCompile Include="game\Settings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

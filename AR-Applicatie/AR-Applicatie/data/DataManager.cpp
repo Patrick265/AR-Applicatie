@@ -415,10 +415,7 @@ void DataManager::initWorldMapModels()
 	meshes["wicon"] = ObjLoader::loadObj("Resources/Map/Winterfell.obj");
 }
 
-	this->fonttextId = TextureHandler::addTexture("Resources/Font/ExportedTest.png", textures.size());
-	this->backgroundTextId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetText.png", 1);
-	this->backgroundImgId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetBackground.png", 0);
-	this->settingsId = TextureHandler::addTexture("Resources/Settings/SettingsBackground.png", textures.size());
+
 void DataManager::drawBackgroundScreen()
 {
 	GLfloat centerX = static_cast<GLfloat>(this->width) / 2.0f;
