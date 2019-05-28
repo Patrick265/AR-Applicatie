@@ -7,7 +7,9 @@ class DeathState : public State
 {
 	GameLogic gameLogic;
 private:
-	float timePassed;
+	float timePassedGame;
+	float timePassedMenu;
+	bool isBackgroundMusicon = false;
 	std::vector<std::string> text;
 public:
 	DeathState(GameLogic &gameLogic);
@@ -17,4 +19,6 @@ public:
 	void draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std::string, uint16_t>& textures) override;
 	void update(float elapsedTime) override;
 	void hovering(float elapsedTime);
+	void checkForReturnGame(float elapsedTime);
+	void checkForReturnMenu(float elapsedTime);
 };

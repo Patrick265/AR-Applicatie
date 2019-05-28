@@ -40,9 +40,6 @@ void StateHandler::setState(const States state)
 	case States::WIN:
 		current = new WinState(dynamic_cast<GameState*>(current)->gameLogic);
 		break;
-	case States::WIN:
-		current = new WinState();
-		break;
 	}
 }
 

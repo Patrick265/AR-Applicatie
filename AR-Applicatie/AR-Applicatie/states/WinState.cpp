@@ -25,32 +25,61 @@ void WinState::update(float elapsedTime)
 
 void WinState::hovering(float elapsedTime)
 {
+	checkForReturnGame(elapsedTime);
+	checkForReturnMenu(elapsedTime);
+}
+
+void WinState::checkForReturnGame(float elapsedTime)
+{
 	if (DataManager::getInstance().mousePos.y >= 5 && DataManager::getInstance().mousePos.y <= 50 &&
 		DataManager::getInstance().mousePos.x >= DataManager::getInstance().width - 300 &&
 		DataManager::getInstance().mousePos.x <= DataManager::getInstance().width)
 	{
-		timePassed += elapsedTime;
+		timePassedGame += elapsedTime;
 
-		if (timePassed >= 3.0f && timePassed <= 3.1f) {
-			timePassed = 0;
+		if (timePassedGame >= 3.0f && timePassedGame <= 3.1f) {
+			timePassedGame = 0;
 			DataManager::getInstance().stateHandler.setState(StateHandler::States::MENU);
+			if (!isBackgroundMusicon)
+			{
+				DataManager::getInstance().soundManager.playSound(SoundManager::Sound::BACKGROUND, true);
+				isBackgroundMusicon = true;
+			}
 		}
-		DataManager::getInstance().scaleLoading = timePassed * 10;
-	}
-	else if (DataManager::getInstance().mousePos.y >= 60 && DataManager::getInstance().mousePos.y <= 110 &&
-		DataManager::getInstance().mousePos.x >= DataManager::getInstance().width - 300 &&
-		DataManager::getInstance().mousePos.x <= DataManager::getInstance().width)
-	{
-		timePassed += elapsedTime;
-
-		if (timePassed >= 3.0f && timePassed <= 3.1f) {
-			timePassed = 0;
-			DataManager::getInstance().stateHandler.setState(StateHandler::States::GAME);
-		}
-		DataManager::getInstance().scaleLoading = timePassed * 10;
+		DataManager::getInstance().scaleLoading = timePassedGame * 10;
 	}
 	else {
 		DataManager::getInstance().scaleLoading = 0;
-		timePassed = 0;
+		timePassedGame = 0;
+	}
+}
+
+void WinState::checkForReturnMenu(float elapsedTime)
+{
+	if (DataManager::getInstance().mousePos.y >= 60 && DataManager::getInstance().mousePos.y <= 110 &&
+		DataManager::getInstance().mousePos.x >= DataManager::getInstance().width - 300 &&
+		DataManager::getInstance().mousePos.x <= DataManager::getInstance().width)
+	{
+		timePassedMenu += elapsedTime;
+
+		if (timePassedMenu >= 3.0f && timePassedMenu <= 3.1f) {
+			timePassedMenu = 0;
+			DataManager::getInstance().stateHandler.setState(StateHandler::States::GAME);
+			if (!isBackgroundMusicon)
+			{
+				DataManager::getInstance().soundManager.playSound(SoundManager::Sound::BACKGROUND, true);
+				if (!isBackgroundMusicon)
+				{
+					DataManager::getInstance().soundManager.playSound(SoundManager::Sound::BACKGROUND, true);
+					isBackgroundMusicon = true;
+				}
+			}
+
+		}
+		DataManager::getInstance().scaleLoading = timePassedMenu * 10;
+	}
+	else {
+		DataManager::getInstance().scaleLoading = 0;
+		timePassedMenu = 0;
 	}
 }
