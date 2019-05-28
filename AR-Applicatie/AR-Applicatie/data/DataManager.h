@@ -100,7 +100,8 @@ public:
 	void drawBackgroundScreen();
 	void DrawScreenText();
 
-	void drawDefaultText(int x, int y, std::string string, void * font);
+	void drawDefaultText(int x, int y, std::string string, void * font, float width, float height);
+
 
 
 };

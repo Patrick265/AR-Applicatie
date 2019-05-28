@@ -493,7 +493,7 @@ void DataManager::DrawScreenText() {
 
 }
 
-void DataManager::drawDefaultText(int x, int y, std::string string, void *font)
+void DataManager::drawDefaultText(int x, int y, std::string string, void *font,float width,float height)
 {
 	int length;
 	const char *cstr = string.c_str();
@@ -504,7 +504,7 @@ void DataManager::drawDefaultText(int x, int y, std::string string, void *font)
 
 	glPushMatrix();
 	glTranslatef(static_cast<GLfloat>(x), static_cast<GLfloat>(y), 0);
-	glScalef(0.5f, -0.5f, 0);
+	glScalef(width, -height, 0);
 	glColor3f(1, 0, 0);
 	for (str=cstr; *str; str++)
 	{
