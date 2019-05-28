@@ -11,9 +11,7 @@ MousePicking::MousePicking(std::vector<GameObject *> objects, int height, int x,
 	this->lastY = y;
 	this->cursorCounter = 0;
 	this->isCounting = false;
-	this->isSettingsScreen = false;
 	this->timePassed = 0;
-	this->cursorCounter = 0;
 }
 
 MousePicking::~MousePicking()
@@ -21,10 +19,23 @@ MousePicking::~MousePicking()
 	
 }
 
-void MousePicking::checkSettings(int x, int y) {
-	if (y >= 20 && y <= 30 && x>=30 && x <= 170) {
+void MousePicking::checkSettings(int x, int y) 
+{
+	if ((y >= 20 && y <= 30 && x>=30 && x <= 190)||(y >= 250 && y <= 260 && x >= 580 && x <= 660)) {
 		this->isCounting = true;
-		this->isSettingsScreen = true;
+		dataMP->settings.isSettingsScreen = true;
+	}
+}
+
+void MousePicking::checkChanges(int x, int y)
+{
+	if (y >= 350 && y <= 360 && x >= 580 && x <= 660) {
+		this->isCounting = true;
+		dataMP->settings.isChangeDif = true;
+	}
+	else if (y >= 370 && y <= 380 && x >= 580 && x <= 660) {
+		this->isCounting = true;
+		dataMP->settings.isChangeInput = true;
 	}
 }
 
@@ -76,6 +87,7 @@ void MousePicking::searchObject(int cursorX, int cursorY)
 
 void MousePicking::update(int cursorX, int cursorY, int height, float time) 
 {
+	//std::cout << "x,y: " << cursorX << " : " << cursorY << std::endl;
 	if (!isCounting) {
 		this->windowHeight = height;
 		if (abs(cursorX - lastX) <= 2 && abs(cursorY - lastY) <= 2) {
@@ -83,6 +95,9 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 			if (cursorCounter >= 1.5f && timePassed <= 1.6f) {
 				searchObject(cursorX, cursorY);
 				checkSettings(cursorX, cursorY);
+				if (dataMP->settingsActive == true) {
+					checkChanges(cursorX, cursorY);
+				}
 				cursorCounter = 0;
 			}
 		}
@@ -93,20 +108,37 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 	else {
 		if (abs(cursorX - lastX) <= 5 && abs(cursorY - lastY) <= 5) {
 			timePassed += time;
-			
 			if (timePassed >= 3.0f && timePassed <= 3.1f) {
-				if (isSettingsScreen) {
-					std::cout << "settings screen selected" << std::endl;
-					isCounting = false;
-					isSettingsScreen = false;
-					timePassed = 0;
+				// Check for the setting screen to apear or disapear
+				if (dataMP->settings.isSettingsScreen) {
+					if (dataMP->settingsActive == true) {
+						dataMP->settingsActive = false;
+					}
+					else {
+						dataMP->settingsActive = true;
+					}						
+					dataMP->settings.isSettingsScreen = false;
+					
 				}
+				// Check for difficulty change
+				else if (dataMP->settings.isChangeDif) {
+					dataMP->settings.changeDifficulty();
+					dataMP->settings.isChangeDif = false;
+					// Change difficulty via the datamanager when possible
+				}
+				// Check for input change
+				else if (dataMP->settings.isChangeInput) {
+					dataMP->settings.changeInput();
+					dataMP->settings.isChangeInput = false;
+					// Change the input via the datamanager when possible
+				}
+				// If nothing else is selected then castle black is selected and the game state will start
 				else {
-					//std::cout << "selected the game!!" << std::endl;
-					isCounting = false;
-					timePassed = 0;
+					dataMP->settingsActive = false;
 					dataMP->stateHandler.setState(StateHandler::States::GAME);
 				}
+				isCounting = false;
+				timePassed = 0;
 			}
 			
 		}
@@ -116,7 +148,6 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 		}
 		DataManager::getInstance().scaleLoading = timePassed * 10;
 	}
-	
 	lastX = cursorX;
 	lastY = cursorY;
 }

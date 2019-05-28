@@ -24,9 +24,9 @@ void Player::update(const float deltaTime)
 	//	return;
 
 	//If the player is currently falling
-	if (currentAction == Action::FALLING) 
+	if (currentAction == Action::FALLING)
 	{
-		velocity.y -= deltaTime * GRAVITY;	
+		velocity.y -= deltaTime * GRAVITY;
 		position.y += deltaTime * velocity.y;
 
 		//When below a certain point, kill the player (lose the game) 
@@ -76,7 +76,7 @@ void Player::kill()
 }
 
 void Player::onIdle(const float velocity)
-{	
+{
 	//If outside the idle distance
 	if (abs(position.x - targetX) >= 2)
 	{
@@ -97,7 +97,7 @@ void Player::onIdle(const float velocity)
 
 	}
 	//If in idle distance
-	else 
+	else
 	{
 		if (currentAction == Action::IDLE)
 		{
