@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\freeglut\include;C:\opencv\build\include;C:\irrKlang-64bit-1.6.0\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <PostBuildEvent>
+      <Command>
+        xcopy "$(SolutionDir)\freeglut\bin\x64\*.dll" "$(OutputPath)" /Y
+        xcopy "C:\opencv\build\x64\vc14\bin\opencv_world410d.dll" "$(OutputPath)" /Y
+        xcopy "C:\irrKlang-64bit-1.6.0\bin\winx64-visualStudio\irrKlang.dll" "$(OutputPath)" /Y
+      </Command>
+      <Message>Copy the freeglut.dll and opencv.dll into the debug folder</Message>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalLibraryDirectories>$(SolutionDir)\freeglut\lib\x64;C:\opencv\build\x64\vc14\lib;C:\irrKlang-64bit-1.6.0\lib\Winx64-visualStudio</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world410d.lib;freeglut.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

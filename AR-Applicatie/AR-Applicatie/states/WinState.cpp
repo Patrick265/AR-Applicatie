@@ -1,14 +1,17 @@
 #include "WinState.h"
 #include <GL/freeglut.h>
-#include "../util/TextureHandler.h"
 #include "../data/DataManager.h"
 
-WinState::WinState() = default;
+WinState::WinState(GameLogic &gameLogic)
+	: gameLogic(gameLogic)
+{
+}
 
 WinState::~WinState() = default;
 
 void WinState::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std::string, uint16_t>& textures)
 {
+	gameLogic.draw(meshes, textures);
 	DataManager::getInstance().drawBackgroundScreen();
 	DataManager::getInstance().drawDefaultText(450, 400, "You Win", GLUT_STROKE_ROMAN, 0.75, 0.75);
 	DataManager::getInstance().drawDefaultText(DataManager::getInstance().width - 300, 50, "Return to map", GLUT_STROKE_ROMAN, 0.25, 0.25);
@@ -17,6 +20,7 @@ void WinState::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std:
 
 void WinState::update(float elapsedTime)
 {
+	gameLogic.update(elapsedTime);
 	if (DataManager::getInstance().mousePos.y >= 5 && DataManager::getInstance().mousePos.y <= 50 &&
 		DataManager::getInstance().mousePos.x >= DataManager::getInstance().width - 300 &&
 		DataManager::getInstance().mousePos.x <= DataManager::getInstance().width)

@@ -1,6 +1,7 @@
 #include "Wildling.h"
 #include "../util/ObjLoader.h"
 #include "../components/AnimationComponent.h"
+#include "../data/DataManager.h"
 
 Wildling::Wildling(Player *player, std::vector<Wildling *> *wildlings, float x)
 {
@@ -56,12 +57,16 @@ bool Wildling::isHit(float xProjectile, float yProjectile)
 {
 	if (abs(xProjectile - position.x) < 2 && abs(yProjectile - position.y - 6) < 2)
 	{
-		currentAction = Action::FALLING;
-		getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::FALL);
-
+		die();
 		return true;
 	}
 	return false;
+}
+
+void Wildling::die()
+{
+	currentAction = Action::FALLING;
+	getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::FALL);
 }
 
 bool Wildling::canBeDestroyed()
@@ -158,5 +163,9 @@ void Wildling::attack(const float deltaTime)
 	if (getComponent<AnimationComponent>()->getCurrentAnimation() == AnimationComponent::Animation::CHEER)
 	{
 		currentAction = Action::CHEER;
+		DataManager::getInstance().soundManager.stopSounds();
+		DataManager::getInstance().soundManager.playSound(SoundManager::Sound::DEATH, false);
+		DataManager::getInstance().soundManager.playSound(SoundManager::Sound::LOSS, false);
+		DataManager::getInstance().stateHandler.setState(StateHandler::States::DEATH);
 	}
 }

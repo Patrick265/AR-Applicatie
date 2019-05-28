@@ -1,10 +1,13 @@
 #pragma once
+
 #include "State.h"
+#include "../game/GameLogic.h"
 
 class WinState : public State
 {
+	GameLogic gameLogic;
 public:
-	WinState();
+	WinState(GameLogic &gameLogic);
 	virtual ~WinState();
 	
 	float timePassed;

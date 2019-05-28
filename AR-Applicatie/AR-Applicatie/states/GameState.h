@@ -5,9 +5,9 @@
 
 class GameState : public State
 {
+public:
 	GameLogic gameLogic;
 
-public:
 	GameState();
 	virtual ~GameState();
 

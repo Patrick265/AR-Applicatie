@@ -1,13 +1,14 @@
 #pragma once
+
 #include "State.h"
+#include "../game/GameLogic.h"
 
 class DeathState : public State
 {
-private:
-
+	GameLogic gameLogic;
 	std::vector<std::string> text;
 public:
-	DeathState();
+	DeathState(GameLogic &gameLogic);
 	virtual ~DeathState();
 
 	float timePassed;

@@ -2,6 +2,8 @@
 
 #include "../vision/markerdetection.h"
 #include "../states/StateHandler.h"
+#include "../game/Settings.h"
+#include "../util/SoundManager.h"
 
 class DataManager
 {
@@ -18,6 +20,9 @@ public:
 	// State handler
 	StateHandler stateHandler;
 
+	// Settings
+	Settings settings;
+
 	// Screen dimensions
 	int width;
 	int height;
@@ -33,6 +38,7 @@ public:
 	// Whether OpenCV control is enabled or not
 	bool mouseControl;
 	bool justMovedMouse = false;
+	bool settingsActive = false;
 
 	// Storage for all game meshes and textures
 	std::map<std::string, Graphics::mesh> meshes;
@@ -43,11 +49,15 @@ public:
 	std::string currentWeapon = "log";
 	void determineNextWeapon();
 
+	// SoundManager
+	SoundManager soundManager;
+
 	int cursorId;
 	int loadingId;
 	int backgroundTextId;
 	int backgroundImgId;
 	int fonttextId;
+	int settingsId;
 
 	// Camera struct and instance (rendering position)
 	struct Camera
@@ -81,6 +91,7 @@ public:
 	void standardRenderOperations() const;
 	void displayInfo() const;
 	void updateCamera();
+	void displaySettings() const;
 
 	// Init methods
 	void initGlut(int argc, char** argv, void(*onIdle)(), void(*onDisplay)()) const;

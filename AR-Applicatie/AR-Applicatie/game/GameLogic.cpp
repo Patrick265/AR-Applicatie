@@ -39,6 +39,8 @@ GameLogic::GameLogic()
 
 	gameDuration = std::chrono::duration<float, std::milli>(1 * 60 * 1000);
 	elapsedTime = std::chrono::duration<float, std::milli>(0);
+
+	hasWon = false;
 }
 
 GameLogic::~GameLogic()
@@ -62,11 +64,14 @@ void GameLogic::update(float deltaTime)
 	spawnRate = std::min(elapsedTime.count() / 5000.0f, 10.0f);
 
 	// Check if game has been won
-	if (elapsedTime >= gameDuration)
+	if (!hasWon && elapsedTime >= gameDuration)
 	{
-		// Game has been won!
-		// TODO: Win logic
-		// exit(1);
+		hasWon = true;
+		for (auto && wildling : wildlings)
+			wildling->die();
+		DataManager::getInstance().soundManager.stopSounds();
+		DataManager::getInstance().soundManager.playSound(SoundManager::Sound::WIN, false);
+		DataManager::getInstance().stateHandler.setState(StateHandler::States::WIN);
 	}
 
 	// Mouse logic
@@ -83,7 +88,7 @@ void GameLogic::update(float deltaTime)
 
 	// Add wildling if there are too few
 	counter += deltaTime;
-	if (counter > (13.0f - spawnRate) * 0.5f)
+	if (!hasWon && counter > (13.0f - spawnRate) * 0.5f)
 	{
 		auto xPos = 0;
 		auto exit = false;
@@ -127,7 +132,10 @@ void GameLogic::update(float deltaTime)
 	for (Wildling* wildling : wildlings)
 		for (Projectile* projectile : projectiles)
 			if (projectile->isActive && wildling->isHit(projectile->getPosition().x, projectile->getPosition().y))
+			{
 				projectile->hasHit();
+				DataManager::getInstance().soundManager.playSound(SoundManager::Sound::DEATH, false);
+			}
 
 	// Update components
 	for (auto o : getGameObjects())
@@ -149,6 +157,7 @@ void GameLogic::throwProjectile(float xVelocity, float yVelocity)
 	   	
 	p->setScale(Math::vec3d{ 1.0,1.0,1.0 });
 	projectiles.push_back(p);
+	DataManager::getInstance().soundManager.playSound(SoundManager::Sound::THROW, false);
 }
 
 std::vector<GameObject *> GameLogic::getGameObjects()

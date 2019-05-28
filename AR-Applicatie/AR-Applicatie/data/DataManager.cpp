@@ -138,7 +138,7 @@ void DataManager::displayInfo() const
 {
 	// Create a string that displays the fps, current camera location and rotation
 	auto text =
-		"->SELECT SETTINGS\nfps " + std::to_string(int(1 / deltaTime)) +
+		"->SELECT SETTINGS<-\nfps " + std::to_string(int(1 / deltaTime)) +
 		"\nx " + std::to_string(camera.posX) +
 		"\ny " + std::to_string(camera.posY) +
 		"\nz " + std::to_string(camera.posZ) +
@@ -172,6 +172,10 @@ void DataManager::displayInfo() const
 		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
 	}
 
+	if (settingsActive) {
+		displaySettings();
+	}
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, this->loadingId);
@@ -199,6 +203,9 @@ void DataManager::displayInfo() const
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
+
+	
+
 }
 
 void DataManager::updateCamera()
@@ -255,9 +262,11 @@ void DataManager::initResources()
 	cursorId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png", textures.size());
 		//Loading ID
 	this->loadingId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon_loading.png", textures.size());
-	this->backgroundImgId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetBackground.png", 0);
-	this->backgroundTextId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetText.png", 1);
 	this->fonttextId = TextureHandler::addTexture("Resources/Font/ExportedTest.png", textures.size());
+	this->backgroundTextId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetText.png", 1);
+	this->backgroundImgId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetBackground.png", 0);
+	this->settingsId = TextureHandler::addTexture("Resources/Settings/SettingsBackground.png", textures.size());
+
 	glutSetCursor(GLUT_CURSOR_NONE);
 
 	// Init random seed
@@ -406,6 +415,7 @@ void DataManager::initWorldMapModels()
 	meshes["wicon"] = ObjLoader::loadObj("Resources/Map/Winterfell.obj");
 }
 
+
 void DataManager::drawBackgroundScreen()
 {
 	GLfloat centerX = static_cast<GLfloat>(this->width) / 2.0f;
@@ -505,4 +515,45 @@ void DataManager::drawDefaultText(int x, int y, std::string string, void *font,f
 	glPopMatrix();
 	glDisable(GL_LINE_SMOOTH);
 	glEnd();
+}
+
+void DataManager::displaySettings() const 
+{
+	
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, settingsId);
+	glEnable(GL_TEXTURE_2D);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0, 0); glVertex2f(1100, 150);
+	glTexCoord2f(0, 1); glVertex2f(1100, 500);
+	glTexCoord2f(1, 1); glVertex2f(-100, 500);
+	glTexCoord2f(1, 0); glVertex2f(-100, 150);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+
+	std::string dif = settings.getDifficultyString();
+	std::string inp = settings.getInputString();
+	auto settingsInfo =
+		"                         ->RETURN<-"
+		"\n\n\nWidth:        " + std::to_string(settings.resX) +
+		"\nHeight:       " + std::to_string(settings.resY) +
+		"\nDifficulty:   " + dif + "     ->CHANGE<-" +
+		"\nInput:        " + inp + "     ->CHANGE<-";
+
+	glRasterPos2f(350, 260);
+	const int len = settingsInfo.length();
+	auto yPosSettings = 260;
+	for (auto i = 0; i < len; i++)
+	{
+		if (settingsInfo[i] == '\n')
+		{
+			yPosSettings += 20;
+			glRasterPos2f(350, yPosSettings);
+			continue;
+		}
+		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, settingsInfo[i]);
+	}
 }
