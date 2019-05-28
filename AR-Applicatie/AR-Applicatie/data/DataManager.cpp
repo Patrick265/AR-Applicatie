@@ -4,6 +4,7 @@
 #include "../util/TextureHandler.h"
 #include "../util/ObjLoader.h"
 #include <corecrt_math_defines.h>
+#include <ctime>
 
 extern float deltaTime;
 extern float lastFrameTime;
@@ -255,6 +256,9 @@ void DataManager::initResources()
 	//Loading ID
 	this->loadingId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon_loading.png", textures.size());
 	glutSetCursor(GLUT_CURSOR_NONE);
+
+	// Init random seed
+	srand(time(nullptr));
 }
 
 void DataManager::initRigParts()

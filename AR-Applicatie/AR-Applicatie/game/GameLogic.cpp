@@ -8,7 +8,7 @@
 int sHeight;
 int yTriggerDistance;
 
-std::queue<Point2D> mouseHistory;
+std::queue<markerdetection::Point2D> mouseHistory;
 bool canThrow = false;
 
 float counter = 0;
