@@ -262,6 +262,11 @@ void DataManager::initResources()
 	cursorId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png", textures.size());
 		//Loading ID
 	this->loadingId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon_loading.png", textures.size());
+	this->fonttextId = TextureHandler::addTexture("Resources/Font/ExportedTest.png", textures.size());
+	this->backgroundTextId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetText.png", 1);
+	this->backgroundImgId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetBackground.png", 0);
+	this->settingsId = TextureHandler::addTexture("Resources/Settings/SettingsBackground.png", textures.size());
+
 	glutSetCursor(GLUT_CURSOR_NONE);
 
 	// Init random seed

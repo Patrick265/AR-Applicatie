@@ -134,6 +134,7 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 				}
 				// If nothing else is selected then castle black is selected and the game state will start
 				else {
+					dataMP->settingsActive = false;
 					dataMP->stateHandler.setState(StateHandler::States::GAME);
 				}
 				isCounting = false;

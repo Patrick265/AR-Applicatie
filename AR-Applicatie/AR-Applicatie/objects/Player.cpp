@@ -24,9 +24,9 @@ void Player::update(const float deltaTime)
 	//	return;
 
 	//If the player is currently falling
-	if (currentAction == Action::FALLING) 
+	if (currentAction == Action::FALLING)
 	{
-		velocity.y -= deltaTime * GRAVITY;	
+		velocity.y -= deltaTime * GRAVITY;
 		position.y += deltaTime * velocity.y;
 
 		//When below a certain point, kill the player (lose the game) 
@@ -62,13 +62,8 @@ void Player::update(const float deltaTime)
 				toLeft(velocity.x);
 			}
 		}
-		//To the left of the target
-		else if (position.x < targetX)
-		{
-			toRight(velocity);
-		}
-		//To the right of the target
-		else if (position.x > targetX)
+		//If Idle/Attacking
+		else
 		{
 			onIdle(velocity.x);
 		}
@@ -80,7 +75,7 @@ void Player::kill()
 	// TODO: Add kill logic
 }
 
-void Player::onIdle(float velocity)
+void Player::onIdle(const float velocity)
 {
 	//If outside the idle distance
 	if (abs(position.x - targetX) >= 2)
@@ -101,19 +96,23 @@ void Player::onIdle(float velocity)
 		}
 
 	}
-	//If in idle
-	else 
+	//If in idle distance
+	else
 	{
 		if (currentAction == Action::IDLE)
 		{
 			currentAction = Action::ATTACK;
-			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK);
+			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_MOUSE);
 
 		}
 	}
 }
 
-void Player::toLeft(float velocity)
+void Player::onFalling(const float velocity)
+{
+}
+
+void Player::toLeft(const float velocity)
 {
 	//If currently moving left
 	if (currentAction == Action::RUNLEFT)
@@ -130,7 +129,7 @@ void Player::toLeft(float velocity)
 	}
 }
 
-void Player::toRight(float velocity)
+void Player::toRight(const float velocity)
 {
 	//If currently moving right
 	if (currentAction == Action::RUNRIGHT)
@@ -146,56 +145,3 @@ void Player::toRight(float velocity)
 		getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_RIGHT);
 	}
 }
-
-		//If Idle/Attacking
-		else
-}
-
-void Player::onIdle(const float velocity)
-{	
-	}
-	//If in idle distance
-	else 
-	{
-		if (currentAction == Action::IDLE)
-		{
-			currentAction = Action::ATTACK;
-			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_MOUSE);
-
-		}
-	}
-}
-
-void Player::onFalling(const float velocity)
-{
-}
-
-void Player::toLeft(const float velocity)
-{
-	//If currently moving left
-	if (currentAction == Action::RUNLEFT)
-	{
-		//Keep moving
-		position.x -= velocity;
-	}
-	//If not currently moving left
-	else
-	{
-		//Start moving right
-		currentAction = Action::RUNLEFT;
-	}
-}
-
-void Player::toRight(const float velocity)
-{
-	//If currently moving right
-	if (currentAction == Action::RUNRIGHT)
-	{
-		//Keep moving
-		position.x += velocity;
-	}
-	//If not currently moving right
-	else
-	{
-		//Start moving right
-		currentAction = Action::RUNRIGHT;
