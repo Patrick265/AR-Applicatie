@@ -97,6 +97,7 @@ public:
 	void initGlut(int argc, char** argv, void(*onIdle)(), void(*onDisplay)()) const;
 	void initResources();
 
+	void setOrtho();
 	void drawBackgroundScreen();
 	void DrawScreenText();
 
