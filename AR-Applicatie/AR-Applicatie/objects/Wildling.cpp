@@ -19,7 +19,7 @@ void Wildling::spawn()
 
 }
 
-void Wildling::update(float deltaTime)
+void Wildling::update(const float deltaTime)
 {
 	GameObject::update(deltaTime);
 
@@ -32,84 +32,23 @@ void Wildling::update(float deltaTime)
 	//Climbing
 	else if (currentAction == Action::CLIMB)
 	{
-		position.y += deltaTime * velocity.y;
-
-		if (position.y >= 12.5) 
-		{
-			
-			// Check for wildling above
-			for (auto && other : *wildlings)
-			{
-				if (other != this && other->position.y > 14.5 && abs(other->position.x - position.x) < 2)
-				{
-					position.y -= deltaTime * velocity.y;
-
-					//Make them use no animation until the way is clear
-					getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::PAUSE);
-
-
-					return;
-				}
-			}
-			
-			currentAction = Action::PULL_UP;
-			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::PULL_UP);
-		}
+		climb(deltaTime);
 	}
 	//Pulling up
 	else if (currentAction == Action::PULL_UP) 
 	{
-		//Do not go further until the pull-up animation is finished
-		if (getComponent<AnimationComponent>()->getCurrentAnimation() == AnimationComponent::Animation::PULL_UP)
-			return;
-
-		position.y = 17.5;
-
-		if (position.x > player->getPosition().x)
-		{
-			currentAction = Action::RUNLEFT;
-			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_LEFT);
-			velocity.x = -2.0f;
-		}
-		else
-		{
-			currentAction = Action::RUNRIGHT;
-			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_RIGHT);
-			velocity.x = 2.0f;
-		}
-		//Putting the goblin on the wall
-		position.z = -0.5f;
+		pullUp(deltaTime);
 	}
 	//Move left or right
 	else if (currentAction == Action::RUNLEFT || currentAction == Action::RUNRIGHT)
 	{
-		//If the player is falling, all goblins start to cheer when they are on the wall
-		if (player->getCurrentAction() == Player::Action::FALLING)
-		{
-			currentAction = Action::CHEER;
-			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::CHEER);
-		}
-		else
-		{
-			position.x += deltaTime * velocity.x;
-
-			//When near the player, attack
-			if (abs(position.x - player->getPosition().x) < 3.0f)
-			{
-				currentAction = Action::ATTACK;
-
-				if (position.x > player->getPosition().x)
-					getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_LEFT);
-				else
-					getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_RIGHT);
-
-				player->setCurrentAction(Player::Action::FALLING);
-				player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::FALL);
-				player->setPosition({ player->getPosition().x, player->getPosition().y, 1 });
-			}
-		}
+		run(deltaTime);
 	}
-
+	//Attacking
+	else if (currentAction == Action::ATTACK) 
+	{
+		attack(deltaTime);
+	}
 }
 
 
@@ -118,6 +57,8 @@ bool Wildling::isHit(float xProjectile, float yProjectile)
 	if (abs(xProjectile - position.x) < 2 && abs(yProjectile - position.y - 6) < 2)
 	{
 		currentAction = Action::FALLING;
+		getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::FALL);
+
 		return true;
 	}
 	return false;
@@ -126,4 +67,96 @@ bool Wildling::isHit(float xProjectile, float yProjectile)
 bool Wildling::canBeDestroyed()
 {
 	return position.y < -10;
+}
+
+void Wildling::climb(const float deltaTime)
+{
+	position.y += deltaTime * velocity.y;
+
+	if (position.y >= 12.5)
+	{
+		// Check for wildling above
+		for (auto && other : *wildlings)
+		{
+			if (other != this && other->position.y > 14.5 && abs(other->position.x - position.x) < 2)
+			{
+				position.y -= deltaTime * velocity.y;
+
+				//Make them use no animation until the way is clear
+				getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::PAUSE);
+
+				return;
+			}
+		}
+
+		currentAction = Action::PULL_UP;
+		getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::PULL_UP);
+	}
+}
+
+void Wildling::pullUp(const float deltaTime)
+{
+	//Do not go further until the pull-up animation is finished
+	if (getComponent<AnimationComponent>()->getCurrentAnimation() == AnimationComponent::Animation::PULL_UP)
+		return;
+
+	position.y = 17.5;
+
+	if (position.x > player->getPosition().x)
+	{
+		currentAction = Action::RUNLEFT;
+		getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_LEFT);
+		velocity.x = -2.0f;
+	}
+	else
+	{
+		currentAction = Action::RUNRIGHT;
+		getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_RIGHT);
+		velocity.x = 2.0f;
+	}
+	//Putting the goblin on the wall
+	position.z = -0.5f;
+}
+
+void Wildling::run(const float deltaTime)
+{
+	//If the player is falling, all goblins start to cheer when they are on the wall
+	if (player->getCurrentAction() == Player::Action::FALLING)
+	{
+		currentAction = Action::CHEER;
+		getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::CHEER);
+	}
+	else
+	{
+		position.x += deltaTime * velocity.x;
+
+		//When near the player, attack
+		if (abs(position.x - player->getPosition().x) < 3.0f)
+		{
+			currentAction = Action::ATTACK;
+
+			if (position.x > player->getPosition().x)
+				getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_LEFT);
+			else
+				getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_RIGHT);		
+		}
+	}
+}
+
+void Wildling::attack(const float deltaTime)
+{
+	//If the second half of the attack animation is initiated, kill the player
+	if (getComponent<AnimationComponent>()->getAniDirection() == true) 
+	{
+		player->setCurrentAction(Player::Action::FALLING);
+		player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::FALL);
+		//Makes sure the player is in front of the wall, so the falling looks natural
+		player->setPosition({ player->getPosition().x, player->getPosition().y, 1 });
+	}
+
+	//If the attack animation has finished, make the player fall down
+	if (getComponent<AnimationComponent>()->getCurrentAnimation() == AnimationComponent::Animation::CHEER)
+	{
+		currentAction = Action::CHEER;
+	}
 }

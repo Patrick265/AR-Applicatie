@@ -29,7 +29,14 @@ public:
 	Wildling(Player *player, std::vector<Wildling *> *wildlings, float x);
 
 	void spawn();
-	void update(float deltaTime);
+	void update(const float deltaTime);
 	bool isHit(float xProjectile, float yProjectile);
 	bool canBeDestroyed();
+
+private:
+
+	void climb(const float deltaTime);
+	void pullUp(const float deltaTime);
+	void run(const float deltaTime);
+	void attack(const float deltaTime);
 };

@@ -248,13 +248,13 @@ void Rig::rigGoblin()
 		_pos, _rot);
 
 	_pos = convertCoordinates(icicle_left, arm_left_bottom);
-		Node goblin_icicle_left("la_weapon", "goblin_la_icicle",
-		"goblin_la_icicle",
+		Node goblin_icicle_left("la_weapon", "icicle",
+		"icicle",
 		_pos, _rot);
 
 		_pos = convertCoordinates(icicle_right, arm_right_bottom);
-		Node goblin_icicle_right("ra_weapon", "goblin_ra_icicle",
-		"goblin_ra_icicle",
+		Node goblin_icicle_right("ra_weapon", "icicle",
+		"icicle",
 		_pos, _rot);
 
 

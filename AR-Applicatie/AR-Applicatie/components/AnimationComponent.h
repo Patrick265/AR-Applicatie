@@ -49,6 +49,10 @@ public:
 	*/
 	const Animation &getCurrentAnimation() { return current_animation; }
 
+	/*
+		Returns the current direction of the animation
+	*/
+	const bool getAniDirection() { return ani_forward; }
 private:
 
 	// The currently selected animation

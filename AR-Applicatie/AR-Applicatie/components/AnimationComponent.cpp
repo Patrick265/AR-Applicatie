@@ -227,7 +227,8 @@ void AnimationComponent::climb(const float elapsedTime)
 	else if (current_rotation >= 90.0f)
 		ani_forward = false;
 
-	rig.getNode("torso").setRotation({ -30,0,0 });
+	//rig.getNode("torso").setRotation({ -30,0,0 });
+	rig.getNode("torso").setRotation({ -30,0,2.5f - current_rotation / 20 });
 
 	rig.getNode("la_u").setRotation({ -current_rotation - 30, 0, 0 });
 	rig.getNode("la_l").setRotation({ current_rotation / 5 - 100 ,0, 0 });
@@ -242,29 +243,35 @@ void AnimationComponent::climb(const float elapsedTime)
 
 void AnimationComponent::attack(const float elapsedTime)
 {
-	
-	   
-	if (ani_forward)
-		current_rotation += 250.0f * elapsedTime;
-	else
-		current_rotation -= 250.0f * elapsedTime;
+	//Given the goblin the elf model to throw down
+	if (rig.getNode("la_weapon").getMesh() == "none")
+	{
+		current_rotation = 100;
+		rig.getNode("la_weapon").setMesh("icicle");
+		rig.getNode("la_weapon").setTexture("icicle");
+	}	   
 
 	if (current_rotation <= 0.0f)
 		ani_forward = true;
-	else if (current_rotation >= 160.0f)
+	else if (current_rotation >= 100.0f)
 		ani_forward = false;
 
+
+	if (ani_forward)
+		current_rotation += 100.0f * elapsedTime;
+	else
+		current_rotation -= 200.0f * elapsedTime;
+
+
 	//After one rotation of the animation, switch to the cheer animation
-	if (current_rotation <= 0.0f)
+	if (current_rotation < 0.0f)
 	{
-		current_rotation = 0.0f;
-
-		setAnimation(Animation::CHEER);
+		
 	}
-
-	else if (current_rotation >= ATTACK_MAX_ROTATION)
+	else if (current_rotation > 100)
 	{
-		current_rotation = ATTACK_MAX_ROTATION;
+		setAnimation(Animation::CHEER);
+		current_rotation = ATTACK_MAX_ROTATION;		
 	}
 		
 	rig.getNode("la_u").setRotation({ -current_rotation,0, 0 });
@@ -306,7 +313,7 @@ void AnimationComponent::pullUp(const float elapsedTime)
 		rig.getNode("ra_weapon").setMesh("none");
 		rig.getNode("ra_weapon").setTexture("none");
 	}
-
+	
 	rig.setRotation({ 0,180,0 });
 
 	current_rotation += 80.0f * elapsedTime;
@@ -417,6 +424,7 @@ void AnimationComponent::fall(const float elapsedTime)
 void AnimationComponent::pause(const float elapsedTime)
 {
 	rig.setRotation({ 0,180,0 });
+	rig.getNode("torso").setRotation({ -30,0,0 });
 }
 
 Math::vec3d AnimationComponent::convertCoordinates(const Math::vec3d &posCords, const Math::vec3d &parent)
