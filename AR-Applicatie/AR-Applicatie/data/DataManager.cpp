@@ -4,6 +4,7 @@
 #include "../util/TextureHandler.h"
 #include "../util/ObjLoader.h"
 #include <corecrt_math_defines.h>
+#include <iostream>
 
 extern float deltaTime;
 extern float lastFrameTime;
@@ -250,7 +251,7 @@ void DataManager::initResources()
 	this->loadingId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon_loading.png", textures.size());
 	this->backgroundImgId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetBackground.png", 0);
 	this->backgroundTextId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetText.png", 1);
-	this->fonttextId = TextureHandler::addTexture("Resources/Font/ExportedTest.png", textures.size());
+	this->fonttextId = TextureHandler::addTexture("Resources/Font/32x32_DSFont.tga", textures.size());
 	glutSetCursor(GLUT_CURSOR_NONE);
 }
 
@@ -396,35 +397,32 @@ void DataManager::DrawScreenText() {
 	glTranslated(0, 20, 0);
 	for (int i = 0; i < 256; i++)
 	{
-		float characterx = (float)(i % 32) / 32.0f;
-		float charactery = (float)(i / 32) / 32.0f;
-		float size = 1 / 32.0f;
-
+		float characterx = (float)(i % 32) * 32.0f;
+		float charactery = (float)(i / 32) * 32.0f;
+		float size = 1/32.0f;
+		//std::cout << "\tindex: " << i  << "CX: " << characterx << "\tCY: " << charactery << "\tsize: " << size  << "\n";
 		glEnable(GL_BLEND);
+		glNewList(characterlist + i, GL_COMPILE);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBindTexture(GL_TEXTURE_2D, this->fonttextId);
-		glNewList(characterlist + i, GL_COMPILE);
+		glEnable(GL_TEXTURE_2D);
 		glBegin(GL_QUADS);
-		glTexCoord2f(characterx, charactery);
-		glVertex2d(0, 1);
-		glTexCoord2f(characterx, charactery + size);
-		glVertex2i(0, 0);
-		glTexCoord2f(characterx + size, charactery + size);
-		glVertex2i(1, 0);
-		glTexCoord2f(characterx + size, charactery);
-		glVertex2i(1, 1);
-
-		
+		glVertex2d(0, 0); glTexCoord2f(characterx, charactery);
+		glVertex2i(0, 1);  glTexCoord2f(characterx, charactery + size);
+		glVertex2i(1, 1); glTexCoord2f(characterx + size, charactery + size);
+		glVertex2i(1, 0); glTexCoord2f(characterx + size, charactery);
 		glEnd();
 		glTranslated(2, 0, 0);
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
 		glEndList();
 
 	}
 	
 	int size = 6;
-	glScalef(25.0f, 25.0f, 25.0f);
+	glScalef(100, 100, 0);
 	glListBase(characterlist);
-	glCallLists(6, GL_UNSIGNED_BYTE, "Lekker");
+	glCallLists(6, GL_UNSIGNED_BYTE, "012345");
 }
 
 
