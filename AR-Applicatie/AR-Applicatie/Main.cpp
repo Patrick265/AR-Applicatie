@@ -1,5 +1,6 @@
 #include "data/DataManager.h"
 #include <GL/freeglut.h>
+#include <thread>
 
 DataManager *data = &DataManager::getInstance();
 markerdetection m;
@@ -17,7 +18,6 @@ int main(int argc, char** argv)
 
 	data->stateHandler.setState(StateHandler::States::MENU);
 	
-
 	std::thread openCV(runOpenCVThread);
 
 	glutMainLoop();

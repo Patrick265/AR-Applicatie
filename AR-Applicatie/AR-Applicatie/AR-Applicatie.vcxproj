@@ -64,11 +64,11 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="OpenGL-OpenCV-PropertySheet-Debug.props" />
+    <Import Project="propertysheets\AR-PropertySheet-Debug.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="OpenGL-OpenCV-PropertySheet-Release.props" />
+    <Import Project="propertysheets\AR-PropertySheet-Release.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
@@ -121,6 +121,7 @@
     <ClCompile Include="game\WorldMap.cpp" />
     <ClCompile Include="data\DataManager.cpp" />
     <ClCompile Include="game\Settings.cpp" />
+    <ClCompile Include="util\SoundManager.cpp" />
     <ClCompile Include="states\DeathState.cpp" />
     <ClCompile Include="states\GameState.cpp" />
     <ClCompile Include="game\GameLogic.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="game\WorldMap.h" />
     <ClInclude Include="data\DataManager.h" />
     <ClInclude Include="game\Settings.h" />
+    <ClInclude Include="util\SoundManager.h" />
     <ClInclude Include="states\DeathState.h" />
     <ClInclude Include="states\GameState.h" />
     <ClInclude Include="game\GameLogic.h" />
