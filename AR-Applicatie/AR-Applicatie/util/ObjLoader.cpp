@@ -6,12 +6,7 @@
 
 #include "ObjLoader.h"
 
-static void addFace(Graphics::mesh &mesh,
-	const std::vector<Math::vec3d> &verts,
-	const std::vector<Math::vec2d> &texture_coords,
-	const std::vector<Math::vec3d> &normals,
-	const int index,
-	const std::vector<std::vector<std::string>> &verticesdata);
+
 
 static std::vector<std::string> split(std::string str, const char separator)
 {
@@ -80,7 +75,7 @@ Graphics::mesh ObjLoader::loadObj(std::string filename)
 				verticesdata.push_back(vertexdata);
 
 				if (i >= 2) {
-					addFace(mesh, verts, texture_coords, normals, i, verticesdata);
+					addTriangle(mesh, verts, texture_coords, normals, i, verticesdata);
 				}
 			}
 
@@ -90,17 +85,8 @@ Graphics::mesh ObjLoader::loadObj(std::string filename)
 	return mesh;
 }
 
-/*
-	Adds a face to the given mesh
 
-	@param mesh           - The given mesh
-	@param verts          - The vertices
-	@param texture_coords - The texture coordinates
-	@param normals        - The normals
-	@param index		  - The index of the vertex
-	@param verticesdata   - The values of all the vertices, texture coordinates and normals
-*/
-static void addFace(Graphics::mesh &mesh,
+void ObjLoader::addTriangle(Graphics::mesh &mesh,
 	const std::vector<Math::vec3d> &verts,
 	const std::vector<Math::vec2d> &texture_coords,
 	const std::vector<Math::vec3d> &normals,
