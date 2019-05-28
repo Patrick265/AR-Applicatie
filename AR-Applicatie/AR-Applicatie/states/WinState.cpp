@@ -29,12 +29,7 @@ void WinState::update(float elapsedTime)
 		}
 		DataManager::getInstance().scaleLoading = timePassed * 10;
 	}
-	else {
-		DataManager::getInstance().scaleLoading = 0;
-		timePassed = 0;
-	}
-
-	if (DataManager::getInstance().mousePos.y >= 60 && DataManager::getInstance().mousePos.y <= 110 &&
+	else if (DataManager::getInstance().mousePos.y >= 60 && DataManager::getInstance().mousePos.y <= 110 &&
 		DataManager::getInstance().mousePos.x >= DataManager::getInstance().width - 300 &&
 		DataManager::getInstance().mousePos.x <= DataManager::getInstance().width)
 	{
