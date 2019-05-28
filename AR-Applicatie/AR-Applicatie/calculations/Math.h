@@ -18,6 +18,16 @@ public:
 		float z = 0;
 		float w = 1;
 
+
+		vec3d& operator=(const vec3d& a)
+		{
+			x = a.x;
+			y = a.y;
+			z = a.z;
+
+			return *this;
+		}
+
 		vec3d& operator+=(const vec3d& a)
 		{
 			x += a.x;
@@ -41,7 +51,7 @@ public:
 
 		Returns the resulting vector
 	*/
-	static vec3d vector_add(vec3d vec1, vec3d vec2);
+	static vec3d vector_add(const vec3d &vec1, const vec3d &vec2);
 
 	/*
 		Subtracts two vectors
@@ -51,7 +61,9 @@ public:
 
 		Returns the resulting vector
 	*/
-	static vec3d vector_sub(vec3d vec1, vec3d vec2);
+	static vec3d vector_sub(const vec3d &vec1, const vec3d &vec2);
+
+	static vec3d vector_getInverse(const vec3d &vec);
 
 	/*
 		Multiplies a vector with a matrix
@@ -61,7 +73,7 @@ public:
 
 		Returns the resulting vector
 	*/
-	static vec3d matrix_multiplyVector(mat4x4 mat, vec3d vec);
+	static vec3d matrix_multiplyVector(const mat4x4 &mat, const vec3d &vec);
 
 
 	/*
@@ -72,7 +84,7 @@ public:
 
 		Returns the resulting matrix
 	*/
-	static mat4x4 matrix_multiplyMatrix(mat4x4 mat1, mat4x4 mat2);
+	static mat4x4 matrix_multiplyMatrix(const mat4x4 &mat1, const mat4x4 &mat2);
 
 	/*
 		Normalizes the vector
@@ -81,7 +93,7 @@ public:
 
 		Returns the normalized vector
 	*/
-	static vec3d normalize(vec3d v);
+	static vec3d normalize(const vec3d &v);
 
 	/*
 		Obtains the length of v2 projected onto v1
@@ -91,7 +103,7 @@ public:
 
 		Returns the dotproduct
 	*/
-	static float dotProduct(vec3d v1, vec3d v2);
+	static float dotProduct(const vec3d &v1, const vec3d &v2);
 
 
 	/*
@@ -102,5 +114,5 @@ public:
 
 		Returns the normal vector
 	*/
-	static vec3d crossProduct(vec3d v1, vec3d v2);
+	static vec3d crossProduct(const vec3d &v1, const vec3d &v2);
 };

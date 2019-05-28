@@ -76,6 +76,11 @@ std::vector<std::string> Node::getChildren()
 	return children;
 }
 
+Math::vec3d Node::getPosition()
+{
+	return this->pos;
+}
+
 void Node::addChild(std::string child)
 {
 	children.push_back(child);

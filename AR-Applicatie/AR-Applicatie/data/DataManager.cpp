@@ -125,7 +125,8 @@ void DataManager::standardRenderOperations() const
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-
+		
+	
 	//Lighting
 	glEnable(GL_LIGHT0);
 	glEnable(GL_LIGHTING);
@@ -286,6 +287,36 @@ void DataManager::initRigParts()
 
 	textures["log"] = TextureHandler::addTexture("Resources/Weapons/weapon_log.png", textures.size());
 	meshes["log"] = ObjLoader::loadObj("Resources/Weapons/weapon_log.obj");
+	weaponMap["log"] = { 0.667523f,-0.030498f, 0.71092f };
+
+	textures["weights"] = TextureHandler::addTexture("Resources/Weapons/weights.png", textures.size());
+	meshes["weights"] = ObjLoader::loadObj("Resources/Weapons/weights.obj");
+	weaponMap["weights"] = { 0.0f,0.0f,0.820919f };
+
+	textures["godsword"] = TextureHandler::addTexture("Resources/Weapons/weapon_godsword.png", textures.size());
+	meshes["godsword"] = ObjLoader::loadObj("Resources/Weapons/weapon_godsword.obj");
+	weaponMap["godsword"] = { 0.0f,0.119117f,0.81344f };
+
+	textures["cattleprod"] = TextureHandler::addTexture("Resources/Weapons/weapon_cattleprod.png", textures.size());
+	meshes["cattleprod"] = ObjLoader::loadObj("Resources/Weapons/weapon_cattleprod.obj");
+	weaponMap["cattleprod"] = { 0.661686f,0.014448f,0.698785f };
+
+	//textures["scythe"] = TextureHandler::addTexture("Resources/Weapons/weapon_scythe.png", textures.size());
+	//meshes["scythe"] = ObjLoader::loadObj("Resources/Weapons/weapon_scythe.obj");
+	//weaponMap["scythe"] = { 0.213286f,-0.106202f,0.998531f };
+
+	textures["fish"] = TextureHandler::addTexture("Resources/Weapons/weapon_fish.png", textures.size());
+	meshes["fish"] = ObjLoader::loadObj("Resources/Weapons/weapon_fish.obj");
+	weaponMap["fish"] = { 0.811473f,0.14979f,-0.108852f};
+
+	///Secret weapon
+	//textures["go"] = TextureHandler::addTexture("Resources/Weapons/weapon_go.png", textures.size());
+	//meshes["go"] = ObjLoader::loadObj("Resources/Weapons/weapon_go.obj");
+	//weaponMap["go"] = { 0.716873f,0.053516f,-0.114973 };
+
+	textures["weapon_elf"] = TextureHandler::addTexture("Resources/Weapons/weapon_elf.png", textures.size());
+	meshes["weapon_elf"] = ObjLoader::loadObj("Resources/Weapons/weapon_elf.obj");
+	//weaponMap["weapon_elf"] = { 0.213286f,-0.106202f,0.998531f };
 
 	/*
 	GOBLIN
@@ -315,11 +346,11 @@ void DataManager::initRigParts()
 	textures["goblin_rl_l"] = TextureHandler::addTexture("Resources/Enemy/goblin_leg_right_bottom.png", textures.size());
 	meshes["goblin_rl_l"] = ObjLoader::loadObj("Resources/Enemy/Goblin_leg_right_bottom.obj");
 
-	textures["goblin_la_icicle"] = TextureHandler::addTexture("Resources/Enemy/icicle.png", textures.size());
-	meshes["goblin_la_icicle"] = ObjLoader::loadObj("Resources/Enemy/icicle.obj");
+	textures["icicle"] = TextureHandler::addTexture("Resources/Enemy/icicle.png", textures.size());
+	meshes["icicle"] = ObjLoader::loadObj("Resources/Enemy/icicle.obj");
 
-	textures["goblin_ra_icicle"] = TextureHandler::addTexture("Resources/Enemy/icicle.png", textures.size());
-	meshes["goblin_ra_icicle"] = ObjLoader::loadObj("Resources/Enemy/icicle.obj");
+//	textures["goblin_ra_icicle"] = TextureHandler::addTexture("Resources/Enemy/icicle.png", textures.size());
+//	meshes["goblin_ra_icicle"] = ObjLoader::loadObj("Resources/Enemy/icicle.obj");
 
 }
 
@@ -334,13 +365,29 @@ void DataManager::initGameLogicModels()
 	textures["giant"] = TextureHandler::addTexture("Resources/Rune/giant.png", textures.size());
 	meshes["giant"] = ObjLoader::loadObj("Resources/Rune/giant.obj");
 	
-	textures["skybox"] = TextureHandler::addTexture("Resources/Skybox/skybox.jpg", textures.size());
+	textures["skybox"] = TextureHandler::addTexture("Resources/Skybox/stars.jpg", textures.size());
 	meshes["skybox"] = ObjLoader::loadObj("Resources/Skybox/skybox.obj");
+	Graphics::inverseNormals(meshes["skybox"]);
 	
 	textures["packet"] = TextureHandler::addTexture("Resources/Pakketje/Pakketje.png", textures.size());
 	meshes["packet"] = ObjLoader::loadObj("Resources/Pakketje/Pakketje.obj");
 
 	textures["brick"] = TextureHandler::addTexture("Resources/Weapons/Brick.png", textures.size());
+}
+
+void DataManager::determineNextWeapon()
+{
+	int number = rand() % weaponMap.size();
+	int pos = 0;
+	for (auto const& x : weaponMap)
+	{
+		if (number == pos)
+		{
+			currentWeapon = x.first;
+			break;
+		}
+		pos += 1;
+	}
 }
 
 void DataManager::initWorldMapModels()

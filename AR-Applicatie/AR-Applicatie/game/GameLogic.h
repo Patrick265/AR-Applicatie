@@ -5,16 +5,21 @@
 #include <vector>
 #include "../objects/Player.h"
 #include <map>
+#include <chrono>
 
 class GameLogic
 {
 	GameObject *wall;
 	GameObject *wallTop;
+	const int wallWidth = 26;
 	GameObject *skybox;
 	Player* player;
 	std::vector<Projectile *> projectiles;
 	std::vector<Wildling *> wildlings;
-	
+
+	std::chrono::duration<float, std::milli> gameDuration;
+	std::chrono::duration<float, std::milli> elapsedTime;
+
 	void handleMouse();
 
 public:
