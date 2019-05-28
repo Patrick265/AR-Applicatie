@@ -6,9 +6,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-uint16_t TextureHandler::addTexture(const std::string &image_path, const int &amount_of_textures)
+uint16_t TextureHandler::addTexture(const std::string &image_path, const size_t &amount_of_textures)
 {
-	GLuint texture_id = amount_of_textures;
+	auto texture_id = static_cast<GLuint>(amount_of_textures);
 
 	glGenTextures(1, &texture_id);
 	glBindTexture(GL_TEXTURE_2D, texture_id);

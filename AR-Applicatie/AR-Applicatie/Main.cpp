@@ -35,8 +35,8 @@ void onIdle()
 	data->stateHandler.update(deltaTime);
 	data->updateCamera();
 
-	if (m.hasNewMousePosition)
-		data->onMotionData(data->mousePos.x, data->mousePos.y);
+	if (m.hasNewMousePosition())
+		data->onMotionData(static_cast<int>(data->mousePos.x), static_cast<int>(data->mousePos.y));
 
 	glutPostRedisplay();
 }

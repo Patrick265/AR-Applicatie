@@ -58,5 +58,5 @@ public:
 	*/
 	 Point2D getCoordinates();
 
-	 static bool hasNewMousePosition();
+	 bool hasNewMousePosition();
 };

@@ -176,7 +176,7 @@ void AnimationComponent::attackMouse(const float elapsedTime)
 	const auto mousePos = DataManager::getInstance().mousePos;
 	const auto height = DataManager::getInstance().height;
 
-	positionToRotation(mousePos.y);
+	positionToRotation(static_cast<int>(mousePos.y));
 
 	if (current_rotation <= 0.0f) 
 	{

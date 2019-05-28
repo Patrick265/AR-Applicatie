@@ -19,8 +19,8 @@ public:
 	StateHandler stateHandler;
 
 	// Screen dimensions
-	float width;
-	float height;
+	int width;
+	int height;
 
 	// Mouse position
 	markerdetection::Point2D mousePos;

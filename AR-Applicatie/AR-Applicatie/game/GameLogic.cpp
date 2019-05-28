@@ -35,7 +35,7 @@ GameLogic::GameLogic()
 	player = new Player();
 	player->addComponent(new AnimationComponent(Rig("elf", Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 })));
 	player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_MOUSE);
-	player->setPosition(Math::vec3d{ wallWidth / 2.0f,20.2,-2 });
+	player->setPosition(Math::vec3d{ wallWidth / 2.0f,20.2f,-2.0f });
 
 	gameDuration = std::chrono::duration<float, std::milli>(1 * 60 * 1000);
 	elapsedTime = std::chrono::duration<float, std::milli>(0);
@@ -89,7 +89,7 @@ void GameLogic::update(float deltaTime)
 		auto exit = false;
 		for (auto i = 0; i < 10; ++i)
 		{
-			xPos = rand() % wallWidth - wallWidth / 2.0f;
+			xPos = static_cast<int>(rand() % wallWidth - wallWidth / 2.0f);
 			exit = false;
 			for (auto && wildling : wildlings)
 			{
@@ -103,7 +103,7 @@ void GameLogic::update(float deltaTime)
 				break;
 		}
 
-		auto wildling = new Wildling(player, &wildlings, xPos);
+		auto wildling = new Wildling(player, &wildlings, static_cast<float>(xPos));
 		wildling->addComponent(new AnimationComponent(Rig("goblin",
 			Math::vec3d{ 0,0,0 }, Math::vec3d{ 0.5,0.5,0.5 })));
 		wildling->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::CLIMB);
@@ -198,7 +198,7 @@ void GameLogic::handleMouse()
 		return;
 
 	sHeight = DataManager::getInstance().height;
-	yTriggerDistance = sHeight / 3.0f;
+	yTriggerDistance = static_cast<int>(sHeight / 3.0f);
 
 	//If a weapon is not ready
 	if (!canThrow)
@@ -215,7 +215,7 @@ void GameLogic::handleMouse()
 		//If the mouse is within the trigger area at the bottom
 		if (mousePos.y + yTriggerDistance >= sHeight)
 		{
-			throwProjectile((last.x - first.x) * 0.1, (first.y - last.y) * 0.1);
+			throwProjectile((last.x - first.x) * 0.1f, (first.y - last.y) * 0.1f);
 			canThrow = false;
 			DataManager::getInstance().determineNextWeapon();
 		}

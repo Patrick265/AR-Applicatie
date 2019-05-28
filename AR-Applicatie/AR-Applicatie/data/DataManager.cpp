@@ -110,7 +110,7 @@ static void onReshape(int w, int h)
 void DataManager::standardRenderOperations() const
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.4, 0.4, 0.4, 1.0);
+	glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -158,15 +158,15 @@ void DataManager::displayInfo() const
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glRasterPos2f(xPos, yPos);
+	glRasterPos2f(static_cast<GLfloat>(xPos), static_cast<GLfloat>(yPos));
 	glColor3f(1, 1, 1);
-	const int len = text.length();
+	const auto len = text.length();
 	for (auto i = 0; i < len; i++)
 	{
 		if (text[i] == '\n')
 		{
 			yPos += 20;
-			glRasterPos2f(xPos, yPos);
+			glRasterPos2f(static_cast<GLfloat>(xPos), static_cast<GLfloat>(yPos));
 			continue;
 		}
 		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
@@ -238,7 +238,7 @@ void DataManager::initGlut(int argc, char** argv, void(*onIdle)(), void(*onDispl
 	glutMotionFunc(onMotion);
 	glutReshapeFunc(onReshape);
 
-	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
+	lastFrameTime = static_cast<float>(glutGet(GLUT_ELAPSED_TIME));
 }
 
 void DataManager::initResources()
@@ -261,7 +261,7 @@ void DataManager::initResources()
 	glutSetCursor(GLUT_CURSOR_NONE);
 
 	// Init random seed
-	srand(time(nullptr));
+	srand(static_cast<unsigned int>(time(nullptr)));
 }
 
 void DataManager::initRigParts()
@@ -408,8 +408,8 @@ void DataManager::initWorldMapModels()
 
 void DataManager::drawBackgroundScreen()
 {
-	int centerX = this->width / 2;
-	int centerY = this->height / 2;
+	GLfloat centerX = static_cast<GLfloat>(this->width) / 2.0f;
+	GLfloat centerY = static_cast<GLfloat>(this->height) / 2.0f;
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_COLOR_MATERIAL);
@@ -493,7 +493,7 @@ void DataManager::drawDefaultText(int x, int y, std::string string, void *font)
 	glEnable(GL_LINE_SMOOTH);
 
 	glPushMatrix();
-	glTranslatef(x, y, 0);
+	glTranslatef(static_cast<GLfloat>(x), static_cast<GLfloat>(y), 0);
 	glScalef(0.5f, -0.5f, 0);
 	glColor3f(1, 0, 0);
 	for (str=cstr; *str; str++)
@@ -506,5 +506,3 @@ void DataManager::drawDefaultText(int x, int y, std::string string, void *font)
 	glDisable(GL_LINE_SMOOTH);
 	glEnd();
 }
-
-

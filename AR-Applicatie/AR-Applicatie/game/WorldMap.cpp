@@ -48,7 +48,7 @@ void WorldMap::update(float deltaTime, int x, int y, int height)
 	}
 	this->x = x;
 	this->y = y;
-	this->height = height;
+	this->height = static_cast<float>(height);
 	this->deltatime = deltaTime;
 	
 }
@@ -65,7 +65,7 @@ void WorldMap::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std:
 	}
 	
 
-	this->mousePicking->update(x, y, this->height, this->deltatime);
+	this->mousePicking->update(x, y, static_cast<int>(this->height), this->deltatime);
 }
 
 std::vector<GameObject*> WorldMap::getGameObjects() const

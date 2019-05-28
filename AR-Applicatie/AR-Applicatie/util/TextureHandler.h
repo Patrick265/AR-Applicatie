@@ -15,6 +15,6 @@ public:
 
 		Returns the id of the texture
 	*/
-	static uint16_t addTexture(const std::string &image_path, const int &amount_of_textures);
+	static uint16_t addTexture(const std::string &image_path, const size_t &amount_of_textures);
 
 };

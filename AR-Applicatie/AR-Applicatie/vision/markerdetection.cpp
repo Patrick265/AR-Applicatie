@@ -16,7 +16,7 @@
 //Global variables
 cv::VideoCapture cap(0);
 cv::Mat frame, frame_HSV, frame_threshold;
-cv::Point markerPosition;
+markerdetection::Point2D markerPosition;
 cv::Ptr<cv::SimpleBlobDetector> detector;
 Exceptions exception;
 cv::Mat blobImg;
@@ -92,7 +92,7 @@ void markerdetection::resetBlobDetector()
 	params.filterByInertia = false;       
 	params.filterByConvexity = true;    
 	params.minConvexity = 0.5;
-	params.minCircularity = 0.15;
+	params.minCircularity = 0.15f;
 
 	//Creating a detector with the settings above
 	detector = cv::SimpleBlobDetector::create(params);
@@ -140,10 +140,10 @@ void markerdetection::detectMarker()
 	for (cv::KeyPoint k : myBlobs)
 	{
 		if (k.size > size) {
-			markerdetection::Point2D points{ k.pt.x, k.pt.y };
-			markerPosition.x = k.pt.x;
-			markerPosition.y = k.pt.y;
-			size = k.size;
+			Point2D points{ k.pt.x, k.pt.y };
+			markerPosition.x = static_cast<float>(k.pt.x);
+			markerPosition.y = static_cast<float>(k.pt.y);
+			size = static_cast<int>(k.size);
 			
 		}
 	}
@@ -153,10 +153,10 @@ void markerdetection::detectMarker()
 //	This function is a callback used for using the mouse on the openCV screen.
 //
 */
-void mouseCallback(int  event, int  x, int  y, int  flag, void *param) 
+void mouseCallback(int event, int x, int y, int flag, void *param) 
 {
-	markerPosition.x = x;
-	markerPosition.y = y;
+	markerPosition.x = static_cast<float>(x);
+	markerPosition.y = static_cast<float>(y);
 	newMousePosition = true;
 }
 
@@ -366,8 +366,8 @@ void markerdetection::runMarkerDetection(markerdetection::DetectionMode mode)
 				}
 			}
 
-			width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
-			height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+			width = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_WIDTH));
+			height = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
 
 			calibrate();
 
