@@ -82,5 +82,4 @@ public:
 	void drawDefaultText(int x, int y, std::string string, void * font);
 
 
-
 };

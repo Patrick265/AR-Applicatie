@@ -4,7 +4,6 @@
 #include "../util/TextureHandler.h"
 #include "../util/ObjLoader.h"
 #include <corecrt_math_defines.h>
-#include <iostream>
 
 extern float deltaTime;
 extern float lastFrameTime;
@@ -251,7 +250,7 @@ void DataManager::initResources()
 	this->loadingId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon_loading.png", textures.size());
 	this->backgroundImgId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetBackground.png", 0);
 	this->backgroundTextId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetText.png", 1);
-	this->fonttextId = TextureHandler::addTexture("Resources/Font/32x32_DSFont.tga", textures.size());
+	this->fonttextId = TextureHandler::addTexture("Resources/Font/ExportedTest.png", textures.size());
 	glutSetCursor(GLUT_CURSOR_NONE);
 }
 
@@ -397,11 +396,12 @@ void DataManager::DrawScreenText() {
 	glTranslated(0, 20, 0);
 	for (int i = 0; i < 256; i++)
 	{
-		float characterx = (float)(i % 32) * 32.0f;
-		float charactery = (float)(i / 32) * 32.0f;
-		float size = 1/32.0f;
-		//std::cout << "\tindex: " << i  << "CX: " << characterx << "\tCY: " << charactery << "\tsize: " << size  << "\n";
+		float characterx = (float)(i % 32) / 32.0f;
+		float charactery = (float)(i / 32) / 32.0f;
+		float size = 1 / 32.0f;
+
 		glEnable(GL_BLEND);
+
 		glNewList(characterlist + i, GL_COMPILE);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBindTexture(GL_TEXTURE_2D, this->fonttextId);
@@ -420,9 +420,10 @@ void DataManager::DrawScreenText() {
 	}
 
 	int size = 6;
-	glScalef(100, 100, 0);
+	glScalef(100, 100, 100);
 	glListBase(characterlist);
-	glCallLists(6, GL_UNSIGNED_BYTE, "012345");
+	glCallLists(6, GL_UNSIGNED_BYTE, "Lekker");
+
 }
 
 void DataManager::drawDefaultText(int x, int y, std::string string, void *font)
@@ -430,12 +431,23 @@ void DataManager::drawDefaultText(int x, int y, std::string string, void *font)
 	int length;
 	const char *cstr = string.c_str();
 	length = (int)strlen(cstr);
-	glRasterPos2f(x, y);
+	const char *str;
 
-	for (int i = 0; i < length; i++)
+	glEnable(GL_LINE_SMOOTH);
+
+	glPushMatrix();
+	glTranslatef(x, y, 0);
+	glScalef(0.5f, -0.5f, 0);
+	glColor3f(1, 0, 0);
+	for (str=cstr; *str; str++)
 	{
-		 glutBitmapCharacter(font,string[i]);
+		glutStrokeCharacter(font, *str);
+		glutStrokeWidth(font, *str);
 	}
+	glColor3f(1, 1, 1);
+	glPopMatrix();
+	glDisable(GL_LINE_SMOOTH);
+	glEnd();
 }
 
 
