@@ -253,8 +253,11 @@ void DataManager::initResources()
 
 	//Cursor image
 	cursorId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png", textures.size());
-	//Loading ID
+		//Loading ID
 	this->loadingId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon_loading.png", textures.size());
+	this->backgroundImgId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetBackground.png", 0);
+	this->backgroundTextId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetText.png", 1);
+	this->fonttextId = TextureHandler::addTexture("Resources/Font/ExportedTest.png", textures.size());
 	glutSetCursor(GLUT_CURSOR_NONE);
 
 	// Init random seed
@@ -401,3 +404,106 @@ void DataManager::initWorldMapModels()
 
 	meshes["icon"] = ObjLoader::loadObj("Resources/Map/Castleblack icon.obj");
 }
+
+void DataManager::drawBackgroundScreen()
+{
+	int centerX = this->width / 2;
+	int centerY = this->height / 2;
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
+	glClearDepth(GL_DEPTH_BUFFER_BIT);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0.0, this->width, this->height, 0.0, 0.0, 1.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, this->backgroundImgId);
+	glEnable(GL_TEXTURE_2D);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0, 0); glVertex2f(centerX - centerX, centerY - centerY);
+	glTexCoord2f(0, 1); glVertex2f(centerX - centerX, centerY + centerY);
+	glTexCoord2f(1, 1); glVertex2f(centerX + centerX, centerY + centerY);
+	glTexCoord2f(1, 0); glVertex2f(centerX + centerX, centerY - centerY);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, this->backgroundTextId);
+	glEnable(GL_TEXTURE_2D);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0, 0); glVertex2f(centerX - centerX, centerY - centerY);
+	glTexCoord2f(0, 1); glVertex2f(centerX - centerX, centerY + centerY);
+	glTexCoord2f(1, 1); glVertex2f(centerX + centerX, centerY + centerY);
+	glTexCoord2f(1, 0); glVertex2f(centerX + centerX, centerY - centerY);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+}
+
+void DataManager::DrawScreenText() {
+	GLuint characterlist = glGenLists(256);
+	glTranslated(0, 20, 0);
+	for (int i = 0; i < 256; i++)
+	{
+		float characterx = (float)(i % 32) / 32.0f;
+		float charactery = (float)(i / 32) / 32.0f;
+		float size = 1 / 32.0f;
+
+		glEnable(GL_BLEND);
+
+		glNewList(characterlist + i, GL_COMPILE);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBindTexture(GL_TEXTURE_2D, this->fonttextId);
+		glEnable(GL_TEXTURE_2D);
+		glBegin(GL_QUADS);
+		glVertex2d(0, 0); glTexCoord2f(characterx, charactery);
+		glVertex2i(0, 1);  glTexCoord2f(characterx, charactery + size);
+		glVertex2i(1, 1); glTexCoord2f(characterx + size, charactery + size);
+		glVertex2i(1, 0); glTexCoord2f(characterx + size, charactery);
+		glEnd();
+		glTranslated(2, 0, 0);
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
+		glEndList();
+
+	}
+
+	int size = 6;
+	glScalef(100, 100, 100);
+	glListBase(characterlist);
+	glCallLists(6, GL_UNSIGNED_BYTE, "Lekker");
+
+}
+
+void DataManager::drawDefaultText(int x, int y, std::string string, void *font)
+{
+	int length;
+	const char *cstr = string.c_str();
+	length = (int)strlen(cstr);
+	const char *str;
+
+	glEnable(GL_LINE_SMOOTH);
+
+	glPushMatrix();
+	glTranslatef(x, y, 0);
+	glScalef(0.5f, -0.5f, 0);
+	glColor3f(1, 0, 0);
+	for (str=cstr; *str; str++)
+	{
+		glutStrokeCharacter(font, *str);
+		glutStrokeWidth(font, *str);
+	}
+	glColor3f(1, 1, 1);
+	glPopMatrix();
+	glDisable(GL_LINE_SMOOTH);
+	glEnd();
+}
+
+
