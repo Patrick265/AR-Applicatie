@@ -11,12 +11,12 @@ public:
 	struct vertex {
 		//vertex position
 		Math::vec3d p;
-		//Face normal
-		Math::vec3d fn;
-		//texture coordinate
-		Math::vec2d vt;
 		//vertex normal
 		Math::vec3d vn;
+		//texture coordinate
+		Math::vec2d vt;	
+		//Face normal
+		Math::vec3d fn;
 	};
 
 	struct mesh {
@@ -33,4 +33,12 @@ public:
 		Returns the resulting normal
 	*/
 	static Math::vec3d getNormal(const Math::vec3d &vec1, const Math::vec3d &vec2, const Math::vec3d &vec3);
+
+	/*
+		Inverses all the normals in the mesh
+
+		@param mesh - The given mesh
+	*/
+	static void inverseNormals(Graphics::mesh &mesh);
+
 };

@@ -41,7 +41,7 @@ void DrawHandler::drawMesh_array(const Graphics::mesh &mesh, const uint16_t &tex
 	glBindTexture(GL_TEXTURE_2D, texture_id);
 	glEnable(GL_TEXTURE_2D);
 
-	glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.size());
+	glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mesh.vertices.size()));
 	glDisable(GL_TEXTURE_2D);
 
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);

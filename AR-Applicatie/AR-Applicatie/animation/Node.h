@@ -68,6 +68,14 @@ public:
 	std::vector<std::string> getChildren();
 
 	/*
+		Returns the position of the Node
+	*/
+
+	Math::vec3d getPosition();
+
+	const std::string &getMesh() { return mesh; }
+
+	/*
 		Sets the rotation of the Node
 
 		@param rot - The given rotation

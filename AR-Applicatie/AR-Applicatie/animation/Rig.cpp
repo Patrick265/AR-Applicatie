@@ -44,6 +44,7 @@ void Rig::rigFemaleElf()
 	Math::vec3d big_sack = { 0.0f,0.0f, 0.32386f };
 
 	Math::vec3d weapon_log = {0.667523f,-0.030498f, 0.71092f};
+	Math::vec3d weapon_weights = {0.0f,0.0f,0.820919f};
 
 
 	/* HEAD
@@ -125,10 +126,9 @@ void Rig::rigFemaleElf()
 		_pos, _rot);
 
 		_pos = convertCoordinates(weapon_log, arm_left_bottom);
-	Node elf_weapon_log("la_weapon", "log",
-		"log",
+	Node elf_weapon("la_weapon", "none",
+		"none",
 		_pos, _rot);
-
 
 	//Setting the parent/child relations
 	elf_neck.addChild("head");
@@ -152,7 +152,7 @@ void Rig::rigFemaleElf()
 
 
 	//Storing the nodes
-	nodes["la_weapon"] = elf_weapon_log;
+	nodes["la_weapon"] = elf_weapon;
 
 	nodes["neck"] = elf_neck;
 	nodes["head"] = elf_head;
@@ -178,7 +178,7 @@ void Rig::rigGoblin()
 {
 	Math::vec3d _pos = { 0.0f, 5.50018f, 0.0f };
 	Math::vec3d _rot = { 0.0f, 0.0f, 0.0f };
-	Math::vec3d parentPos;
+	//Math::vec3d parentPos;
 	centre = Node(_pos, _rot);
 
 	Math::vec3d torso = { 0.0f, 0.0f, 5.50018f };
@@ -248,20 +248,20 @@ void Rig::rigGoblin()
 		_pos, _rot);
 
 	_pos = convertCoordinates(icicle_left, arm_left_bottom);
-		Node goblin_icicle_left("la_l_icicle", "goblin_la_icicle",
-		"goblin_la_icicle",
+		Node goblin_icicle_left("la_weapon", "icicle",
+		"icicle",
 		_pos, _rot);
 
 		_pos = convertCoordinates(icicle_right, arm_right_bottom);
-		Node goblin_icicle_right("ra_l_icicle", "goblin_ra_icicle",
-		"goblin_ra_icicle",
+		Node goblin_icicle_right("ra_weapon", "icicle",
+		"icicle",
 		_pos, _rot);
 
 
 		
 	//Setting parent/child relations
-	goblin_arm_left_bottom.addChild("la_l_icicle");
-	goblin_arm_right_bottom.addChild("ra_l_icicle");
+	goblin_arm_left_bottom.addChild("la_weapon");
+	goblin_arm_right_bottom.addChild("ra_weapon");
 
 	goblin_arm_left_top.addChild("la_l");
 	goblin_arm_right_top.addChild("ra_l");
@@ -280,8 +280,8 @@ void Rig::rigGoblin()
 	//Adding nodes to map
 	nodes["torso"] = goblin_torso;
 
-	nodes["la_l_icicle"] = goblin_icicle_left;
-	nodes["ra_l_icicle"] = goblin_icicle_right;
+	nodes["la_weapon"] = goblin_icicle_left;
+	nodes["ra_weapon"] = goblin_icicle_right;
 
 	nodes["la_u"] = goblin_arm_left_top;
 	nodes["la_l"] = goblin_arm_left_bottom;

@@ -5,26 +5,27 @@
 class Player : public GameObject
 {
 	float maxSpeed;
-	Math::vec3d velocity;
+	Math::vec3d velocity;	
 
-	
+	const float GRAVITY = 10.0f;
 
+	//The distance until the player will follow the mouse again
 	const float IDLE_RANGE = 2.0f;
 
 public:
-	enum class Action { IDLE, RUNLEFT, RUNRIGHT, ATTACK };
+	enum class Action { IDLE, RUNLEFT, RUNRIGHT, ATTACK, FALLING };
 
-	bool isDead;
 	float targetX;
 
 	Player();
 
 	void spawn();
-	void update(float deltaTime);
+	void update(const float deltaTime);
 	void kill();
 
 
 	const Action &getCurrentAction() { return currentAction; }
+	void setCurrentAction(const Action &action) { currentAction = action; }
 	const float &getIdleRange() { return IDLE_RANGE; }
 
 private:
@@ -37,9 +38,17 @@ private:
 		@param velocity - The current velocity of the player
 
 	*/
-	void onIdle(float velocity);
+	void onIdle(const float velocity);
 
-	void toLeft(float velocity);
-	void toRight(float velocity);
+	/*
+		What the player does when falling down
+	
+		@param velocity - The current velocity of the player
+
+	*/
+	void onFalling(const float velocity);
+
+	void toLeft(const float velocity);
+	void toRight(const float velocity);
 
 };

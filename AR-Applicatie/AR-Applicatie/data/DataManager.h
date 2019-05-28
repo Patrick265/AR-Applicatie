@@ -23,11 +23,12 @@ public:
 	Settings settings;
 
 	// Screen dimensions
-	float width;
-	float height;
+	int width;
+	int height;
 
 	// Mouse position
-	Point2D mousePos;
+	markerdetection::Point2D mousePos;
+	markerdetection m;
 	float scaleLoading;
 
 	// Key positions (true is pressed)
@@ -41,8 +42,17 @@ public:
 	// Storage for all game meshes and textures
 	std::map<std::string, Graphics::mesh> meshes;
 	std::map<std::string, uint16_t> textures;
+
+	std::vector<std::string> weaponList;
+	std::map<std::string, Math::vec3d> weaponMap;
+	std::string currentWeapon = "log";
+	void determineNextWeapon();
+
 	int cursorId;
 	int loadingId;
+	int backgroundTextId;
+	int backgroundImgId;
+	int fonttextId;
 	int settingsId;
 
 	// Camera struct and instance (rendering position)
@@ -51,7 +61,7 @@ public:
 		float
 			posX = 0,
 			posY = 15,
-			posZ = 20,
+			posZ = 22,
 			rotX = 20,
 			rotY = 0;
 	} camera;
@@ -82,4 +92,11 @@ public:
 	// Init methods
 	void initGlut(int argc, char** argv, void(*onIdle)(), void(*onDisplay)()) const;
 	void initResources();
+
+	void drawBackgroundScreen();
+	void DrawScreenText();
+
+	void drawDefaultText(int x, int y, std::string string, void * font);
+
+
 };

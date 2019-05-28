@@ -8,7 +8,6 @@ Player::Player()
 	position = { 0, 21, -0.5 };
 	maxSpeed = 10;
 	targetX = 0;
-	isDead = false;
 	currentAction = Action::IDLE;
 }
 
@@ -17,27 +16,50 @@ void Player::spawn()
 
 }
 
-void Player::update(float deltaTime)
+void Player::update(const float deltaTime)
 {
 	GameObject::update(deltaTime);
 
-	if (isDead)
-		return;
+	//if (isDead)
+	//	return;
 
-	float velocity = deltaTime * maxSpeed;
-
-	//Currently running
-	if (currentAction == Action::RUNLEFT || currentAction == Action::RUNRIGHT)
+	//If the player is currently falling
+	if (currentAction == Action::FALLING) 
 	{
-		//Close to cursor
-		if (abs(position.x - targetX) < velocity)
+		velocity.y -= deltaTime * GRAVITY;	
+		position.y += deltaTime * velocity.y;
+
+		//When below a certain point, kill the player (lose the game) 
+		if (position.y <= -1)
+			kill();
+	}
+	else
+	{
+		velocity.x = deltaTime * maxSpeed;
+
+		//Currently running
+		if (currentAction == Action::RUNLEFT || currentAction == Action::RUNRIGHT)
 		{
-			if (currentAction != Action::IDLE)
+			//Close to cursor
+			if (abs(position.x - targetX) < velocity.x)
 			{
-				//Set action to idle
-				currentAction = Action::IDLE;
-				getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::IDLE);
-				position.x = targetX;
+				if (currentAction != Action::IDLE)
+				{
+					//Set action to idle
+					currentAction = Action::IDLE;
+					getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::IDLE);
+					position.x = targetX;
+				}
+			}
+			//To the left of the target
+			else if (position.x < targetX)
+			{
+				toRight(velocity.x);
+			}
+			//To the right of the target
+			else if (position.x > targetX)
+			{
+				toLeft(velocity.x);
 			}
 		}
 		//To the left of the target
@@ -48,22 +70,9 @@ void Player::update(float deltaTime)
 		//To the right of the target
 		else if (position.x > targetX)
 		{
-			toLeft(velocity);
+			onIdle(velocity.x);
 		}
 	}
-	//If Idle/Attacking
-	else
-	{
-		onIdle(velocity);
-	}
-
-
-	/*if (!moveRight && position.x > 10 || moveRight && position.x < -10)
-		moveRight = !moveRight;
-	if (moveRight)
-		position.x -= deltaTime * maxSpeed;
-	else
-		position.x += deltaTime * maxSpeed;*/
 }
 
 void Player::kill()
@@ -137,3 +146,56 @@ void Player::toRight(float velocity)
 		getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_RIGHT);
 	}
 }
+
+		//If Idle/Attacking
+		else
+}
+
+void Player::onIdle(const float velocity)
+{	
+	}
+	//If in idle distance
+	else 
+	{
+		if (currentAction == Action::IDLE)
+		{
+			currentAction = Action::ATTACK;
+			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_MOUSE);
+
+		}
+	}
+}
+
+void Player::onFalling(const float velocity)
+{
+}
+
+void Player::toLeft(const float velocity)
+{
+	//If currently moving left
+	if (currentAction == Action::RUNLEFT)
+	{
+		//Keep moving
+		position.x -= velocity;
+	}
+	//If not currently moving left
+	else
+	{
+		//Start moving right
+		currentAction = Action::RUNLEFT;
+	}
+}
+
+void Player::toRight(const float velocity)
+{
+	//If currently moving right
+	if (currentAction == Action::RUNRIGHT)
+	{
+		//Keep moving
+		position.x += velocity;
+	}
+	//If not currently moving right
+	else
+	{
+		//Start moving right
+		currentAction = Action::RUNRIGHT;

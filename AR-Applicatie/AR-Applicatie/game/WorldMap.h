@@ -10,11 +10,15 @@ class WorldMap
 private:
 	GameObject* map;
 	GameObject* icon;
+	GameObject* wIcon;
+	std::vector<GameObject*> icons;
 	int x;
 	int y;
 	float height;
 	float deltatime;
 	MousePicking* mousePicking;
+	int margin;
+	float increment;
 
 
 public:

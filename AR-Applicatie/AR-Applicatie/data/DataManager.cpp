@@ -4,6 +4,7 @@
 #include "../util/TextureHandler.h"
 #include "../util/ObjLoader.h"
 #include <corecrt_math_defines.h>
+#include <ctime>
 
 extern float deltaTime;
 extern float lastFrameTime;
@@ -55,6 +56,12 @@ void DataManager::onMotionData(int x, int y)
 {
 	if (mouseControl)
 		mousePos = { float(x), float(y) };
+	else if(!mouseControl)
+	{
+		markerdetection::Point2D normalized = m.getCoordinates();
+		mousePos = { normalized.x * width, normalized.y * height };
+	}
+
 	/*
 	 cursorX = x;
 	 cursorY = y;
@@ -103,7 +110,7 @@ static void onReshape(int w, int h)
 void DataManager::standardRenderOperations() const
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.4, 0.4, 0.4, 1.0);
+	glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -119,7 +126,8 @@ void DataManager::standardRenderOperations() const
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-
+		
+	
 	//Lighting
 	glEnable(GL_LIGHT0);
 	glEnable(GL_LIGHTING);
@@ -150,15 +158,15 @@ void DataManager::displayInfo() const
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glRasterPos2f(xPos, yPos);
+	glRasterPos2f(static_cast<GLfloat>(xPos), static_cast<GLfloat>(yPos));
 	glColor3f(1, 1, 1);
-	const int len = text.length();
+	const auto len = text.length();
 	for (auto i = 0; i < len; i++)
 	{
 		if (text[i] == '\n')
 		{
 			yPos += 20;
-			glRasterPos2f(xPos, yPos);
+			glRasterPos2f(static_cast<GLfloat>(xPos), static_cast<GLfloat>(yPos));
 			continue;
 		}
 		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
@@ -237,7 +245,7 @@ void DataManager::initGlut(int argc, char** argv, void(*onIdle)(), void(*onDispl
 	glutMotionFunc(onMotion);
 	glutReshapeFunc(onReshape);
 
-	lastFrameTime = glutGet(GLUT_ELAPSED_TIME);
+	lastFrameTime = static_cast<float>(glutGet(GLUT_ELAPSED_TIME));
 }
 
 void DataManager::initResources()
@@ -252,10 +260,12 @@ void DataManager::initResources()
 
 	//Cursor image
 	cursorId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png", textures.size());
-	//Loading ID
+		//Loading ID
 	this->loadingId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon_loading.png", textures.size());
-	this->settingsId = TextureHandler::addTexture("Resources/Settings/SettingsBackground.png", textures.size());
 	glutSetCursor(GLUT_CURSOR_NONE);
+
+	// Init random seed
+	srand(static_cast<unsigned int>(time(nullptr)));
 }
 
 void DataManager::initRigParts()
@@ -288,6 +298,36 @@ void DataManager::initRigParts()
 
 	textures["log"] = TextureHandler::addTexture("Resources/Weapons/weapon_log.png", textures.size());
 	meshes["log"] = ObjLoader::loadObj("Resources/Weapons/weapon_log.obj");
+	weaponMap["log"] = { 0.667523f,-0.030498f, 0.71092f };
+
+	textures["weights"] = TextureHandler::addTexture("Resources/Weapons/weights.png", textures.size());
+	meshes["weights"] = ObjLoader::loadObj("Resources/Weapons/weights.obj");
+	weaponMap["weights"] = { 0.0f,0.0f,0.820919f };
+
+	textures["godsword"] = TextureHandler::addTexture("Resources/Weapons/weapon_godsword.png", textures.size());
+	meshes["godsword"] = ObjLoader::loadObj("Resources/Weapons/weapon_godsword.obj");
+	weaponMap["godsword"] = { 0.0f,0.119117f,0.81344f };
+
+	textures["cattleprod"] = TextureHandler::addTexture("Resources/Weapons/weapon_cattleprod.png", textures.size());
+	meshes["cattleprod"] = ObjLoader::loadObj("Resources/Weapons/weapon_cattleprod.obj");
+	weaponMap["cattleprod"] = { 0.661686f,0.014448f,0.698785f };
+
+	//textures["scythe"] = TextureHandler::addTexture("Resources/Weapons/weapon_scythe.png", textures.size());
+	//meshes["scythe"] = ObjLoader::loadObj("Resources/Weapons/weapon_scythe.obj");
+	//weaponMap["scythe"] = { 0.213286f,-0.106202f,0.998531f };
+
+	textures["fish"] = TextureHandler::addTexture("Resources/Weapons/weapon_fish.png", textures.size());
+	meshes["fish"] = ObjLoader::loadObj("Resources/Weapons/weapon_fish.obj");
+	weaponMap["fish"] = { 0.811473f,0.14979f,-0.108852f};
+
+	///Secret weapon
+	//textures["go"] = TextureHandler::addTexture("Resources/Weapons/weapon_go.png", textures.size());
+	//meshes["go"] = ObjLoader::loadObj("Resources/Weapons/weapon_go.obj");
+	//weaponMap["go"] = { 0.716873f,0.053516f,-0.114973 };
+
+	textures["weapon_elf"] = TextureHandler::addTexture("Resources/Weapons/weapon_elf.png", textures.size());
+	meshes["weapon_elf"] = ObjLoader::loadObj("Resources/Weapons/weapon_elf.obj");
+	//weaponMap["weapon_elf"] = { 0.213286f,-0.106202f,0.998531f };
 
 	/*
 	GOBLIN
@@ -317,11 +357,11 @@ void DataManager::initRigParts()
 	textures["goblin_rl_l"] = TextureHandler::addTexture("Resources/Enemy/goblin_leg_right_bottom.png", textures.size());
 	meshes["goblin_rl_l"] = ObjLoader::loadObj("Resources/Enemy/Goblin_leg_right_bottom.obj");
 
-	textures["goblin_la_icicle"] = TextureHandler::addTexture("Resources/Enemy/icicle.png", textures.size());
-	meshes["goblin_la_icicle"] = ObjLoader::loadObj("Resources/Enemy/icicle.obj");
+	textures["icicle"] = TextureHandler::addTexture("Resources/Enemy/icicle.png", textures.size());
+	meshes["icicle"] = ObjLoader::loadObj("Resources/Enemy/icicle.obj");
 
-	textures["goblin_ra_icicle"] = TextureHandler::addTexture("Resources/Enemy/icicle.png", textures.size());
-	meshes["goblin_ra_icicle"] = ObjLoader::loadObj("Resources/Enemy/icicle.obj");
+//	textures["goblin_ra_icicle"] = TextureHandler::addTexture("Resources/Enemy/icicle.png", textures.size());
+//	meshes["goblin_ra_icicle"] = ObjLoader::loadObj("Resources/Enemy/icicle.obj");
 
 }
 
@@ -336,13 +376,29 @@ void DataManager::initGameLogicModels()
 	textures["giant"] = TextureHandler::addTexture("Resources/Rune/giant.png", textures.size());
 	meshes["giant"] = ObjLoader::loadObj("Resources/Rune/giant.obj");
 	
-	textures["skybox"] = TextureHandler::addTexture("Resources/Skybox/skybox.jpg", textures.size());
+	textures["skybox"] = TextureHandler::addTexture("Resources/Skybox/stars.jpg", textures.size());
 	meshes["skybox"] = ObjLoader::loadObj("Resources/Skybox/skybox.obj");
+	Graphics::inverseNormals(meshes["skybox"]);
 	
 	textures["packet"] = TextureHandler::addTexture("Resources/Pakketje/Pakketje.png", textures.size());
 	meshes["packet"] = ObjLoader::loadObj("Resources/Pakketje/Pakketje.obj");
 
 	textures["brick"] = TextureHandler::addTexture("Resources/Weapons/Brick.png", textures.size());
+}
+
+void DataManager::determineNextWeapon()
+{
+	int number = rand() % weaponMap.size();
+	int pos = 0;
+	for (auto const& x : weaponMap)
+	{
+		if (number == pos)
+		{
+			currentWeapon = x.first;
+			break;
+		}
+		pos += 1;
+	}
 }
 
 void DataManager::initWorldMapModels()
@@ -351,6 +407,112 @@ void DataManager::initWorldMapModels()
 	textures["map"] = TextureHandler::addTexture("Resources/Map/map.jpg", textures.size());
 
 	meshes["icon"] = ObjLoader::loadObj("Resources/Map/Castleblack icon.obj");
+	meshes["wicon"] = ObjLoader::loadObj("Resources/Map/Winterfell.obj");
+}
+
+	this->fonttextId = TextureHandler::addTexture("Resources/Font/ExportedTest.png", textures.size());
+	this->backgroundTextId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetText.png", 1);
+	this->backgroundImgId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetBackground.png", 0);
+	this->settingsId = TextureHandler::addTexture("Resources/Settings/SettingsBackground.png", textures.size());
+void DataManager::drawBackgroundScreen()
+{
+	GLfloat centerX = static_cast<GLfloat>(this->width) / 2.0f;
+	GLfloat centerY = static_cast<GLfloat>(this->height) / 2.0f;
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
+	glClearDepth(GL_DEPTH_BUFFER_BIT);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0.0, this->width, this->height, 0.0, 0.0, 1.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, this->backgroundImgId);
+	glEnable(GL_TEXTURE_2D);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0, 0); glVertex2f(centerX - centerX, centerY - centerY);
+	glTexCoord2f(0, 1); glVertex2f(centerX - centerX, centerY + centerY);
+	glTexCoord2f(1, 1); glVertex2f(centerX + centerX, centerY + centerY);
+	glTexCoord2f(1, 0); glVertex2f(centerX + centerX, centerY - centerY);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, this->backgroundTextId);
+	glEnable(GL_TEXTURE_2D);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0, 0); glVertex2f(centerX - centerX, centerY - centerY);
+	glTexCoord2f(0, 1); glVertex2f(centerX - centerX, centerY + centerY);
+	glTexCoord2f(1, 1); glVertex2f(centerX + centerX, centerY + centerY);
+	glTexCoord2f(1, 0); glVertex2f(centerX + centerX, centerY - centerY);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+}
+
+void DataManager::DrawScreenText() {
+	GLuint characterlist = glGenLists(256);
+	glTranslated(0, 20, 0);
+	for (int i = 0; i < 256; i++)
+	{
+		float characterx = (float)(i % 32) / 32.0f;
+		float charactery = (float)(i / 32) / 32.0f;
+		float size = 1 / 32.0f;
+
+		glEnable(GL_BLEND);
+
+		glNewList(characterlist + i, GL_COMPILE);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBindTexture(GL_TEXTURE_2D, this->fonttextId);
+		glEnable(GL_TEXTURE_2D);
+		glBegin(GL_QUADS);
+		glVertex2d(0, 0); glTexCoord2f(characterx, charactery);
+		glVertex2i(0, 1);  glTexCoord2f(characterx, charactery + size);
+		glVertex2i(1, 1); glTexCoord2f(characterx + size, charactery + size);
+		glVertex2i(1, 0); glTexCoord2f(characterx + size, charactery);
+		glEnd();
+		glTranslated(2, 0, 0);
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
+		glEndList();
+
+	}
+
+	int size = 6;
+	glScalef(100, 100, 100);
+	glListBase(characterlist);
+	glCallLists(6, GL_UNSIGNED_BYTE, "Lekker");
+
+}
+
+void DataManager::drawDefaultText(int x, int y, std::string string, void *font)
+{
+	int length;
+	const char *cstr = string.c_str();
+	length = (int)strlen(cstr);
+	const char *str;
+
+	glEnable(GL_LINE_SMOOTH);
+
+	glPushMatrix();
+	glTranslatef(static_cast<GLfloat>(x), static_cast<GLfloat>(y), 0);
+	glScalef(0.5f, -0.5f, 0);
+	glColor3f(1, 0, 0);
+	for (str=cstr; *str; str++)
+	{
+		glutStrokeCharacter(font, *str);
+		glutStrokeWidth(font, *str);
+	}
+	glColor3f(1, 1, 1);
+	glPopMatrix();
+	glDisable(GL_LINE_SMOOTH);
+	glEnd();
 }
 
 void DataManager::displaySettings() const 

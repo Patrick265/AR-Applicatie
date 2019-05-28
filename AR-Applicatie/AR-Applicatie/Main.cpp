@@ -2,7 +2,7 @@
 #include <GL/freeglut.h>
 
 DataManager *data = &DataManager::getInstance();
-
+markerdetection m;
 float deltaTime;
 float lastFrameTime;
 
@@ -18,9 +18,7 @@ int main(int argc, char** argv)
 	data->stateHandler.setState(StateHandler::States::MENU);
 	
 
-	//std::thread openCV(runOpenCVThread);
-	//openCV.join();
-	// runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
+	std::thread openCV(runOpenCVThread);
 
 	glutMainLoop();
 }
@@ -38,11 +36,8 @@ void onIdle()
 	data->stateHandler.update(deltaTime);
 	data->updateCamera();
 
-	// // Check for vision mouse updates
-	// if (hasNewMousePosition())
-	// 	onMouse();
-	//
-	// runMarkerDetection(MARKERDETECTION_WITH_MOUSE);
+	if (m.hasNewMousePosition())
+		data->onMotionData(static_cast<int>(data->mousePos.x), static_cast<int>(data->mousePos.y));
 
 	glutPostRedisplay();
 }
@@ -58,5 +53,6 @@ void onDisplay()
 
 void runOpenCVThread()
 {
-	//runMarkerDetection(MARKERDETECTION_WITH_OPENCV);
+	while (true)
+		m.runMarkerDetection(markerdetection::DetectionMode::mouse);
 }
