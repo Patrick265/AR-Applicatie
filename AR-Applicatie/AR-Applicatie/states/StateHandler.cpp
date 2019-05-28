@@ -2,6 +2,7 @@
 #include "GameState.h"
 #include "DeathState.h"
 #include "WorldMapState.h"
+#include "WinState.h"
 
 StateHandler::StateHandler()
 {
@@ -34,7 +35,10 @@ void StateHandler::setState(const States state)
 		current = new GameState();
 		break;
 	case States::DEATH:
-		current = new DeathState();
+		current = new DeathState(dynamic_cast<GameState*>(current)->gameLogic);
+		break;
+	case States::WIN:
+		current = new WinState(dynamic_cast<GameState*>(current)->gameLogic);
 		break;
 	}
 }

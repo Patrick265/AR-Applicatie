@@ -31,6 +31,7 @@ public:
 	void spawn();
 	void update(const float deltaTime);
 	bool isHit(float xProjectile, float yProjectile);
+	void die();
 	bool canBeDestroyed();
 
 private:

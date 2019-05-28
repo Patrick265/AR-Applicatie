@@ -54,5 +54,5 @@ void onDisplay()
 void runOpenCVThread()
 {
 	while (true)
-		m.runMarkerDetection(markerdetection::DetectionMode::opencv);
+		m.runMarkerDetection(markerdetection::DetectionMode::mouse);
 }

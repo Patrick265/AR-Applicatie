@@ -1,13 +1,14 @@
 #pragma once
+
 #include "State.h"
+#include "../game/GameLogic.h"
 
 class DeathState : public State
 {
-private:
-
+	GameLogic gameLogic;
 	std::vector<std::string> text;
 public:
-	DeathState();
+	DeathState(GameLogic &gameLogic);
 	virtual ~DeathState();
 
 	void draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std::string, uint16_t>& textures) override;

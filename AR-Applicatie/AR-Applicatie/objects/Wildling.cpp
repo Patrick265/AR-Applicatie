@@ -57,12 +57,16 @@ bool Wildling::isHit(float xProjectile, float yProjectile)
 {
 	if (abs(xProjectile - position.x) < 2 && abs(yProjectile - position.y - 6) < 2)
 	{
-		currentAction = Action::FALLING;
-		getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::FALL);
-
+		die();
 		return true;
 	}
 	return false;
+}
+
+void Wildling::die()
+{
+	currentAction = Action::FALLING;
+	getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::FALL);
 }
 
 bool Wildling::canBeDestroyed()
