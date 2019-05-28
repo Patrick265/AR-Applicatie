@@ -55,7 +55,6 @@ void MousePicking::searchObject(int cursorX, int cursorY)
 	);
 	for(int i =0; i < objectsToCheck.size(); i++)
 	{
-		std::cout << i << std::endl;
 		const double xIcon = objectsToCheck.at(i)->getPosition().x;
 		const double yIcon = objectsToCheck.at(i)->getPosition().y;
 		const double zIcon = objectsToCheck.at(i)->getPosition().z;
@@ -93,7 +92,6 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 	}
 	else {
 		if (abs(cursorX - lastX) <= 5 && abs(cursorY - lastY) <= 5) {
-			//std::cout << "entered" << time << std::endl;
 			timePassed += time;
 			
 			if (timePassed >= 3.0f && timePassed <= 3.1f) {
