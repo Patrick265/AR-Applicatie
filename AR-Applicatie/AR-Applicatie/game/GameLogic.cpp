@@ -127,7 +127,10 @@ void GameLogic::update(float deltaTime)
 	for (Wildling* wildling : wildlings)
 		for (Projectile* projectile : projectiles)
 			if (projectile->isActive && wildling->isHit(projectile->getPosition().x, projectile->getPosition().y))
+			{
 				projectile->hasHit();
+				DataManager::getInstance().soundManager.playSound(SoundManager::Sound::DEATH, false);
+			}
 
 	// Update components
 	for (auto o : getGameObjects())
@@ -149,6 +152,7 @@ void GameLogic::throwProjectile(float xVelocity, float yVelocity)
 	   	
 	p->setScale(Math::vec3d{ 1.0,1.0,1.0 });
 	projectiles.push_back(p);
+	DataManager::getInstance().soundManager.playSound(SoundManager::Sound::THROW, false);
 }
 
 std::vector<GameObject *> GameLogic::getGameObjects()

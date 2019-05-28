@@ -3,6 +3,7 @@
 #include "../vision/markerdetection.h"
 #include "../states/StateHandler.h"
 #include "../game/Settings.h"
+#include "../util/SoundManager.h"
 
 class DataManager
 {
@@ -47,6 +48,9 @@ public:
 	std::map<std::string, Math::vec3d> weaponMap;
 	std::string currentWeapon = "log";
 	void determineNextWeapon();
+
+	// SoundManager
+	SoundManager soundManager;
 
 	int cursorId;
 	int loadingId;
