@@ -3,7 +3,7 @@
 
 DataManager *dataMP = &DataManager::getInstance();
 
-MousePicking::MousePicking(GameObject *objects, int height, int x, int y)
+MousePicking::MousePicking(std::vector<GameObject *> objects, int height, int x, int y)
 {
 	this->objectsToCheck = objects;
 	this->windowHeight = height;
@@ -53,22 +53,26 @@ void MousePicking::searchObject(int cursorX, int cursorY)
 		&y,
 		&z
 	);
-	//std::cout << "xyz: " << x << ", " << y << ", " << z << std::endl;
-	const double xIcon = objectsToCheck->getPosition().x;
-	const double yIcon = objectsToCheck->getPosition().y;
-	const double zIcon = objectsToCheck->getPosition().z;
-	const double sizeIcon = 0.5f;
-	
-	if ((xIcon + sizeIcon) > x && (xIcon - sizeIcon) < x &&
-		(yIcon + sizeIcon) > y && (yIcon - sizeIcon) < y &&
-		(zIcon + sizeIcon) > z && (zIcon - sizeIcon) < z)
+	for(int i =0; i < objectsToCheck.size(); i++)
 	{
-		isCounting = true;
+		std::cout << i << std::endl;
+		const double xIcon = objectsToCheck.at(i)->getPosition().x;
+		const double yIcon = objectsToCheck.at(i)->getPosition().y;
+		const double zIcon = objectsToCheck.at(i)->getPosition().z;
+		const double sizeIcon = 0.5f;
+
+		if ((xIcon + sizeIcon) > x && (xIcon - sizeIcon) < x &&
+			(yIcon + sizeIcon) > y && (yIcon - sizeIcon) < y &&
+			(zIcon + sizeIcon) > z && (zIcon - sizeIcon) < z)
+		{
+			isCounting = true;
+		}
+		else
+		{
+
+		}
 	}
-	else
-	{
-		
-	}
+
 }
 
 void MousePicking::update(int cursorX, int cursorY, int height, float time) 

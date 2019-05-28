@@ -400,4 +400,5 @@ void DataManager::initWorldMapModels()
 	textures["map"] = TextureHandler::addTexture("Resources/Map/map.jpg", textures.size());
 
 	meshes["icon"] = ObjLoader::loadObj("Resources/Map/Castleblack icon.obj");
+	meshes["wicon"] = ObjLoader::loadObj("Resources/Map/Winterfell.obj");
 }

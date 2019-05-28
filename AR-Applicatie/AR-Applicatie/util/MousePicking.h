@@ -11,7 +11,8 @@ class MousePicking {
 private:
 	int windowHeight;
 	//The object the MousePicker has to check
-	GameObject* objectsToCheck;
+
+	std::vector<GameObject*> objectsToCheck;
 	//Variables for checking what the last position of the cursor was
 	int lastX, lastY;
 	//Variables for checking how long the cursor is on the same position
@@ -29,7 +30,7 @@ public:
 	x: The x position of the mouse for initialization purpose
 	y: The y position of the mouse for initialization purpose
 	*/
-	MousePicking(GameObject *objectsToCheck, int height, int x, int y);
+	MousePicking(std::vector<GameObject*> objects, int height, int x, int y);
 	~MousePicking();
 	/*
 	The method which checks if the cursor position corresponds to the position of the object
