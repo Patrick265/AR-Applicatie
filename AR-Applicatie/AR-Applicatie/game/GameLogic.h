@@ -20,11 +20,11 @@ class GameLogic
 	std::chrono::duration<float, std::milli> gameDuration;
 	std::chrono::duration<float, std::milli> elapsedTime;
 
-	bool hasWon;
-
 	void handleMouse();
 
 public:
+	bool isOver;
+
 	GameLogic();
 	~GameLogic();
 

@@ -4,6 +4,7 @@
 #include "../components/StaticComponent.h"
 #include "../components/AnimationComponent.h"
 #include "../data/DataManager.h"
+#include <GL/freeglut_std.h>
 
 int sHeight;
 int yTriggerDistance;
@@ -40,7 +41,7 @@ GameLogic::GameLogic()
 	gameDuration = std::chrono::duration<float, std::milli>(1 * 60 * 1000);
 	elapsedTime = std::chrono::duration<float, std::milli>(0);
 
-	hasWon = false;
+	isOver = false;
 }
 
 GameLogic::~GameLogic()
@@ -64,9 +65,9 @@ void GameLogic::update(float deltaTime)
 	spawnRate = std::min(elapsedTime.count() / 5000.0f, 10.0f);
 
 	// Check if game has been won
-	if (!hasWon && elapsedTime >= gameDuration)
+	if (!isOver && elapsedTime >= gameDuration)
 	{
-		hasWon = true;
+		isOver = true;
 		for (auto && wildling : wildlings)
 			wildling->die();
 		DataManager::getInstance().soundManager.stopSounds();
@@ -88,7 +89,7 @@ void GameLogic::update(float deltaTime)
 
 	// Add wildling if there are too few
 	counter += deltaTime;
-	if (!hasWon && counter > (13.0f - spawnRate) * 0.5f)
+	if (!isOver && counter > (13.0f - spawnRate) * 0.5f)
 	{
 		auto xPos = 0;
 		auto exit = false;
@@ -148,6 +149,15 @@ void GameLogic::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std
 	for (auto o : getGameObjects())
 		for (auto c : o->getComponents())
 			c->draw(meshes, textures);
+
+	if (isOver)
+		return;
+
+	auto minutes = std::chrono::duration_cast<std::chrono::minutes>(gameDuration - elapsedTime);
+	auto seconds = std::chrono::duration_cast<std::chrono::seconds>(gameDuration - elapsedTime - minutes);
+	DataManager::getInstance().setOrtho();
+	DataManager::getInstance().drawDefaultText(DataManager::getInstance().width - 300, 50,
+		"Time left : " + std::to_string(minutes.count()) + ":" + std::to_string(seconds.count()), GLUT_STROKE_ROMAN, 0.25, 0.25);
 }
 
 void GameLogic::throwProjectile(float xVelocity, float yVelocity)
