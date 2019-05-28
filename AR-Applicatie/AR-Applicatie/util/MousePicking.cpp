@@ -131,6 +131,7 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 					dataMP->settings.changeInput();
 					dataMP->settings.isChangeInput = false;
 					// Change the input via the datamanager when possible
+					dataMP->mouseControl = !dataMP->mouseControl;
 				}
 				// If nothing else is selected then castle black is selected and the game state will start
 				else {
