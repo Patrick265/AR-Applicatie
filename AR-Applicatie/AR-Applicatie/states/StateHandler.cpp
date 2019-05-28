@@ -2,6 +2,7 @@
 #include "GameState.h"
 #include "DeathState.h"
 #include "WorldMapState.h"
+#include "WinState.h"
 
 StateHandler::StateHandler()
 {
@@ -35,6 +36,9 @@ void StateHandler::setState(const States state)
 		break;
 	case States::DEATH:
 		current = new DeathState();
+		break;
+	case States::WIN:
+		current = new WinState();
 		break;
 	}
 }

@@ -9,7 +9,7 @@ class StateHandler
 public:
 	enum class States
 	{
-		MENU, GAME, DEATH
+		MENU, GAME, DEATH, WIN
 	};
 
 	StateHandler();
