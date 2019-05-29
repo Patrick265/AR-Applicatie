@@ -6,6 +6,8 @@
 #include "../states/WorldMapState.h"
 #include <corecrt_math_defines.h>
 #include <ctime>
+#include <iostream>
+#include <fstream>
 
 extern float deltaTime;
 extern float lastFrameTime;
@@ -529,6 +531,39 @@ void DataManager::drawDefaultText(int x, int y, std::string string, void *font, 
 	glPopMatrix();
 	glDisable(GL_LINE_SMOOTH);
 	glEnd();
+}
+
+int DataManager::retrieveHighscore()
+{
+	std::ifstream myfile;
+	myfile.open ("Resources\\Data\\Data.txt", std::ios::in);
+	if(myfile.fail())
+	{
+		return 0;
+	}
+	std::string textline;
+	int score = 0;
+	if (getline(myfile, textline))
+	{
+		score = std::stoi(textline);
+	}
+	myfile.close();
+	this->currentScore = score;
+	return score;
+}
+
+void DataManager::writeHighscore(int score)
+{
+	std::ofstream myfile;
+	myfile.open ("Resources\\Data\\Data.txt", std::ios::trunc);
+	if(myfile.fail())
+	{
+		myfile.close();
+		return;
+	}
+	this->currentScore = score;
+	myfile << score;
+	myfile.close();
 }
 
 void DataManager::displaySettings() const

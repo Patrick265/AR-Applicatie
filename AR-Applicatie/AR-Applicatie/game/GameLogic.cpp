@@ -14,6 +14,8 @@ bool canThrow = false;
 
 float counter = 0;
 float spawnRate = 0;
+int gameScore = 0;
+int highScore;
 
 GameLogic::GameLogic()
 {
@@ -42,6 +44,9 @@ GameLogic::GameLogic()
 	elapsedTime = std::chrono::duration<float, std::milli>(0);
 
 	isOver = false;
+
+	highScore = DataManager::getInstance().retrieveHighscore();
+	gameScore = 0;
 }
 
 GameLogic::~GameLogic()
@@ -70,6 +75,14 @@ void GameLogic::update(float deltaTime)
 		isOver = true;
 		for (auto && wildling : wildlings)
 			wildling->die();
+
+		if(gameScore > highScore)
+		{
+			DataManager::getInstance().writeHighscore(gameScore);
+			highScore = gameScore;
+			DataManager::getInstance().newHighScore = true;
+		}
+
 		DataManager::getInstance().soundManager.stopSounds();
 		DataManager::getInstance().soundManager.setVolume(0.5);
 		DataManager::getInstance().soundManager.playSound(SoundManager::Sound::WIN, false);
@@ -137,6 +150,7 @@ void GameLogic::update(float deltaTime)
 			{
 				projectile->hasHit();
 				DataManager::getInstance().soundManager.playSound(SoundManager::Sound::DEATH, false);
+				gameScore += 10;
 			}
 
 	// Update components
@@ -159,6 +173,10 @@ void GameLogic::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std
 	DataManager::getInstance().setOrtho();
 	DataManager::getInstance().drawDefaultText(DataManager::getInstance().width - 300, 50,
 		"Time left : " + std::to_string(minutes.count()) + ":" + std::to_string(seconds.count()), GLUT_STROKE_ROMAN, 0.25, 0.25);
+	DataManager::getInstance().drawDefaultText(20, 50,
+		"Score   : " + std::to_string(gameScore), GLUT_STROKE_ROMAN, 0.25, 0.25);
+	DataManager::getInstance().drawDefaultText(20, 85,
+		"Highscore : " + std::to_string(highScore), GLUT_STROKE_ROMAN, 0.25, 0.25);
 }
 
 void GameLogic::throwProjectile(float xVelocity, float yVelocity)

@@ -14,7 +14,7 @@
 #define SCREEN_RIGHT_SIDE_BOUND_START 4
 
 //Global variables
-cv::VideoCapture cap(1);
+cv::VideoCapture cap(0);
 cv::Mat frame, frame_HSV, frame_threshold;
 markerdetection::Point2D markerPosition;
 cv::Ptr<cv::SimpleBlobDetector> detector;

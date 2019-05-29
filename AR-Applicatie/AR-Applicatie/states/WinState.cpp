@@ -16,6 +16,11 @@ void WinState::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std:
 	DataManager::getInstance().drawDefaultText(DataManager::getInstance().width / 2 - 210 , (DataManager::getInstance().height / 2) + 40, "You Win", GLUT_STROKE_ROMAN, 0.75, 0.75);
 	DataManager::getInstance().drawDefaultText(DataManager::getInstance().width - 300, 50, "Return to map", GLUT_STROKE_ROMAN, 0.25, 0.25);
 	DataManager::getInstance().drawDefaultText(DataManager::getInstance().width - 300, 100, "Return to game", GLUT_STROKE_ROMAN, 0.25, 0.25);
+
+	if(DataManager::getInstance().newHighScore)
+	{
+		DataManager::getInstance().drawDefaultText(DataManager::getInstance().width / 2 - 210, (DataManager::getInstance().height / 2) + 100, "NEW HIGH SCORE : " + std::to_string(DataManager::getInstance().currentScore) , GLUT_STROKE_ROMAN, 0.25, 0.25);
+	}
 }
 
 void WinState::update(float elapsedTime)
@@ -42,6 +47,7 @@ void WinState::checkForReturnGame(float elapsedTime)
 			timePassedGame = 0;
 			DataManager::getInstance().soundManager.stopSounds();
 			DataManager::getInstance().soundManager.setVolume(0.2);
+			DataManager::getInstance().newHighScore = false;
 			DataManager::getInstance().stateHandler.setState(StateHandler::States::MENU);
 			if (!isBackgroundMusicon)
 			{
@@ -68,6 +74,7 @@ void WinState::checkForReturnMenu(float elapsedTime)
 		if (timePassedMenu >= 3.0f && timePassedMenu <= 3.1f) {
 			timePassedMenu = 0;
 			DataManager::getInstance().soundManager.stopSounds();
+			DataManager::getInstance().newHighScore = false;
 			DataManager::getInstance().soundManager.setVolume(0.2);
 			DataManager::getInstance().stateHandler.setState(StateHandler::States::GAME);
 			if (!isBackgroundMusicon)

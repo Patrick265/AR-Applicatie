@@ -47,6 +47,8 @@ public:
 	std::vector<std::string> weaponList;
 	std::map<std::string, Math::vec3d> weaponMap;
 	std::string currentWeapon = "log";
+	int currentScore = 0;
+	bool newHighScore = false;
 	void determineNextWeapon();
 
 	// SoundManager
@@ -102,6 +104,9 @@ public:
 	void DrawScreenText();
 
 	void drawDefaultText(int x, int y, std::string string, void * font, float width, float height);
+
+	int retrieveHighscore();
+	void writeHighscore(int score);
 
 
 
