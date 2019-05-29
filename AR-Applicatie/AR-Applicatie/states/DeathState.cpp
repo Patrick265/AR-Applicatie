@@ -40,6 +40,7 @@ void DeathState::checkForReturnGame(float elapsedTime)
 
 		if (timePassedGame >= 3.0f && timePassedGame <= 3.1f) {
 			timePassedGame = 0;
+			DataManager::getInstance().soundManager.stopSounds();
 			DataManager::getInstance().stateHandler.setState(StateHandler::States::MENU);
 			if (!isBackgroundMusicon)
 			{
@@ -65,6 +66,7 @@ void DeathState::checkForReturnMenu(float elapsedTime)
 
 		if (timePassedMenu >= 3.0f && timePassedMenu <= 3.1f) {
 			timePassedMenu = 0;
+			DataManager::getInstance().soundManager.stopSounds();
 			DataManager::getInstance().stateHandler.setState(StateHandler::States::GAME);
 			if (!isBackgroundMusicon)
 			{
