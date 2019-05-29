@@ -71,6 +71,7 @@ void GameLogic::update(float deltaTime)
 		for (auto && wildling : wildlings)
 			wildling->die();
 		DataManager::getInstance().soundManager.stopSounds();
+		DataManager::getInstance().soundManager.setVolume(0.5);
 		DataManager::getInstance().soundManager.playSound(SoundManager::Sound::WIN, false);
 		DataManager::getInstance().stateHandler.setState(StateHandler::States::WIN);
 	}

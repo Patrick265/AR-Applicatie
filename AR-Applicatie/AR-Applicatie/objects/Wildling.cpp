@@ -154,6 +154,7 @@ void Wildling::attack(const float deltaTime)
 	//If the second half of the attack animation is initiated, kill the player
 	if (getComponent<AnimationComponent>()->getAniDirection() == true) 
 	{
+		DataManager::getInstance().soundManager.playSound(SoundManager::Sound::DEATH, false);
 		player->setCurrentAction(Player::Action::FALLING);
 		player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::FALL);
 		//Makes sure the player is in front of the wall, so the falling looks natural
@@ -164,8 +165,8 @@ void Wildling::attack(const float deltaTime)
 	if (getComponent<AnimationComponent>()->getCurrentAnimation() == AnimationComponent::Animation::CHEER)
 	{
 		currentAction = Action::CHEER;
-		DataManager::getInstance().soundManager.stopSounds();
-		DataManager::getInstance().soundManager.playSound(SoundManager::Sound::DEATH, false);
+		DataManager::getInstance().soundManager.stopSounds();		
+		DataManager::getInstance().soundManager.setVolume(1.0);
 		DataManager::getInstance().soundManager.playSound(SoundManager::Sound::LOSS, false);
 		GameState *state = dynamic_cast<GameState*>(&DataManager::getInstance().stateHandler.getState());
 		state->gameLogic.isOver = true;
