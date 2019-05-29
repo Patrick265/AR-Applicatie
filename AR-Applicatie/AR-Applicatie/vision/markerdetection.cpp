@@ -292,7 +292,7 @@ void markerdetection::excecuteMouseDetection()
 	
 	//Showing the text
 	cv::imshow("binair beeld", blobImg);
-	cv::resizeWindow("binair beeld", 640, 480);
+	cv::resizeWindow("binair beeld", width, height);
 
 		if (cv::waitKey(1) == 32) {
 			terminateDetection();
