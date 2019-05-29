@@ -82,7 +82,6 @@ void WinState::checkForReturnMenu(float elapsedTime)
 		DataManager::getInstance().scaleLoading = timePassedMenu * 10;
 	}
 	else {
-		DataManager::getInstance().scaleLoading = 0;
 		timePassedMenu = 0;
 	}
 }
