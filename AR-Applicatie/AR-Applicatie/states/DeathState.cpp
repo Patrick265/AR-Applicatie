@@ -21,6 +21,7 @@ void DeathState::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<st
 
 void DeathState::update(float elapsedTime){
 	hovering(elapsedTime);
+	gameLogic.update(elapsedTime);
 }
 
 void DeathState::hovering(float elapsedTime)
