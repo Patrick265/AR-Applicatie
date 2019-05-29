@@ -11,6 +11,7 @@ private:
 	GameObject* map;
 	GameObject* icon;
 	GameObject* wIcon;
+	GameObject* skybox;
 	std::vector<GameObject*> icons;
 	int x;
 	int y;

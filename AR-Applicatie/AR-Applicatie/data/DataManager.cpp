@@ -410,6 +410,7 @@ void DataManager::initWorldMapModels()
 {
 	meshes["map"] = ObjLoader::loadObj("Resources/Map/Map.obj");
 	textures["map"] = TextureHandler::addTexture("Resources/Map/map.jpg", textures.size());
+	textures["skybox_forest"] = TextureHandler::addTexture("Resources/Skybox/skybox2.jpg", textures.size());
 
 	meshes["icon"] = ObjLoader::loadObj("Resources/Map/Castleblack icon.obj");
 	meshes["wicon"] = ObjLoader::loadObj("Resources/Map/Winterfell.obj");
