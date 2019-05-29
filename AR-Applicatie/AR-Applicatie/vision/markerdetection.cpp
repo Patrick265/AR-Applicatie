@@ -14,7 +14,7 @@
 #define SCREEN_RIGHT_SIDE_BOUND_START 4
 
 //Global variables
-cv::VideoCapture cap(0);
+cv::VideoCapture cap(1);
 cv::Mat frame, frame_HSV, frame_threshold;
 markerdetection::Point2D markerPosition;
 cv::Ptr<cv::SimpleBlobDetector> detector;
@@ -239,13 +239,14 @@ void markerdetection::calibrate()
 		}
 		flip(frame, frame, 1);
 
-		// Convert from BGR to HSV colorspace
-		cvtColor(frame, frame_HSV, cv::COLOR_BGR2HSV);
-		// Detect the object based on HSV Range Values
-		inRange(frame_HSV, cv::Scalar(lowH, lowS, lowV), cv::Scalar(highH, highS, highV), frame_threshold);
+		//Filter the frame on it's red value
+		cv::Mat bgr[3];
+		cv::split(frame, bgr);
 
+		cv::Mat red = bgr[2] - (bgr[0] + bgr[1]);
+			   
 		//Detecting the blobs
-		detector->detect(frame_threshold, myBlobs);
+		detector->detect(red, myBlobs);
 		
 		if (myBlobs.size() == 1 && upperS == -1) {
 			counterUp++;
@@ -321,16 +322,19 @@ void markerdetection::excecuteOpenCVDetection()
 		}
 		flip(frame, frame, 1);
 
-		// Convert from BGR to HSV colorspace
-		cvtColor(frame, frame_HSV, cv::COLOR_BGR2HSV);
-		// Detect the object based on HSV Range Values
-		inRange(frame_HSV, cv::Scalar(lowH, lowS, lowV), cv::Scalar(highH, highS, highV), frame_threshold);
+		//Filter the frame on it's red value
+		cv::Mat bgr[3];
+		cv::split(frame, bgr);
+
+		cv::Mat red = bgr[2] - (bgr[0] + bgr[1]);
+
+		cv::threshold(red, red, 20, 255, cv::THRESH_BINARY);
 
 		//Detecting the blobs
-		detector->detect(frame_threshold, myBlobs);
-
+		detector->detect(red, myBlobs);
+			   
 		//Drawing keypoints (red circles)
-		drawKeypoints(frame_threshold, myBlobs, blobImg, cv::Scalar(0, 0, 255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+		drawKeypoints(red, myBlobs, blobImg, cv::Scalar(0, 0, 255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
 		detectMarker();
 
