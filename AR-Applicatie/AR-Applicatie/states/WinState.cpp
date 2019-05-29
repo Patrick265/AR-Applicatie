@@ -21,6 +21,7 @@ void WinState::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std:
 void WinState::update(float elapsedTime)
 {
 	hovering(elapsedTime);
+	gameLogic.update(elapsedTime);
 }
 
 void WinState::hovering(float elapsedTime)
