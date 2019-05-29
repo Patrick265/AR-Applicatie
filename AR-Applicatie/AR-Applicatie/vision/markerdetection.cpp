@@ -24,16 +24,19 @@ cv::SimpleBlobDetector::Params params;
 std::vector<cv::KeyPoint> myBlobs;
 cv::Mat originalBlobImg;
 markerdetection::DetectionMode mode;
-int lowerS = -1;
-int upperS = -1;
+int threshold_lower = -1;
+int threshold_upper = -1;
+int threshold = 200;
 
 //Variables for HSV
 const int maxValueH = 360 / 2;
 const int maxValue = 255;
 const std::string windowCaptureName = "Video Capture";
 const std::string windowDetectionName = "Object Detection";
-int lowH = 0, lowS = 200, lowV = 115;
+int lowH = 0, lowV = 115;
 int highH = 7, highS = maxValue, highV = maxValue;
+
+
 
 //Variables for camera
 int width;
@@ -225,7 +228,7 @@ void markerdetection::calibrate()
 {
 	int counterUp = 0;
 	int counterDown = 0;
-	while ((lowerS == -1 || upperS == -1) && lowS >= 0) {
+	while ((threshold_lower == -1 || threshold_upper == -1) && threshold >= 0) {
 		cap >> frame;
 		if (frame.empty()) {
 			try
@@ -243,15 +246,19 @@ void markerdetection::calibrate()
 		cv::Mat bgr[3];
 		cv::split(frame, bgr);
 
-		cv::Mat red = bgr[2] - (bgr[0] + bgr[1]);
-			   
+		cv::Mat red = bgr[2] - (bgr[0]/2 + bgr[1]/2);
+		
+		cv::threshold(red, red, threshold, 255, cv::THRESH_BINARY);
+
 		//Detecting the blobs
 		detector->detect(red, myBlobs);
+
 		
-		if (myBlobs.size() == 1 && upperS == -1) {
+		
+		if (myBlobs.size() == 1 && threshold_upper == -1) {
 			counterUp++;
 			if (counterUp == 3) {
-				upperS = lowS;
+				threshold_upper = threshold;
 				
 				counterUp = 0;
 			}
@@ -259,19 +266,19 @@ void markerdetection::calibrate()
 		else {
 			counterUp = 0;
 		}
-		if ((myBlobs.size() == 0 || myBlobs.size() > 1) && upperS != -1) {
+		if ((myBlobs.size() == 0 || myBlobs.size() > 1) && threshold_upper != -1) {
 			counterDown++;
 			if (counterDown == 3) {
-				lowerS = lowS;
+				threshold_lower = threshold;
 				
 			}
 		}
 		else {
 			counterDown = 0;
 		}
-		lowS -= 2;
+		threshold -= 2;
 	}
-	lowS = (upperS + lowerS) / 2;
+	threshold = (threshold_upper + threshold_lower) / 2.0f;
 }
 
 /*
@@ -326,9 +333,9 @@ void markerdetection::excecuteOpenCVDetection()
 		cv::Mat bgr[3];
 		cv::split(frame, bgr);
 
-		cv::Mat red = bgr[2] - (bgr[0] + bgr[1]);
+		cv::Mat red = bgr[2] - (bgr[0]/2 + bgr[1]/2);
 
-		cv::threshold(red, red, 20, 255, cv::THRESH_BINARY);
+		cv::threshold(red, red, threshold, 255, cv::THRESH_BINARY);
 
 		//Detecting the blobs
 		detector->detect(red, myBlobs);
