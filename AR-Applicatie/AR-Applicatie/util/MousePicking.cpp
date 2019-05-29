@@ -92,7 +92,7 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 		this->windowHeight = height;
 		if (abs(cursorX - lastX) <= 2 && abs(cursorY - lastY) <= 2) {
 			cursorCounter += time;
-			if (cursorCounter >= 1.5f && timePassed <= 1.6f) {
+			if (cursorCounter >= 0.1f && timePassed <= 0.2f) {
 				searchObject(cursorX, cursorY);
 				checkSettings(cursorX, cursorY);
 				if (dataMP->settingsActive == true) {
