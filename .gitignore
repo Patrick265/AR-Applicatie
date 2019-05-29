@@ -12,7 +12,7 @@
 *.o
 *.obj
 !/AR-Applicatie/AR-Applicatie/Resources/**/*.obj
-
+/AR-Applicatie/AR-Applicatie/Resources/Data/Highscores.txt
 
 # Precompiled Headers
 *.gch
