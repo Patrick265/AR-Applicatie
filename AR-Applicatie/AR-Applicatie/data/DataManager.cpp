@@ -536,7 +536,7 @@ void DataManager::drawDefaultText(int x, int y, std::string string, void *font, 
 int DataManager::retrieveHighscore()
 {
 	std::ifstream myfile;
-	myfile.open ("Resources\\Data\\Data.txt", std::ios::in);
+	myfile.open ("Resources\\Data\\Highscores.txt", std::ios::in);
 	if(myfile.fail())
 	{
 		return 0;
@@ -555,7 +555,7 @@ int DataManager::retrieveHighscore()
 void DataManager::writeHighscore(int score)
 {
 	std::ofstream myfile;
-	myfile.open ("Resources\\Data\\Data.txt", std::ios::trunc);
+	myfile.open ("Resources\\Data\\Highscores.txt", std::ios::trunc);
 	if(myfile.fail())
 	{
 		myfile.close();
