@@ -9,6 +9,11 @@ WorldMap::WorldMap()
 	this->map->setPosition({ -1.5, 18, 26 });
 	this->map->setRotation({ 0, 90, 0});
 
+	this->skybox = new GameObject();
+	this->skybox->addComponent(new StaticComponent("skybox", "skybox_forest"));
+	this->skybox->setPosition({ -0,0,0 });
+	this->skybox->setRotation({ 0, 0, 0 });
+
 	this->icon = new GameObject();
 	this->icon->addComponent(new StaticComponent("icon", "none"));
 	this->icon->setPosition({ 1.3563f, 18.50308f, 11});
@@ -75,6 +80,7 @@ std::vector<GameObject*> WorldMap::getGameObjects() const
 	gameObjects.push_back(map);
 	gameObjects.push_back(icon);
 	gameObjects.push_back(wIcon);
+	gameObjects.push_back(skybox);
 	return gameObjects;
 }
 MousePicking* WorldMap::getMousePicking() const
