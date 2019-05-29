@@ -140,6 +140,7 @@ void Wildling::run(const float deltaTime)
 		if (abs(position.x - player->getPosition().x) < 3.0f)
 		{
 			currentAction = Action::ATTACK;
+			DataManager::getInstance().soundManager.playSound(SoundManager::Sound::DEATH, false);
 
 			if (position.x > player->getPosition().x)
 				getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_LEFT);
@@ -154,7 +155,6 @@ void Wildling::attack(const float deltaTime)
 	//If the second half of the attack animation is initiated, kill the player
 	if (getComponent<AnimationComponent>()->getAniDirection() == true) 
 	{
-		DataManager::getInstance().soundManager.playSound(SoundManager::Sound::DEATH, false);
 		player->setCurrentAction(Player::Action::FALLING);
 		player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::FALL);
 		//Makes sure the player is in front of the wall, so the falling looks natural
