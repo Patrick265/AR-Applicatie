@@ -3,6 +3,7 @@
 #include <GL/freeglut.h>
 #include "../util/TextureHandler.h"
 #include "../util/ObjLoader.h"
+#include "../states/WorldMapState.h"
 #include <corecrt_math_defines.h>
 #include <ctime>
 
@@ -19,7 +20,7 @@ DataManager::DataManager()
  * GLUT CALLBACKS
  */
 
-// OnKey
+ // OnKey
 void DataManager::onKeyData(unsigned char keyId, int x, int y)
 {
 	if (keyId == VK_ESCAPE)
@@ -56,7 +57,7 @@ void DataManager::onMotionData(int x, int y)
 {
 	if (mouseControl)
 		mousePos = { float(x), float(y) };
-	else if(!mouseControl)
+	else if (!mouseControl)
 	{
 		markerdetection::Point2D normalized = m.getCoordinates();
 		mousePos = { normalized.x * width, normalized.y * height };
@@ -126,8 +127,8 @@ void DataManager::standardRenderOperations() const
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-		
-	
+
+
 	//Lighting
 	glEnable(GL_LIGHT0);
 	glEnable(GL_LIGHTING);
@@ -136,42 +137,47 @@ void DataManager::standardRenderOperations() const
 
 void DataManager::displayInfo() const
 {
-	// Create a string that displays the fps, current camera location and rotation
-	auto text =
-		"->SELECT SETTINGS<-\nfps " + std::to_string(int(1 / deltaTime)) +
-		"\nx " + std::to_string(camera.posX) +
-		"\ny " + std::to_string(camera.posY) +
-		"\nz " + std::to_string(camera.posZ) +
-		"\nX " + std::to_string(camera.rotX) +
-		"\nY " + std::to_string(camera.rotY);
-
-	const auto xPos = 20;
-	auto yPos = 30;
-	glDisable(GL_LIGHT0);
-	glDisable(GL_LIGHTING);
-	glDisable(GL_COLOR_MATERIAL);
-	glClearDepth(GL_DEPTH_BUFFER_BIT);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0.0, width, height, 0.0, 0.0, 1.0);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glRasterPos2f(static_cast<GLfloat>(xPos), static_cast<GLfloat>(yPos));
-	glColor3f(1, 1, 1);
-	const auto len = text.length();
-	for (auto i = 0; i < len; i++)
+	if (dynamic_cast<WorldMapState*>(&stateHandler.getState()))
 	{
-		if (text[i] == '\n')
-		{
-			yPos += 20;
-			glRasterPos2f(static_cast<GLfloat>(xPos), static_cast<GLfloat>(yPos));
-			continue;
-		}
-		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
-	}
 
+		// Create a string that displays the fps, current camera location and rotation
+		std::string text =	"->SELECT SETTINGS<-";
+		
+		//fps " + std::to_string(int(1 / deltaTime)) +
+			//"\nx " + std::to_string(camera.posX) +
+		//	"\ny " + std::to_string(camera.posY) +
+		//	"\nz " + std::to_string(camera.posZ) +
+		//	"\nX " + std::to_string(camera.rotX) +
+		//	"\nY " + std::to_string(camera.rotY);
+
+		const auto xPos = 20;
+		auto yPos = 30;
+		glDisable(GL_LIGHT0);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_COLOR_MATERIAL);
+		glClearDepth(GL_DEPTH_BUFFER_BIT);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0.0, width, height, 0.0, 0.0, 1.0);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		glRasterPos2f(static_cast<GLfloat>(xPos), static_cast<GLfloat>(yPos));
+		glColor3f(1, 1, 1);
+		const auto len = text.length();
+		for (auto i = 0; i < len; i++)
+		{
+			if (text[i] == '\n')
+			{
+				yPos += 20;
+				glRasterPos2f(static_cast<GLfloat>(xPos), static_cast<GLfloat>(yPos));
+				continue;
+			}
+			glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
+		}
+
+	}
 	if (settingsActive) {
 		displaySettings();
 	}
@@ -204,7 +210,7 @@ void DataManager::displayInfo() const
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
 
-	
+
 
 }
 
@@ -260,7 +266,7 @@ void DataManager::initResources()
 
 	//Cursor image
 	cursorId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png", textures.size());
-		//Loading ID
+	//Loading ID
 	this->loadingId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon_loading.png", textures.size());
 	this->fonttextId = TextureHandler::addTexture("Resources/Font/ExportedTest.png", textures.size());
 	this->backgroundTextId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetText.png", 1);
@@ -323,7 +329,7 @@ void DataManager::initRigParts()
 
 	textures["fish"] = TextureHandler::addTexture("Resources/Weapons/weapon_fish.png", textures.size());
 	meshes["fish"] = ObjLoader::loadObj("Resources/Weapons/weapon_fish.obj");
-	weaponMap["fish"] = { 0.811473f,0.14979f,-0.108852f};
+	weaponMap["fish"] = { 0.811473f,0.14979f,-0.108852f };
 
 	///Secret weapon
 	//textures["go"] = TextureHandler::addTexture("Resources/Weapons/weapon_go.png", textures.size());
@@ -365,8 +371,8 @@ void DataManager::initRigParts()
 	textures["icicle"] = TextureHandler::addTexture("Resources/Enemy/icicle.png", textures.size());
 	meshes["icicle"] = ObjLoader::loadObj("Resources/Enemy/icicle.obj");
 
-//	textures["goblin_ra_icicle"] = TextureHandler::addTexture("Resources/Enemy/icicle.png", textures.size());
-//	meshes["goblin_ra_icicle"] = ObjLoader::loadObj("Resources/Enemy/icicle.obj");
+	//	textures["goblin_ra_icicle"] = TextureHandler::addTexture("Resources/Enemy/icicle.png", textures.size());
+	//	meshes["goblin_ra_icicle"] = ObjLoader::loadObj("Resources/Enemy/icicle.obj");
 
 }
 
@@ -380,11 +386,11 @@ void DataManager::initGameLogicModels()
 
 	textures["giant"] = TextureHandler::addTexture("Resources/Rune/giant.png", textures.size());
 	meshes["giant"] = ObjLoader::loadObj("Resources/Rune/giant.obj");
-	
+
 	textures["skybox"] = TextureHandler::addTexture("Resources/Skybox/stars.jpg", textures.size());
 	meshes["skybox"] = ObjLoader::loadObj("Resources/Skybox/skybox.obj");
 	Graphics::inverseNormals(meshes["skybox"]);
-	
+
 	textures["packet"] = TextureHandler::addTexture("Resources/Pakketje/Pakketje.png", textures.size());
 	meshes["packet"] = ObjLoader::loadObj("Resources/Pakketje/Pakketje.obj");
 
@@ -501,7 +507,7 @@ void DataManager::DrawScreenText() {
 
 }
 
-void DataManager::drawDefaultText(int x, int y, std::string string, void *font,float width,float height)
+void DataManager::drawDefaultText(int x, int y, std::string string, void *font, float width, float height)
 {
 	int length;
 	const char *cstr = string.c_str();
@@ -514,7 +520,7 @@ void DataManager::drawDefaultText(int x, int y, std::string string, void *font,f
 	glTranslatef(static_cast<GLfloat>(x), static_cast<GLfloat>(y), 0);
 	glScalef(width, -height, 0);
 	glColor3f(1, 0, 0);
-	for (str=cstr; *str; str++)
+	for (str = cstr; *str; str++)
 	{
 		glutStrokeCharacter(font, *str);
 		glutStrokeWidth(font, *str);
@@ -525,9 +531,9 @@ void DataManager::drawDefaultText(int x, int y, std::string string, void *font,f
 	glEnd();
 }
 
-void DataManager::displaySettings() const 
+void DataManager::displaySettings() const
 {
-	
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, settingsId);
