@@ -27,8 +27,10 @@ void DataManager::onKeyData(unsigned char keyId, int x, int y)
 {
 	if (keyId == VK_ESCAPE)
 		exit(1);
-	if (keyId == 'c')
+	if (keyId == 'c') {
 		mouseControl = !mouseControl;
+		settings.changeInput();
+	}
 	keys[keyId] = true;
 }
 static void onKey(unsigned char keyId, int x, int y)
@@ -589,7 +591,7 @@ void DataManager::displaySettings() const
 		"                         ->RETURN<-"
 		"\n\n\nWidth:        " + std::to_string(settings.resX) +
 		"\nHeight:       " + std::to_string(settings.resY) +
-		"\nDifficulty:   " + dif + "     ->CHANGE<-" +
+		"\nDifficulty:   " + dif  +
 		"\nInput:        " + inp + "     ->CHANGE<-";
 
 	glRasterPos2f(350, 260);
