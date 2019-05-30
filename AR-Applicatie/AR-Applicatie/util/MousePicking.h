@@ -38,6 +38,7 @@ public:
 	void searchObject(int cursorX, int cursorY);
 
 	void checkSettings(int x, int y);
+	void checkReturnButton(int x, int y);
 	void checkChanges(int x, int y);
 
 	/*
