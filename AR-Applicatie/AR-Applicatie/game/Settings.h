@@ -9,6 +9,7 @@ public:
 	bool isSettingsScreen;
 	bool isChangeDif;
 	bool isChangeInput;
+	bool isGameObject;
 
 	// Enums
 	enum class Difficulty { Hard, Medium, Easy };

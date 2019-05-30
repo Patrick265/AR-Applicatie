@@ -79,6 +79,10 @@ void MousePicking::searchObject(int cursorX, int cursorY)
 			(zIcon + sizeIcon) > z && (zIcon - sizeIcon) < z)
 		{
 			isCounting = true;
+			if (i == 0) {
+				dataMP->settings.isGameObject = true;
+				dataMP->settings.isSettingsScreen = false;
+			}
 		}
 		else
 		{
@@ -113,12 +117,14 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 			timePassed += time;
 			if (timePassed >= 3.0f && timePassed <= 3.1f) {
 				// Check for the setting screen to apear or disapear
-				if (dataMP->settings.isSettingsScreen&&(!dataMP->settings.isChangeInput)) {
+				if (dataMP->settings.isSettingsScreen == true && (!dataMP->settings.isChangeInput) && (!dataMP->settings.isGameObject)) {
 					if (dataMP->settingsActive == true) {
 						dataMP->settingsActive = false;
+						dataMP->settings.isSettingsScreen = false;
 					}
 					else {
 						dataMP->settingsActive = true;
+						dataMP->settings.isSettingsScreen = false;
 					}						
 					dataMP->settings.isSettingsScreen = false;
 					std::cout << "settings not active" << std::endl;
@@ -138,8 +144,9 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 					std::cout << "mousecontrol" << dataMP->mouseControl << std::endl;
 				}
 				// If nothing else is selected then castle black is selected and the game state will start
-				else {
+				else if(dataMP->settings.isGameObject) {
 					dataMP->settingsActive = false;
+					dataMP->settings.isGameObject = false;
 					dataMP->stateHandler.setState(StateHandler::States::GAME);
 				}
 				isCounting = false;

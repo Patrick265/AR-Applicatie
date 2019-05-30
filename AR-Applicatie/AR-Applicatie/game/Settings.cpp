@@ -8,6 +8,7 @@ Settings::Settings() {
 	isChangeDif = false;
 	isChangeInput = false;
 	isSettingsScreen = false;
+	isGameObject = false;
 }
 
 std::string Settings::getDifficultyString()const
