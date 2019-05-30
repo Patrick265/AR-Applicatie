@@ -24,6 +24,7 @@ void MousePicking::checkSettings(int x, int y)
 	if ((y >= 20 && y <= 30 && x>=30 && x <= 190)||(y >= 250 && y <= 260 && x >= 580 && x <= 660)) {
 		this->isCounting = true;
 		dataMP->settings.isSettingsScreen = true;
+		dataMP->settings.isChangeInput = false;
 	}
 }
 
@@ -35,9 +36,11 @@ void MousePicking::checkChanges(int x, int y)
 		dataMP->settings.isChangeDif = true;
 	}
 	*/
+	std::cout << "check changes with: " << x << " , " << y << std::endl;
 	if (y >= 370 && y <= 380 && x >= 580 && x <= 660) {
 		this->isCounting = true;
 		dataMP->settings.isChangeInput = true;
+		std::cout << "reached with: " <<x << " , " << y << std::endl;
 	}
 	
 }
@@ -114,11 +117,12 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 		}
 	}
 	else {
+		std::cout << "reached: " << cursorX << " , " << cursorY << std::endl;
 		if (abs(cursorX - lastX) <= 5 && abs(cursorY - lastY) <= 5) {
 			timePassed += time;
 			if (timePassed >= 3.0f && timePassed <= 3.1f) {
 				// Check for the setting screen to apear or disapear
-				if (dataMP->settings.isSettingsScreen == true && (!dataMP->settings.isChangeInput) && (!dataMP->settings.isGameObject)) {
+				if (dataMP->settings.isSettingsScreen == true && (dataMP->settings.isChangeInput == false) && (dataMP->settings.isGameObject == false)) {
 					if (dataMP->settingsActive == true) {
 						dataMP->settingsActive = false;
 						dataMP->settings.isSettingsScreen = false;
@@ -131,13 +135,13 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 					std::cout << "settings not active" << std::endl;
 				}
 				// Check for difficulty change
-				else if (dataMP->settings.isChangeDif) {
+				else if (dataMP->settings.isChangeDif == true) {
 					dataMP->settings.changeDifficulty();
 					dataMP->settings.isChangeDif = false;
 					// Change difficulty via the datamanager when possible
 				}
 				// Check for input change
-				else if (dataMP->settings.isChangeInput) {
+				else if (dataMP->settings.isChangeInput == true) {
 					dataMP->settings.changeInput();
 					dataMP->settings.isChangeInput = false;
 					// Change the input via the datamanager when possible
@@ -145,12 +149,15 @@ void MousePicking::update(int cursorX, int cursorY, int height, float time)
 					std::cout << "mousecontrol" << dataMP->mouseControl << std::endl;
 				}
 				// If nothing else is selected then castle black is selected and the game state will start
-				else if(dataMP->settings.isGameObject) {
+				else if(dataMP->settings.isGameObject == true) {
 					dataMP->settingsActive = false;
 					dataMP->settings.isGameObject = false;
 					dataMP->stateHandler.setState(StateHandler::States::GAME);
 				}
 				isCounting = false;
+				dataMP->settings.isGameObject = false;
+				dataMP->settings.isChangeInput = false;
+				dataMP->settings.isSettingsScreen = false;
 				timePassed = 0;
 			}
 			
