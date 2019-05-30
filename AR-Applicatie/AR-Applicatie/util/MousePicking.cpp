@@ -79,6 +79,7 @@ void MousePicking::searchObject(int cursorX, int cursorY)
 			(zIcon + sizeIcon) > z && (zIcon - sizeIcon) < z)
 		{
 			isCounting = true;
+			dataMP->settings.isSettingsScreen = false;
 			if (i == 0) {
 				dataMP->settings.isGameObject = true;
 				dataMP->settings.isSettingsScreen = false;
