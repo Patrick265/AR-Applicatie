@@ -2,9 +2,8 @@
 #include "../objects/GameObject.h"
 #include "../objects/Player.h"
 
-class Wildling: public GameObject
+class Wildling : public GameObject
 {
-private:
 	//float speed;
 	Math::vec3d velocity;
 
@@ -28,11 +27,10 @@ public:
 	*/
 	Wildling(Player *player, std::vector<Wildling *> *wildlings, float x);
 
-	void spawn();
 	void update(const float deltaTime);
 	bool isHit(float xProjectile, float yProjectile);
 	void die();
-	bool canBeDestroyed();
+	bool canBeDestroyed() const;
 
 private:
 

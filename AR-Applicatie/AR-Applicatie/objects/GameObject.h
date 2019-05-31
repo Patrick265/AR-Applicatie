@@ -31,8 +31,6 @@ public:
 	Math::vec3d getPosition() const;
 	Math::vec3d getRotation() const;
 	Math::vec3d getScale() const;
-	std::string getMesh() const;
-	std::string getTexture() const;
 
 	template<class T>
 	T* getComponent()

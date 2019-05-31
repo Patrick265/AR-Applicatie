@@ -6,16 +6,15 @@
 class AnimationComponent : public Component
 {
 	// The rig that performs the animations
-	Rig rig;	
+	Rig rig;
 
 	// The current rotation, which the animation is based on
-	float current_rotation;
+	float currentRotation;
 	// Animations loop forward and backward, this tracks whether they are going forward or backward.
-	bool ani_forward;
+	bool aniForward;
 
 	//The maximum rotation for the attack animation
 	const float ATTACK_MAX_ROTATION = 160.0f;
-
 
 public:
 
@@ -23,7 +22,7 @@ public:
 	enum class Animation { RUN_LEFT, RUN_RIGHT, IDLE, ATTACK_MOUSE, FALL, CLIMB, PULL_UP, ATTACK_LEFT, ATTACK_RIGHT, CHEER, PAUSE };
 
 	AnimationComponent(Rig rig);
-	AnimationComponent(const AnimationComponent &animation_handler);
+	AnimationComponent(const AnimationComponent &animationHandler);
 
 	// Draws the joints from the rig
 	void draw(std::map<std::string, Graphics::mesh> &meshes, std::map<std::string, uint16_t> &textures) override;
@@ -47,38 +46,38 @@ public:
 	/*
 		Returns the currently selected animation
 	*/
-	const Animation &getCurrentAnimation() { return current_animation; }
+	const Animation &getCurrentAnimation() { return currentAnimation; }
 
 	/*
 		Returns the current direction of the animation
 	*/
-	const bool getAniDirection() { return ani_forward; }
+	bool getAniDirection() { return aniForward; }
 private:
 
 	// The currently selected animation
-	Animation current_animation;
+	Animation currentAnimation;
 
 	// The animations
-	void run(const float elapsedTime);
-	void runLeft(const float elapsedTime);
-	void runRight(const float elapsedTime);
+	void run(float elapsedTime);
+	void runLeft(float elapsedTime);
+	void runRight(float elapsedTime);
 
-	void idle(const float elapsedTime);
-	void attackMouse(const float elapsedTime);
-	void climb(const float elapsedTime);
+	void idle(float elapsedTime);
+	void attackMouse(float elapsedTime);
+	void climb(float elapsedTime);
 
-	void attack(const float elapsedTime);
-	void attackLeft(const float elapsedTime);
-	void attackRight(const float elapsedTime);
+	void attack(float elapsedTime);
+	void attackLeft(float elapsedTime);
+	void attackRight(float elapsedTime);
 
-	void pullUp(const float elapsedTime);
-	void cheer(const float elapsedTime);
-	void fall(const float elapsedTime);
+	void pullUp(float elapsedTime);
+	void cheer(float elapsedTime);
+	void fall(float elapsedTime);
 
-	void pause(const float elapsedTime);
+	void pause(float elapsedTime);
 
-	Math::vec3d convertCoordinates(const Math::vec3d &posCords, const Math::vec3d &parent);
+	static Math::vec3d convertCoordinates(const Math::vec3d &posCords, const Math::vec3d &parent);
 
 	// For the attack animation, it matches the rotation of the character with the position of the cursor
-	void positionToRotation(const int y);
+	void positionToRotation(int y);
 };

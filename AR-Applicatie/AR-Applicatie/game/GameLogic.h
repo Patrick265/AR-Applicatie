@@ -1,4 +1,5 @@
 #pragma once
+
 #include "../objects/GameObject.h"
 #include "../objects/Wildling.h"
 #include "../objects/Projectile.h"
@@ -12,7 +13,7 @@ class GameLogic
 	GameObject *wall;
 	GameObject *wallTop;
 	const int wallWidth = 26;
-	GameObject *skybox;
+	GameObject *skyBox;
 	Player* player;
 	std::vector<Projectile *> projectiles;
 	std::vector<Wildling *> wildlings;
@@ -27,8 +28,6 @@ public:
 
 	GameLogic();
 	~GameLogic();
-
-	void start();
 
 	void update(float deltaTime);
 	void draw(std::map<std::string, Graphics::mesh> &meshes, std::map<std::string, uint16_t> &textures);

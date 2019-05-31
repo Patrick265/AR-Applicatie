@@ -6,7 +6,6 @@
 #include "../states/WorldMapState.h"
 #include <corecrt_math_defines.h>
 #include <ctime>
-#include <iostream>
 #include <fstream>
 
 extern float deltaTime;
@@ -63,37 +62,9 @@ void DataManager::onMotionData(int x, int y)
 		mousePos = { float(x), float(y) };
 	else if (!mouseControl)
 	{
-		markerdetection::Point2D normalized = m.getCoordinates();
+		const auto normalized = m.getCoordinates();
 		mousePos = { normalized.x * width, normalized.y * height };
 	}
-
-	/*
-	 cursorX = x;
-	 cursorY = y;
-	int dx = x - width / 2;
-	int dy = y - height / 2;
-	if ((dx != 0 || dy != 0) && abs(dx) < 400 && abs(dy) < 400 && !justMovedMouse)
-	{
-		camera.rotY += dx / 10.0f;
-		camera.rotX += dy / 10.0f;
-		if (camera.rotX < -90)
-			camera.rotX = -90;
-		if (camera.rotX > 90)
-			camera.rotX = 90;
-		if (camera.rotY > 360)
-			camera.rotY -= 360;
-		if (camera.rotY <= 0)
-			camera.rotY += 360;
-	}
-
-	if (!justMovedMouse)
-	{
-		//glutWarpPointer(width / 2, height / 2);
-		justMovedMouse = true;
-	}
-	else
-		justMovedMouse = false;
-	*/
 }
 
 // OnReshape
@@ -119,7 +90,7 @@ void DataManager::standardRenderOperations() const
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(70.0f, float(width) / float(height), 0.1f, 1000.0f);
+	gluPerspective(70.0f, static_cast<float>(width) / static_cast<float>(height), 0.1f, 1000.0f);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -132,7 +103,6 @@ void DataManager::standardRenderOperations() const
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-
 	//Lighting
 	glEnable(GL_LIGHT0);
 	glEnable(GL_LIGHTING);
@@ -143,16 +113,7 @@ void DataManager::displayInfo() const
 {
 	if (dynamic_cast<WorldMapState*>(&stateHandler.getState()))
 	{
-
-		// Create a string that displays the fps, current camera location and rotation
-		std::string text =	"->SELECT SETTINGS<-";
-		
-		//fps " + std::to_string(int(1 / deltaTime)) +
-			//"\nx " + std::to_string(camera.posX) +
-		//	"\ny " + std::to_string(camera.posY) +
-		//	"\nz " + std::to_string(camera.posZ) +
-		//	"\nX " + std::to_string(camera.rotX) +
-		//	"\nY " + std::to_string(camera.rotY);
+		std::string text = "->SELECT SETTINGS<-";
 
 		const auto xPos = 20;
 		auto yPos = 30;
@@ -180,11 +141,9 @@ void DataManager::displayInfo() const
 			}
 			glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
 		}
-
 	}
-	if (settingsActive) {
+	if (settingsActive)
 		displaySettings();
-	}
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -213,9 +172,6 @@ void DataManager::displayInfo() const
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
-
-
-
 }
 
 void DataManager::updateCamera()
@@ -229,7 +185,7 @@ void DataManager::updateCamera()
 	if (keys[int('q')]) camera.posZ -= deltaTime * speed;
 }
 
-void DataManager::moveCamera(float angle, float fac)
+void DataManager::moveCamera(const float angle, const float fac)
 {
 	camera.posX -= static_cast<float>(cos((camera.rotY + angle) / 180 * M_PI)) * fac;
 	camera.posY -= static_cast<float>(sin((camera.rotY + angle) / 180 * M_PI)) * fac;
@@ -272,7 +228,7 @@ void DataManager::initResources()
 	cursorId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon.png", textures.size());
 	//Loading ID
 	this->loadingId = TextureHandler::addTexture("Resources/Cursor/16x16_cursor_icon_loading.png", textures.size());
-	this->fonttextId = TextureHandler::addTexture("Resources/Font/ExportedTest.png", textures.size());
+	this->fontTextId = TextureHandler::addTexture("Resources/Font/ExportedTest.png", textures.size());
 	this->backgroundTextId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetText.png", 1);
 	this->backgroundImgId = TextureHandler::addTexture("Resources/Ending_Screen/ScreenAssetBackground.png", 0);
 	this->settingsId = TextureHandler::addTexture("Resources/Settings/SettingsBackground.png", textures.size());
@@ -327,22 +283,12 @@ void DataManager::initRigParts()
 	meshes["cattleprod"] = ObjLoader::loadObj("Resources/Weapons/weapon_cattleprod.obj");
 	weaponMap["cattleprod"] = { 0.661686f,0.014448f,0.698785f };
 
-	//textures["scythe"] = TextureHandler::addTexture("Resources/Weapons/weapon_scythe.png", textures.size());
-	//meshes["scythe"] = ObjLoader::loadObj("Resources/Weapons/weapon_scythe.obj");
-	//weaponMap["scythe"] = { 0.213286f,-0.106202f,0.998531f };
-
 	textures["fish"] = TextureHandler::addTexture("Resources/Weapons/weapon_fish.png", textures.size());
 	meshes["fish"] = ObjLoader::loadObj("Resources/Weapons/weapon_fish.obj");
 	weaponMap["fish"] = { 0.811473f,0.14979f,-0.108852f };
 
-	///Secret weapon
-	//textures["go"] = TextureHandler::addTexture("Resources/Weapons/weapon_go.png", textures.size());
-	//meshes["go"] = ObjLoader::loadObj("Resources/Weapons/weapon_go.obj");
-	//weaponMap["go"] = { 0.716873f,0.053516f,-0.114973 };
-
 	textures["weapon_elf"] = TextureHandler::addTexture("Resources/Weapons/weapon_elf.png", textures.size());
 	meshes["weapon_elf"] = ObjLoader::loadObj("Resources/Weapons/weapon_elf.obj");
-	//weaponMap["weapon_elf"] = { 0.213286f,-0.106202f,0.998531f };
 
 	/*
 	GOBLIN
@@ -374,10 +320,6 @@ void DataManager::initRigParts()
 
 	textures["icicle"] = TextureHandler::addTexture("Resources/Enemy/icicle.png", textures.size());
 	meshes["icicle"] = ObjLoader::loadObj("Resources/Enemy/icicle.obj");
-
-	//	textures["goblin_ra_icicle"] = TextureHandler::addTexture("Resources/Enemy/icicle.png", textures.size());
-	//	meshes["goblin_ra_icicle"] = ObjLoader::loadObj("Resources/Enemy/icicle.obj");
-
 }
 
 void DataManager::initGameLogicModels()
@@ -403,8 +345,8 @@ void DataManager::initGameLogicModels()
 
 void DataManager::determineNextWeapon()
 {
-	int number = rand() % weaponMap.size();
-	int pos = 0;
+	const int number = rand() % weaponMap.size();
+	auto pos = 0;
 	for (auto const& x : weaponMap)
 	{
 		if (number == pos)
@@ -426,11 +368,10 @@ void DataManager::initWorldMapModels()
 	meshes["wicon"] = ObjLoader::loadObj("Resources/Map/Winterfell.obj");
 }
 
-
-void DataManager::drawBackgroundScreen()
+void DataManager::drawBackgroundScreen() const
 {
-	GLfloat centerX = static_cast<GLfloat>(this->width) / 2.0f;
-	GLfloat centerY = static_cast<GLfloat>(this->height) / 2.0f;
+	const auto centerX = static_cast<GLfloat>(this->width) / 2.0f;
+	const auto centerY = static_cast<GLfloat>(this->height) / 2.0f;
 
 	setOrtho();
 
@@ -462,7 +403,7 @@ void DataManager::drawBackgroundScreen()
 	glDisable(GL_BLEND);
 }
 
-void DataManager::setOrtho()
+void DataManager::setOrtho() const
 {
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
@@ -476,47 +417,44 @@ void DataManager::setOrtho()
 	glLoadIdentity();
 }
 
-void DataManager::DrawScreenText() {
-	GLuint characterlist = glGenLists(256);
+void DataManager::drawScreenText() const
+{
+	const auto characterList = glGenLists(256);
 	glTranslated(0, 20, 0);
-	for (int i = 0; i < 256; i++)
+	for (auto i = 0; i < 256; i++)
 	{
-		float characterx = (float)(i % 32) / 32.0f;
-		float charactery = (float)(i / 32) / 32.0f;
-		float size = 1 / 32.0f;
+		const auto characterX = static_cast<float>(i % 32) / 32.0f;
+		const auto characterY = static_cast<float>(i / 32) / 32.0f;
+		const auto size = 1 / 32.0f;
 
 		glEnable(GL_BLEND);
 
-		glNewList(characterlist + i, GL_COMPILE);
+		glNewList(characterList + i, GL_COMPILE);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glBindTexture(GL_TEXTURE_2D, this->fonttextId);
+		glBindTexture(GL_TEXTURE_2D, this->fontTextId);
 		glEnable(GL_TEXTURE_2D);
 		glBegin(GL_QUADS);
-		glVertex2d(0, 0); glTexCoord2f(characterx, charactery);
-		glVertex2i(0, 1);  glTexCoord2f(characterx, charactery + size);
-		glVertex2i(1, 1); glTexCoord2f(characterx + size, charactery + size);
-		glVertex2i(1, 0); glTexCoord2f(characterx + size, charactery);
+		glVertex2d(0, 0); glTexCoord2f(characterX, characterY);
+		glVertex2i(0, 1);  glTexCoord2f(characterX, characterY + size);
+		glVertex2i(1, 1); glTexCoord2f(characterX + size, characterY + size);
+		glVertex2i(1, 0); glTexCoord2f(characterX + size, characterY);
 		glEnd();
 		glTranslated(2, 0, 0);
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);
 		glEndList();
-
 	}
 
-	int size = 6;
+	auto size = 6;
 	glScalef(100, 100, 100);
-	glListBase(characterlist);
+	glListBase(characterList);
 	glCallLists(6, GL_UNSIGNED_BYTE, "Lekker");
-
 }
 
 void DataManager::drawDefaultText(int x, int y, std::string string, void *font, float width, float height)
 {
-	int length;
-	const char *cstr = string.c_str();
-	length = (int)strlen(cstr);
-	const char *str;
+	const auto cStr = string.c_str();
+	auto length = static_cast<int>(strlen(cStr));
 
 	glEnable(GL_LINE_SMOOTH);
 
@@ -524,7 +462,7 @@ void DataManager::drawDefaultText(int x, int y, std::string string, void *font, 
 	glTranslatef(static_cast<GLfloat>(x), static_cast<GLfloat>(y), 0);
 	glScalef(width, -height, 0);
 	glColor3f(1, 0, 0);
-	for (str = cstr; *str; str++)
+	for (auto str = cStr; *str; str++)
 	{
 		glutStrokeCharacter(font, *str);
 		glutStrokeWidth(font, *str);
@@ -537,40 +475,39 @@ void DataManager::drawDefaultText(int x, int y, std::string string, void *font, 
 
 int DataManager::retrieveHighscore()
 {
-	std::ifstream myfile;
-	myfile.open ("Resources\\Data\\Highscores.txt", std::ios::in);
-	if(myfile.fail())
+	std::ifstream myFile;
+	myFile.open("Resources\\Data\\Highscores.txt", std::ios::in);
+	if (myFile.fail())
 	{
 		return 0;
 	}
-	std::string textline;
-	int score = 0;
-	if (getline(myfile, textline))
+	std::string textLine;
+	auto score = 0;
+	if (getline(myFile, textLine))
 	{
-		score = std::stoi(textline);
+		score = std::stoi(textLine);
 	}
-	myfile.close();
+	myFile.close();
 	this->currentScore = score;
 	return score;
 }
 
-void DataManager::writeHighscore(int score)
+void DataManager::writeHighscore(const int score)
 {
-	std::ofstream myfile;
-	myfile.open ("Resources\\Data\\Highscores.txt", std::ios::trunc);
-	if(myfile.fail())
+	std::ofstream myFile;
+	myFile.open("Resources\\Data\\Highscores.txt", std::ios::trunc);
+	if (myFile.fail())
 	{
-		myfile.close();
+		myFile.close();
 		return;
 	}
 	this->currentScore = score;
-	myfile << score;
-	myfile.close();
+	myFile << score;
+	myFile.close();
 }
 
 void DataManager::displaySettings() const
 {
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, settingsId);
@@ -585,13 +522,13 @@ void DataManager::displaySettings() const
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
 
-	std::string dif = settings.getDifficultyString();
-	std::string inp = settings.getInputString();
+	const auto dif = settings.getDifficultyString();
+	const auto inp = settings.getInputString();
 	auto settingsInfo =
 		"                         ->RETURN<-"
 		"\n\n\nWidth:        " + std::to_string(settings.resX) +
 		"\nHeight:       " + std::to_string(settings.resY) +
-		"\nDifficulty:   " + dif  +
+		"\nDifficulty:   " + dif +
 		"\nInput:        " + inp + "     ->CHANGE<-";
 
 	glRasterPos2f(350, 260);

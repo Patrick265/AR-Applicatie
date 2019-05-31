@@ -3,40 +3,39 @@
 #include <opencv2/opencv.hpp>
 #include "../util/Exceptions.h"
 
-class markerdetection 
+class markerdetection
 {
-	 void resetBlobDetector();
-	 int checkBounds(cv::Point point1, cv::Point point2);
-	 void detectMarker();
-	 void drawBounds(cv::Mat draw_img);
-	 void checkAllBounds(cv::Mat draw_img);
-	 void readRGBValues();
-	 void calibrate();
-	 void excecuteMouseDetection();
-	 void excecuteOpenCVDetection();
+	void resetBlobDetector();
+	int checkBounds(cv::Point point1, cv::Point point2);
+	void detectMarker();
+	void drawBounds(cv::Mat drawImg) const;
+	void checkAllBounds(cv::Mat drawImg);
+	void calibrate();
+	void executeMouseDetection();
+	void executeOpenCVDetection();
 
-	 const int SCREEN_DIVIDER_RATIO = 5;
-	 const int SCREEN_RIGHT_SIDE_BOUND_START = 4;
+	const int SCREEN_DIVIDER_RATIO = 5;
+	const int SCREEN_RIGHT_SIDE_BOUND_START = 4;
 
-	 cv::Mat frame, frame_threshold;
-	 Exceptions exception;
-	 cv::Mat blob_img;
-	 cv::Mat original_blob_img;
-	 int thresholdLower = -1;
-	 int thresholdUpper = -1;
-	 int threshold = 200;
+	cv::Mat frame, frameThreshold;
+	Exceptions exception;
+	cv::Mat blobImg;
+	cv::Mat originalBlobImg;
+	int thresholdLower = -1;
+	int thresholdUpper = -1;
+	int threshold = 200;
 
-	 cv::Ptr<cv::SimpleBlobDetector> detector;
-	 cv::SimpleBlobDetector::Params params;
-	 std::vector<cv::KeyPoint> my_blobs;
-
+	cv::Ptr<cv::SimpleBlobDetector> detector;
+	cv::SimpleBlobDetector::Params params;
+	std::vector<cv::KeyPoint> myBlobs;
 
 public:
 	// typesafe enums
-	enum class DetectionMode {opencv,mouse};
+	enum class DetectionMode { opencv, mouse };
 
 	//struct for passing the x and y
-	struct Point2D {
+	struct Point2D
+	{
 		float x, y;
 	};
 
@@ -61,20 +60,20 @@ public:
 	//
 	//  @return returns the Markerdetection mode. 0 for OpenCV and 1 for Mouse detection
 	*/
-	 DetectionMode getDetectionMode();
+	DetectionMode getDetectionMode();
 
 	/*
 	//	This function is used for changing the detection mode of the OpenCV module.
 	//
 	*/
-	 void changeDetectionMode();
+	void changeDetectionMode();
 
 	/*
 	//	This function is used for getting the coordinates of the OpenCV application..
 	//
 	//  @return Struct of Point2D with x and y coordinates
 	*/
-	 Point2D getCoordinates();
+	Point2D getCoordinates();
 
-	 bool hasNewMousePosition();
+	bool hasNewMousePosition();
 };

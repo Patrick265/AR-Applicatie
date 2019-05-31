@@ -58,7 +58,7 @@ public:
 	int loadingId;
 	int backgroundTextId;
 	int backgroundImgId;
-	int fonttextId;
+	int fontTextId;
 	int settingsId;
 
 	// Camera struct and instance (rendering position)
@@ -99,15 +99,12 @@ public:
 	void initGlut(int argc, char** argv, void(*onIdle)(), void(*onDisplay)()) const;
 	void initResources();
 
-	void setOrtho();
-	void drawBackgroundScreen();
-	void DrawScreenText();
+	void setOrtho() const;
+	void drawBackgroundScreen() const;
+	void drawScreenText() const;
 
-	void drawDefaultText(int x, int y, std::string string, void * font, float width, float height);
+	static void drawDefaultText(int x, int y, std::string string, void * font, float width, float height);
 
 	int retrieveHighscore();
 	void writeHighscore(int score);
-
-
-
 };

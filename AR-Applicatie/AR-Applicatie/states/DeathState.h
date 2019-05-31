@@ -6,7 +6,6 @@
 class DeathState : public State
 {
 	GameLogic gameLogic;
-private:
 	float timePassedGame;
 	float timePassedMenu;
 	bool isBackgroundMusicon = false;
@@ -14,7 +13,6 @@ private:
 public:
 	DeathState(GameLogic &gameLogic);
 	virtual ~DeathState();
-
 
 	void draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std::string, uint16_t>& textures) override;
 	void update(float elapsedTime) override;

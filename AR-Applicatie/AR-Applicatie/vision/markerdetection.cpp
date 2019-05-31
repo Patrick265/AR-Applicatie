@@ -10,7 +10,7 @@
 
 //Global variables
 cv::VideoCapture cap(0);
-markerdetection::Point2D marker_position;
+markerdetection::Point2D markerPosition;
 markerdetection::DetectionMode mode;
 
 bool newMousePosition = false;
@@ -24,7 +24,7 @@ int height;
 //
 //  @return returns the Markerdetection mode. 0 for OpenCV and 1 for Mouse detection
 */
-markerdetection::DetectionMode markerdetection::getDetectionMode() 
+markerdetection::DetectionMode markerdetection::getDetectionMode()
 {
 	return mode;
 }
@@ -34,12 +34,12 @@ markerdetection::DetectionMode markerdetection::getDetectionMode()
 //
 */
 void markerdetection::changeDetectionMode() {
-	if (mode == markerdetection::DetectionMode::opencv) 
+	if (mode == DetectionMode::opencv)
 	{
-		mode = markerdetection::DetectionMode::mouse;
+		mode = DetectionMode::mouse;
 	}
 	else {
-		mode = markerdetection::DetectionMode::opencv;
+		mode = DetectionMode::opencv;
 	}
 }
 
@@ -47,7 +47,7 @@ void markerdetection::changeDetectionMode() {
 //	This function is used for terminating the OpenCV windows.
 //
 */
-void markerdetection::terminateDetection() 
+void markerdetection::terminateDetection()
 {
 	cv::destroyAllWindows();
 }
@@ -56,25 +56,24 @@ void markerdetection::terminateDetection()
 // This method is used for setting the parameters of the blobdetector.
 //
 */
-void markerdetection::resetBlobDetector() 
+void markerdetection::resetBlobDetector()
 {
-	params.minDistBetweenBlobs = 1.0;   
-	params.filterByArea = true;           
-	params.filterByColor = false;        
-	params.minArea = 1000;        
-	params.maxArea = 70000;      
-	params.thresholdStep = 100;            
-	params.blobColor = 0;              
-	params.filterByCircularity = true;  
-	params.filterByInertia = false;       
-	params.filterByConvexity = true;    
+	params.minDistBetweenBlobs = 1.0;
+	params.filterByArea = true;
+	params.filterByColor = false;
+	params.minArea = 1000;
+	params.maxArea = 70000;
+	params.thresholdStep = 100;
+	params.blobColor = 0;
+	params.filterByCircularity = true;
+	params.filterByInertia = false;
+	params.filterByConvexity = true;
 	params.minConvexity = 0.5;
 	params.minCircularity = 0.15f;
 
 	//Creating a detector with the settings above
 	detector = cv::SimpleBlobDetector::create(params);
 }
-
 
 /*
 //	This function is used for getting the coordinates of the OpenCV application..
@@ -83,7 +82,7 @@ void markerdetection::resetBlobDetector()
 */
 markerdetection::Point2D markerdetection::getCoordinates()
 {
-	markerdetection::Point2D point = { marker_position.x / float(width), marker_position.y / float(height)};
+	const Point2D point = { markerPosition.x / float(width), markerPosition.y / float(height) };
 	return point;
 }
 
@@ -96,13 +95,11 @@ markerdetection::Point2D markerdetection::getCoordinates()
 //	@return returnvalue returns the value 0 or 1, 0 for not in bounds and 1 for in bounds
 //
 */
-int markerdetection::checkBounds(cv::Point point1, cv::Point point2) 
+int markerdetection::checkBounds(const cv::Point point1, const cv::Point point2)
 {
-	int returnValue = 0;
-	if (marker_position.x >= point1.x && marker_position.x <= point2.x && marker_position.y >= point1.y && marker_position.y <= point2.y) {
-		//std::cout << "point is in bounds" << std::endl;
+	auto returnValue = 0;
+	if (markerPosition.x >= point1.x && markerPosition.x <= point2.x && markerPosition.y >= point1.y && markerPosition.y <= point2.y)
 		returnValue = 1;
-	}
 
 	return returnValue;
 }
@@ -110,18 +107,18 @@ int markerdetection::checkBounds(cv::Point point1, cv::Point point2)
 /*
 //	This function is used for detecting the marker
 */
-void markerdetection::detectMarker() 
+void markerdetection::detectMarker()
 {
 	newMousePosition = true;
-	int size = 0;
-	for (cv::KeyPoint k : my_blobs)
+	auto size = 0;
+	for (const auto k : myBlobs)
 	{
-		if (k.size > size) {
+		if (k.size > size)
+		{
 			Point2D points{ k.pt.x, k.pt.y };
-			marker_position.x = static_cast<float>(k.pt.x);
-			marker_position.y = static_cast<float>(k.pt.y);
+			markerPosition.x = static_cast<float>(k.pt.x);
+			markerPosition.y = static_cast<float>(k.pt.y);
 			size = static_cast<int>(k.size);
-			
 		}
 	}
 }
@@ -130,10 +127,10 @@ void markerdetection::detectMarker()
 //	This function is a callback used for using the mouse on the openCV screen.
 //
 */
-void mouseCallback(int event, int x, int y, int flag, void *param) 
+void mouseCallback(int event, const int x, const int y, int flag, void *param)
 {
-	marker_position.x = static_cast<float>(x);
-	marker_position.y = static_cast<float>(y);
+	markerPosition.x = static_cast<float>(x);
+	markerPosition.y = static_cast<float>(y);
 	newMousePosition = true;
 }
 
@@ -151,61 +148,79 @@ bool markerdetection::hasNewMousePosition()
 //	This function is used for drawing the borders on the openCV screen.
 //
 */
-void markerdetection::drawBounds(cv::Mat draw_img) 
+void markerdetection::drawBounds(cv::Mat drawImg) const
 {
 	//Draw Horizontal raster
-	cv::line(draw_img, cv::Point(0, height / SCREEN_DIVIDER_RATIO), cv::Point(width, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 255, 255), 2);
-	cv::line(draw_img, cv::Point(0, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 255, 255), 2);
+	line(drawImg, cv::Point(0, height / SCREEN_DIVIDER_RATIO), cv::Point(width, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 255, 255), 2);
+	line(drawImg, cv::Point(0, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START),
+		cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 255, 255), 2);
 
 	//Draw Vertical raster
-	cv::line(draw_img, cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO, height), CV_RGB(255, 255, 255), 2);
-	cv::line(draw_img, cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height), CV_RGB(255, 255, 255), 2);
+	line(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO, height), CV_RGB(255, 255, 255), 2);
+	line(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, 0),
+		cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height), CV_RGB(255, 255, 255), 2);
 }
 
 /*
 //	This function is used for checking if the x and the y values of the object are in the bounds.
 //
 */
-void markerdetection::checkAllBounds(cv::Mat draw_img) 
+void markerdetection::checkAllBounds(cv::Mat drawImg)
 {
 	//Check left bound
-	if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO)) == 1) {
-		cv::rectangle(draw_img, cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 0, 0), 5, 1, 0);
+	if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO, 0),
+		cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO)) == 1)
+	{
+		rectangle(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO, 0),
+			cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 0, 0), 5, 1, 0);
 	}
 
 	//Check Upper bound
-	if (checkBounds(cv::Point(0, height / SCREEN_DIVIDER_RATIO), cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START)) == 1) {
-		cv::rectangle(draw_img, cv::Point(0, height / 5), cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
+	if (checkBounds(cv::Point(0, height / SCREEN_DIVIDER_RATIO), cv::Point(width / SCREEN_DIVIDER_RATIO,
+		height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START)) == 1)
+	{
+		rectangle(drawImg, cv::Point(0, height / 5),
+			cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
 	}
 
 	//Check right bound
-	if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO), cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START)) == 1) {
-		cv::rectangle(draw_img, cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO), cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
+	if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO),
+		cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START)) == 1)
+	{
+		rectangle(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO),
+			cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
 	}
 
 	//Check lower bound
-	if (checkBounds(cv::Point(width / 5, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height)) == 1) {
-		cv::rectangle(draw_img, cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height), CV_RGB(255, 0, 0), 5, 1, 0);
+	if (checkBounds(cv::Point(width / 5, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START),
+		cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height)) == 1)
+	{
+		rectangle(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START),
+			cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height), CV_RGB(255, 0, 0), 5, 1, 0);
 	}
 
 	//Check middle bound
-	if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START)) == 1) {
-		cv::rectangle(draw_img, cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO), cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
+	if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO),
+		cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START)) == 1)
+	{
+		rectangle(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO),
+			cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START,
+				height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
 	}
 }
 
 /*
 //	This function is used for calibrating the tracked object.
-//
 */
-void markerdetection::calibrate() 
+void markerdetection::calibrate()
 {
-	int counterUp = 0;
-	int counterDown = 0;
-	while ((thresholdLower == -1 || thresholdUpper == -1) && threshold >= 0) {
-		
+	auto counterUp = 0;
+	auto counterDown = 0;
+	while ((thresholdLower == -1 || thresholdUpper == -1) && threshold >= 0)
+	{
 		cap >> frame;
-		if (frame.empty()) {
+		if (frame.empty())
+		{
 			try
 			{
 				exception.noCameraDetected();
@@ -215,38 +230,43 @@ void markerdetection::calibrate()
 				std::cout << "Exception: " << e.getExceptionMessage() << std::endl;
 			}
 		}
-		cv::flip(frame, frame, 1);
+		flip(frame, frame, 1);
 
 		//Filter the frame on it's red value
 		cv::Mat bgr[3];
-		cv::split(frame, bgr);
+		split(frame, bgr);
 
 		cv::Mat red = bgr[2] - (bgr[0] / 2 + bgr[1] / 2);
 
 		cv::threshold(red, red, threshold, 255, cv::THRESH_BINARY);
 
 		//Detecting the blobs
-		detector->detect(red, my_blobs);
-		
-		if (my_blobs.size() == 1 && thresholdUpper == -1) {
+		detector->detect(red, myBlobs);
+
+		if (myBlobs.size() == 1 && thresholdUpper == -1)
+		{
 			counterUp++;
-			if (counterUp == 3) {
+			if (counterUp == 3)
+			{
 				thresholdUpper = threshold;
-				
+
 				counterUp = 0;
 			}
 		}
-		else {
+		else
+		{
 			counterUp = 0;
 		}
-		if ((my_blobs.size() == 0 || my_blobs.size() > 1) && thresholdUpper != -1) {
+		if ((myBlobs.size() == 0 || myBlobs.size() > 1) && thresholdUpper != -1)
+		{
 			counterDown++;
-			if (counterDown == 3) {
+			if (counterDown == 3)
+			{
 				thresholdLower = threshold;
-				
 			}
 		}
-		else {
+		else
+		{
 			counterDown = 0;
 		}
 		threshold -= 2;
@@ -258,107 +278,110 @@ void markerdetection::calibrate()
 //	This function starts the mouse detection modus.
 //
 */
-void markerdetection::excecuteMouseDetection() 
+void markerdetection::executeMouseDetection()
 {
-	original_blob_img = cv::imread("Resources/Vision/Black_Picture.jpg");
+	originalBlobImg = cv::imread("Resources/Vision/Black_Picture.jpg");
 
-	blob_img = original_blob_img;
+	blobImg = originalBlobImg;
 
 	cv::setMouseCallback("binair beeld", mouseCallback);
 
 	width = 640;
 	height = 480;
 
-	blob_img = original_blob_img.clone();
-	
+	blobImg = originalBlobImg.clone();
+
 	//Showing the text
-	cv::imshow("binair beeld", blob_img);
+	imshow("binair beeld", blobImg);
 	cv::resizeWindow("binair beeld", width, height);
 
-		if (cv::waitKey(1) == 32) {
-			terminateDetection();
-			changeDetectionMode();
-			runMarkerDetection(getDetectionMode());
-		}
+	if (cv::waitKey(1) == 32)
+	{
+		terminateDetection();
+		changeDetectionMode();
+		runMarkerDetection(getDetectionMode());
+	}
 }
 
 /*
 //	This function starts the OpenCV detection modus.
-//
 */
-void markerdetection::excecuteOpenCVDetection() 
+void markerdetection::executeOpenCVDetection()
 {
-		cap.read(frame);
-		if (frame.empty()) {
-			try
-			{
-				exception.invalidFrames();
-			}
-			catch (Exceptions e)
-			{
-				std::cout << "Exception: " << e.getExceptionMessage() << std::endl;
-				return;
-			}
+	cap.read(frame);
+	if (frame.empty())
+	{
+		try
+		{
+			exception.invalidFrames();
 		}
-		flip(frame, frame, 1);
-
-		//Filter the frame on it's red value
-		cv::Mat bgr[3];
-		cv::split(frame, bgr);
-
-		cv::Mat red = bgr[2] - (bgr[0]/2 + bgr[1]/2);
-
-		cv::threshold(red, red, threshold, 255, cv::THRESH_BINARY);
-
-		//Detecting the blobs
-		detector->detect(red, my_blobs);
-			   
-		//Drawing keypoints (red circles)
-		drawKeypoints(red, my_blobs, blob_img, cv::Scalar(0, 0, 255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-
-		detectMarker();
-
-		//Showing the text
-		cv::imshow("binair beeld", blob_img);
-
-		if (cv::waitKey(1) == 32) {
-			terminateDetection();
-			changeDetectionMode();
-			runMarkerDetection(getDetectionMode());
+		catch (Exceptions e)
+		{
+			std::cout << "Exception: " << e.getExceptionMessage() << std::endl;
+			return;
 		}
+	}
+	flip(frame, frame, 1);
+
+	//Filter the frame on it's red value
+	cv::Mat bgr[3];
+	split(frame, bgr);
+
+	cv::Mat red = bgr[2] - (bgr[0] / 2 + bgr[1] / 2);
+
+	cv::threshold(red, red, threshold, 255, cv::THRESH_BINARY);
+
+	//Detecting the blobs
+	detector->detect(red, myBlobs);
+
+	//Drawing keypoints (red circles)
+	drawKeypoints(red, myBlobs, blobImg, cv::Scalar(0, 0, 255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+
+	detectMarker();
+
+	//Showing the text
+	imshow("binair beeld", blobImg);
+
+	if (cv::waitKey(1) == 32)
+	{
+		terminateDetection();
+		changeDetectionMode();
+		runMarkerDetection(getDetectionMode());
+	}
 }
 
 /*
 //	This function starts the openCV module.
 //
 //	@param int input is for switching the mode between mouse and openCV
-//
 */
-void markerdetection::runMarkerDetection(markerdetection::DetectionMode mode)
+void markerdetection::runMarkerDetection(const DetectionMode mode)
 {
-	if (mode == markerdetection::DetectionMode::opencv) {
-			resetBlobDetector();
+	if (mode == DetectionMode::opencv)
+	{
+		resetBlobDetector();
 
-			if (!cap.isOpened()) {
-				try
-				{
-					exception.noCameraDetected();
-				}
-				catch (Exceptions e)
-				{
-					std::cout << "Exception: " << e.getExceptionMessage() << std::endl;
-				}
+		if (!cap.isOpened())
+		{
+			try
+			{
+				exception.noCameraDetected();
 			}
+			catch (Exceptions e)
+			{
+				std::cout << "Exception: " << e.getExceptionMessage() << std::endl;
+			}
+		}
 
-			width = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_WIDTH));
-			height = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
+		width = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_WIDTH));
+		height = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
 
-			calibrate();
+		calibrate();
 
-			excecuteOpenCVDetection();
+		executeOpenCVDetection();
 	}
-	if (mode == markerdetection::DetectionMode::mouse) {
-		excecuteMouseDetection();
+	if (mode == DetectionMode::mouse)
+	{
+		executeMouseDetection();
 	}
 }
-

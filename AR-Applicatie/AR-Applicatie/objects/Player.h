@@ -1,11 +1,10 @@
 #pragma once
 #include "../objects/GameObject.h"
-#include <string>
 
 class Player : public GameObject
 {
 	float maxSpeed;
-	Math::vec3d velocity;	
+	Math::vec3d velocity;
 
 	const float GRAVITY = 10.0f;
 
@@ -19,10 +18,7 @@ public:
 
 	Player();
 
-	void spawn();
 	void update(const float deltaTime);
-	void kill();
-
 
 	const Action &getCurrentAction() { return currentAction; }
 	void setCurrentAction(const Action &action) { currentAction = action; }
@@ -31,24 +27,13 @@ public:
 private:
 
 	Action currentAction;
-	
+
 	/*
 		What the player does when Idle
 
 		@param velocity - The current velocity of the player
-
 	*/
-	void onIdle(const float velocity);
-
-	/*
-		What the player does when falling down
-	
-		@param velocity - The current velocity of the player
-
-	*/
-	void onFalling(const float velocity);
-
-	void toLeft(const float velocity);
-	void toRight(const float velocity);
-
+	void onIdle(float velocity);
+	void toLeft(float velocity);
+	void toRight(float velocity);
 };

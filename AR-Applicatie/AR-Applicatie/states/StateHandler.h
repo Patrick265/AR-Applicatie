@@ -1,4 +1,5 @@
 #pragma once
+
 #include <map>
 #include "../calculations/Graphics.h"
 #include "State.h"

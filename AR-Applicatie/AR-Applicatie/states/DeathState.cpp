@@ -3,7 +3,7 @@
 #include "../data/DataManager.h"
 
 DeathState::DeathState(GameLogic &gameLogic)
-: gameLogic(gameLogic)
+	: gameLogic(gameLogic), timePassedGame(0), timePassedMenu(0)
 {
 }
 
@@ -13,24 +13,28 @@ void DeathState::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<st
 {
 	gameLogic.draw(meshes, textures);
 	DataManager::getInstance().drawBackgroundScreen();
-	DataManager::getInstance().drawDefaultText(DataManager::getInstance().width / 2 - 210, (DataManager::getInstance().height / 2) + 40, "You Lose", GLUT_STROKE_ROMAN, 0.75, 0.75);
-	DataManager::getInstance().drawDefaultText(DataManager::getInstance().width - 300, 50, "Return to map", GLUT_STROKE_ROMAN, 0.25, 0.25);
-	DataManager::getInstance().drawDefaultText(DataManager::getInstance().width - 300, 100, "Return to game", GLUT_STROKE_ROMAN, 0.25, 0.25);
-
+	DataManager::getInstance().drawDefaultText(DataManager::getInstance().width / 2 - 210,
+	                                           (DataManager::getInstance().height / 2) + 40, "You Lose",
+	                                           GLUT_STROKE_ROMAN, 0.75, 0.75);
+	DataManager::getInstance().drawDefaultText(DataManager::getInstance().width - 300, 50, "Return to map",
+	                                           GLUT_STROKE_ROMAN, 0.25, 0.25);
+	DataManager::getInstance().drawDefaultText(DataManager::getInstance().width - 300, 100, "Return to game",
+	                                           GLUT_STROKE_ROMAN, 0.25, 0.25);
 }
 
-void DeathState::update(float elapsedTime){
+void DeathState::update(const float elapsedTime)
+{
 	hovering(elapsedTime);
 	gameLogic.update(elapsedTime);
 }
 
-void DeathState::hovering(float elapsedTime)
+void DeathState::hovering(const float elapsedTime)
 {
 	checkForReturnGame(elapsedTime);
 	checkForReturnMenu(elapsedTime);
 }
 
-void DeathState::checkForReturnGame(float elapsedTime) 
+void DeathState::checkForReturnGame(const float elapsedTime)
 {
 	if (DataManager::getInstance().mousePos.y >= 5 && DataManager::getInstance().mousePos.y <= 50 &&
 		DataManager::getInstance().mousePos.x >= DataManager::getInstance().width - 300 &&
@@ -38,7 +42,8 @@ void DeathState::checkForReturnGame(float elapsedTime)
 	{
 		timePassedGame += elapsedTime;
 
-		if (timePassedGame >= 3.0f && timePassedGame <= 3.1f) {
+		if (timePassedGame >= 3.0f && timePassedGame <= 3.1f)
+		{
 			timePassedGame = 0;
 			DataManager::getInstance().soundManager.setVolume(0.2);
 			DataManager::getInstance().stateHandler.setState(StateHandler::States::MENU);
@@ -50,13 +55,14 @@ void DeathState::checkForReturnGame(float elapsedTime)
 		}
 		DataManager::getInstance().scaleLoading = timePassedGame * 10;
 	}
-	else {
+	else
+	{
 		DataManager::getInstance().scaleLoading = 0;
-		timePassedGame= 0;
+		timePassedGame = 0;
 	}
 }
 
-void DeathState::checkForReturnMenu(float elapsedTime) 
+void DeathState::checkForReturnMenu(const float elapsedTime)
 {
 	if (DataManager::getInstance().mousePos.y >= 60 && DataManager::getInstance().mousePos.y <= 110 &&
 		DataManager::getInstance().mousePos.x >= DataManager::getInstance().width - 300 &&
@@ -64,7 +70,8 @@ void DeathState::checkForReturnMenu(float elapsedTime)
 	{
 		timePassedMenu += elapsedTime;
 
-		if (timePassedMenu >= 3.0f && timePassedMenu <= 3.1f) {
+		if (timePassedMenu >= 3.0f && timePassedMenu <= 3.1f)
+		{
 			timePassedMenu = 0;
 			DataManager::getInstance().soundManager.setVolume(0.2);
 			DataManager::getInstance().stateHandler.setState(StateHandler::States::GAME);
@@ -77,12 +84,11 @@ void DeathState::checkForReturnMenu(float elapsedTime)
 					isBackgroundMusicon = true;
 				}
 			}
-
 		}
 		DataManager::getInstance().scaleLoading = timePassedMenu * 10;
 	}
-	else {
+	else
+	{
 		timePassedMenu = 0;
 	}
 }
-

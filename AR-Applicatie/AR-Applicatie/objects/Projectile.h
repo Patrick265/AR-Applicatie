@@ -1,9 +1,9 @@
 #pragma once
+
 #include "../objects/GameObject.h"
 
 class Projectile : public GameObject
 {
-private:
 	int gravity;
 	Math::vec3d velocity;
 
@@ -14,5 +14,5 @@ public:
 
 	void update(float deltaTime);
 	void hasHit();
-	bool canBeDestroyed();
+	bool canBeDestroyed() const;
 };

@@ -4,7 +4,7 @@
 #include "../data/DataManager.h"
 #include "../states/GameState.h"
 
-Wildling::Wildling(Player *player, std::vector<Wildling *> *wildlings, float x)
+Wildling::Wildling(Player *player, std::vector<Wildling *> *wildlings, const float x)
 {
 	this->player = player;
 	this->wildlings = wildlings;
@@ -14,11 +14,6 @@ Wildling::Wildling(Player *player, std::vector<Wildling *> *wildlings, float x)
 	position.z = 1;
 	velocity.y = 1;
 	currentAction = Action::CLIMB;
-}
-
-void Wildling::spawn()
-{
-
 }
 
 void Wildling::update(const float deltaTime)
@@ -37,7 +32,7 @@ void Wildling::update(const float deltaTime)
 		climb(deltaTime);
 	}
 	//Pulling up
-	else if (currentAction == Action::PULL_UP) 
+	else if (currentAction == Action::PULL_UP)
 	{
 		pullUp(deltaTime);
 	}
@@ -47,14 +42,13 @@ void Wildling::update(const float deltaTime)
 		run(deltaTime);
 	}
 	//Attacking
-	else if (currentAction == Action::ATTACK) 
+	else if (currentAction == Action::ATTACK)
 	{
 		attack(deltaTime);
 	}
 }
 
-
-bool Wildling::isHit(float xProjectile, float yProjectile)
+bool Wildling::isHit(const float xProjectile, const float yProjectile)
 {
 	if (abs(xProjectile - position.x) < 2 && abs(yProjectile - position.y - 6) < 2)
 	{
@@ -70,7 +64,7 @@ void Wildling::die()
 	getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::FALL);
 }
 
-bool Wildling::canBeDestroyed()
+bool Wildling::canBeDestroyed() const
 {
 	return position.y < -10;
 }
@@ -145,7 +139,7 @@ void Wildling::run(const float deltaTime)
 			if (position.x > player->getPosition().x)
 				getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_LEFT);
 			else
-				getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_RIGHT);		
+				getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_RIGHT);
 		}
 	}
 }
@@ -153,7 +147,7 @@ void Wildling::run(const float deltaTime)
 void Wildling::attack(const float deltaTime)
 {
 	//If the second half of the attack animation is initiated, kill the player
-	if (getComponent<AnimationComponent>()->getAniDirection() == true) 
+	if (getComponent<AnimationComponent>()->getAniDirection())
 	{
 		player->setCurrentAction(Player::Action::FALLING);
 		player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::FALL);
@@ -165,7 +159,7 @@ void Wildling::attack(const float deltaTime)
 	if (getComponent<AnimationComponent>()->getCurrentAnimation() == AnimationComponent::Animation::CHEER)
 	{
 		currentAction = Action::CHEER;
-		DataManager::getInstance().soundManager.stopSounds();		
+		DataManager::getInstance().soundManager.stopSounds();
 		DataManager::getInstance().soundManager.setVolume(1.0);
 		DataManager::getInstance().soundManager.playSound(SoundManager::Sound::LOSS, false);
 		GameState *state = dynamic_cast<GameState*>(&DataManager::getInstance().stateHandler.getState());

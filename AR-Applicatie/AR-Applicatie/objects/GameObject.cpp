@@ -24,23 +24,23 @@ void GameObject::draw(std::map<std::string, Graphics::mesh> &meshes, std::map<st
 		c->draw(meshes, textures);
 }
 
-void GameObject::update(const float elapsedTime)
+void GameObject::update(float elapsedTime)
 {
 	for (auto &c : components)
 		c->update(elapsedTime);
 }
 
-void GameObject::setPosition(Math::vec3d pos)
+void GameObject::setPosition(const Math::vec3d pos)
 {
 	this->position = pos;
 }
 
-void GameObject::setRotation(Math::vec3d rot)
+void GameObject::setRotation(const Math::vec3d rot)
 {
 	this->rotation = rot;
 }
 
-void GameObject::setScale(Math::vec3d scale)
+void GameObject::setScale(const Math::vec3d scale)
 {
 	this->scale = scale;
 }

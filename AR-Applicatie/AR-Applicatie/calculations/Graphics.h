@@ -1,25 +1,25 @@
 #pragma once
 
 #include <vector>
-
 #include "Math.h"
 
-class Graphics {
-private:
+class Graphics
+{
 public:
-
-	struct vertex {
+	struct vertex
+	{
 		//vertex position
 		Math::vec3d p;
 		//vertex normal
 		Math::vec3d vn;
 		//texture coordinate
-		Math::vec2d vt;	
+		Math::vec2d vt;
 		//Face normal
 		Math::vec3d fn;
 	};
 
-	struct mesh {
+	struct mesh
+	{
 		std::vector<vertex> vertices;
 	};
 
@@ -39,6 +39,5 @@ public:
 
 		@param mesh - The given mesh
 	*/
-	static void inverseNormals(Graphics::mesh &mesh);
-
+	static void inverseNormals(mesh &mesh);
 };

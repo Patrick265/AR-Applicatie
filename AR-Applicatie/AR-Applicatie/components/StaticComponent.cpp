@@ -21,7 +21,7 @@ void StaticComponent::draw(std::map<std::string, Graphics::mesh>& meshes, std::m
 	glRotatef(gameObject->getRotation().z, 0, 0, 1);
 	glScalef(gameObject->getScale().x, gameObject->getScale().y, gameObject->getScale().z);
 
-	DrawHandler::drawMesh_array(meshes[mesh], textures[texture]);
+	DrawHandler::drawMeshArray(meshes[mesh], textures[texture]);
 
 	glPopMatrix();
 }

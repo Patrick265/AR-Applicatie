@@ -3,8 +3,8 @@
 
 Projectile::Projectile(float x, float xVelocity, float yVelocity)
 {
-	position = {x, 22, 1};
-	velocity = {xVelocity, yVelocity, 0};
+	position = { x, 22, 1 };
+	velocity = { xVelocity, yVelocity, 0 };
 	gravity = 10;
 	isActive = true;
 }
@@ -18,8 +18,6 @@ void Projectile::update(float deltaTime)
 	position.x += deltaTime * velocity.x;
 	position.y += deltaTime * velocity.y;
 	position.z += deltaTime * velocity.z;
-
-	// rotation = {rotation.x + 1, rotation.y + 1, rotation.z + 1};
 }
 
 void Projectile::hasHit()
@@ -29,7 +27,7 @@ void Projectile::hasHit()
 	isActive = false;
 }
 
-bool Projectile::canBeDestroyed()
+bool Projectile::canBeDestroyed() const
 {
 	return position.y < 0;
 }

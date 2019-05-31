@@ -11,27 +11,15 @@ Player::Player()
 	currentAction = Action::IDLE;
 }
 
-void Player::spawn()
-{
-
-}
-
 void Player::update(const float deltaTime)
 {
 	GameObject::update(deltaTime);
-
-	//if (isDead)
-	//	return;
 
 	//If the player is currently falling
 	if (currentAction == Action::FALLING)
 	{
 		velocity.y -= deltaTime * GRAVITY;
 		position.y += deltaTime * velocity.y;
-
-		//When below a certain point, kill the player (lose the game) 
-		if (position.y <= -1)
-			kill();
 	}
 	else
 	{
@@ -70,11 +58,6 @@ void Player::update(const float deltaTime)
 	}
 }
 
-void Player::kill()
-{
-	// TODO: Add kill logic
-}
-
 void Player::onIdle(const float velocity)
 {
 	//If outside the idle distance
@@ -85,16 +68,13 @@ void Player::onIdle(const float velocity)
 		{
 			currentAction = Action::RUNRIGHT;
 			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_RIGHT);
-
 		}
 		//To the right of the target
 		else if (position.x > targetX)
 		{
 			currentAction = Action::RUNLEFT;
 			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::RUN_LEFT);
-
 		}
-
 	}
 	//If in idle distance
 	else
@@ -103,13 +83,8 @@ void Player::onIdle(const float velocity)
 		{
 			currentAction = Action::ATTACK;
 			getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_MOUSE);
-
 		}
 	}
-}
-
-void Player::onFalling(const float velocity)
-{
 }
 
 void Player::toLeft(const float velocity)

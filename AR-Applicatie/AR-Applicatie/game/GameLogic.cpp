@@ -29,11 +29,11 @@ GameLogic::GameLogic()
 	wallTop->setPosition({ 0, -9, 0 });
 	wallTop->setScale({ 0.5, 0.5, 0.5 });
 
-	skybox = new GameObject();
-	skybox->addComponent(new StaticComponent("skybox", "skybox"));
-	skybox->setPosition({ 0,0,0 });
-	skybox->setScale({ 1,1,1 });
-	skybox->setPosition({-160,0,0});
+	skyBox = new GameObject();
+	skyBox->addComponent(new StaticComponent("skybox", "skybox"));
+	skyBox->setPosition({ 0,0,0 });
+	skyBox->setScale({ 1,1,1 });
+	skyBox->setPosition({ -160,0,0 });
 
 	player = new Player();
 	player->addComponent(new AnimationComponent(Rig("elf", Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 })));
@@ -59,11 +59,7 @@ GameLogic::~GameLogic()
 		delete p;
 }
 
-void GameLogic::start()
-{
-}
-
-void GameLogic::update(float deltaTime)
+void GameLogic::update(const float deltaTime)
 {
 	// Add elapsedTime
 	elapsedTime += std::chrono::milliseconds(static_cast<int>(deltaTime * 1000.0f));
@@ -76,7 +72,7 @@ void GameLogic::update(float deltaTime)
 		for (auto && wildling : wildlings)
 			wildling->die();
 
-		if(gameScore > highScore)
+		if (gameScore > highScore)
 		{
 			DataManager::getInstance().writeHighscore(gameScore);
 			highScore = gameScore;
@@ -93,11 +89,11 @@ void GameLogic::update(float deltaTime)
 	handleMouse();
 
 	// Destroy all objects that need to be destroyed
-	for (int i = 0; i < int(projectiles.size()); i++)
+	for (auto i = 0; i < int(projectiles.size()); i++)
 		if (projectiles[i]->canBeDestroyed())
 			projectiles.erase(projectiles.begin() + i--);
 
-	for (int i = 0; i < int(wildlings.size()); i++)
+	for (auto i = 0; i < int(wildlings.size()); i++)
 		if (wildlings[i]->canBeDestroyed())
 			wildlings.erase(wildlings.begin() + i--);
 
@@ -127,7 +123,7 @@ void GameLogic::update(float deltaTime)
 		wildling->addComponent(new AnimationComponent(Rig("goblin",
 			Math::vec3d{ 0,0,0 }, Math::vec3d{ 0.5,0.5,0.5 })));
 		wildling->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::CLIMB);
-	
+
 		wildlings.push_back(wildling);
 		counter = 0;
 	}
@@ -136,16 +132,16 @@ void GameLogic::update(float deltaTime)
 	player->update(deltaTime);
 
 	// Update all wildlings
-	for (Wildling* wildling : wildlings)
+	for (auto wildling : wildlings)
 		wildling->update(deltaTime);
 
 	// Update all projectiles
-	for (Projectile* projectile : projectiles)
+	for (auto projectile : projectiles)
 		projectile->update(deltaTime);
 
 	// Check collision
-	for (Wildling* wildling : wildlings)
-		for (Projectile* projectile : projectiles)
+	for (auto wildling : wildlings)
+		for (auto projectile : projectiles)
 			if (projectile->isActive && wildling->isHit(projectile->getPosition().x, projectile->getPosition().y))
 			{
 				projectile->hasHit();
@@ -179,11 +175,11 @@ void GameLogic::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std
 		"Highscore : " + std::to_string(highScore), GLUT_STROKE_ROMAN, 0.25, 0.25);
 }
 
-void GameLogic::throwProjectile(float xVelocity, float yVelocity)
+void GameLogic::throwProjectile(const float xVelocity, const float yVelocity)
 {
-	Projectile *p = new Projectile(player->getPosition().x, xVelocity, yVelocity);
+	auto p = new Projectile(player->getPosition().x, xVelocity, yVelocity);
 	p->addComponent(new StaticComponent(DataManager::getInstance().currentWeapon, DataManager::getInstance().currentWeapon));
-	   	
+
 	p->setScale(Math::vec3d{ 1.0,1.0,1.0 });
 	projectiles.push_back(p);
 	DataManager::getInstance().soundManager.playSound(SoundManager::Sound::THROW, false);
@@ -196,10 +192,10 @@ std::vector<GameObject *> GameLogic::getGameObjects()
 	gameObjects.push_back(wall);
 	gameObjects.push_back(wallTop);
 	gameObjects.push_back(player);
-	gameObjects.push_back(skybox);
-	for (Wildling* wildling : wildlings)
+	gameObjects.push_back(skyBox);
+	for (auto wildling : wildlings)
 		gameObjects.push_back(wildling);
-	for (Projectile* projectile : projectiles)
+	for (auto projectile : projectiles)
 		gameObjects.push_back(projectile);
 	return gameObjects;
 }
@@ -229,7 +225,6 @@ void GameLogic::handleMouse()
 
 	const auto first = mouseHistory.front();
 	const auto last = mouseHistory.back();
-
 
 	//If the player is not current attacking, ignore the rest
 	if (player->getCurrentAction() != Player::Action::ATTACK)
