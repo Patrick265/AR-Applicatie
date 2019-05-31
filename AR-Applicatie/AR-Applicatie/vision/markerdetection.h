@@ -1,17 +1,35 @@
 #pragma once
 
 #include <opencv2/opencv.hpp>
+#include "../util/Exceptions.h"
 
 class markerdetection 
 {
 	 void resetBlobDetector();
 	 int checkBounds(cv::Point point1, cv::Point point2);
 	 void detectMarker();
-	 void drawBounds(cv::Mat drawImg);
-	 void checkAllBounds(cv::Mat drawImg);
+	 void drawBounds(cv::Mat draw_img);
+	 void checkAllBounds(cv::Mat draw_img);
+	 void readRGBValues();
 	 void calibrate();
 	 void excecuteMouseDetection();
 	 void excecuteOpenCVDetection();
+
+	 const int SCREEN_DIVIDER_RATIO = 5;
+	 const int SCREEN_RIGHT_SIDE_BOUND_START = 4;
+
+	 cv::Mat frame, frame_threshold;
+	 Exceptions exception;
+	 cv::Mat blob_img;
+	 cv::Mat original_blob_img;
+	 int thresholdLower = -1;
+	 int thresholdUpper = -1;
+	 int threshold = 200;
+
+	 cv::Ptr<cv::SimpleBlobDetector> detector;
+	 cv::SimpleBlobDetector::Params params;
+	 std::vector<cv::KeyPoint> my_blobs;
+
 
 public:
 	// typesafe enums
