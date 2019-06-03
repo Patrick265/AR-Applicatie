@@ -14,7 +14,7 @@
 
 class MousePicking {
 private:
-	DataManager *dataMP = &DataManager::getInstance();
+
 	int windowHeight;
 	//The object the MousePicker has to check
 	std::vector<GameObject*> objectsToCheck;

@@ -6,6 +6,8 @@
 //	Author: Tim de Booij, Patrick de Jonge
 */
 
+DataManager *dataMP = &DataManager::getInstance();
+
 // Initialise values
 MousePicking::MousePicking(std::vector<GameObject *> objects, int height, int x, int y)
 {
