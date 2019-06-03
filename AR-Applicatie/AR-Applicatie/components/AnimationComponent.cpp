@@ -5,8 +5,6 @@
 #include "../data/DataManager.h"
 #include "../game/GameLogic.h"
 
-extern int yTriggerDistance;
-
 AnimationComponent::AnimationComponent(const Rig rig)
 {
 	currentAnimation = Animation::IDLE;
@@ -97,13 +95,17 @@ void AnimationComponent::positionToRotation(const int y)
 {
 	const auto height = DataManager::getInstance().height;
 
-	//int numer = Y_TRIGGER_DISTANCE;
 	//Ensures the rotation is 160 at the top trigger area of the screen, and 0 at the bottom trigger area of the screen
 	const auto rotationPerPixel = ATTACK_MAX_ROTATION / (height - yTriggerDistance * 2);
 
 	//Inverse, because 0 == 160 degrees rotation
 	// -y_trigger_distance, because the rotation has to end when entering the trigger area
 	currentRotation = ATTACK_MAX_ROTATION - (y - yTriggerDistance) * rotationPerPixel;
+}
+
+void AnimationComponent::setTriggerDistance(int yTriggerDistance)
+{
+	this->yTriggerDistance = yTriggerDistance;
 }
 
 void AnimationComponent::run(const float elapsedTime)

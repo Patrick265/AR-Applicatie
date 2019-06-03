@@ -15,6 +15,7 @@ class AnimationComponent : public Component
 
 	//The maximum rotation for the attack animation
 	const float ATTACK_MAX_ROTATION = 160.0f;
+	int yTriggerDistance;
 
 public:
 
@@ -52,6 +53,8 @@ public:
 		Returns the current direction of the animation
 	*/
 	bool getAniDirection() { return aniForward; }
+
+	void setTriggerDistance(int yTriggerDistance);
 private:
 
 	// The currently selected animation

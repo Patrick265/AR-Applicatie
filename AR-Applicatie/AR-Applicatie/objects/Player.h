@@ -18,11 +18,11 @@ public:
 
 	Player();
 
-	void update(const float deltaTime);
+	void update(float deltaTime);
 
-	const Action &getCurrentAction() { return currentAction; }
+	Action &getCurrentAction() { return currentAction; }
 	void setCurrentAction(const Action &action) { currentAction = action; }
-	const float &getIdleRange() { return IDLE_RANGE; }
+	float getIdleRange() const { return IDLE_RANGE; }
 
 private:
 

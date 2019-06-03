@@ -1,21 +1,9 @@
 #include "GameLogic.h"
 #include "../util/ObjLoader.h"
-#include <queue>
 #include "../components/StaticComponent.h"
 #include "../components/AnimationComponent.h"
 #include "../data/DataManager.h"
 #include <GL/freeglut_std.h>
-
-int sHeight;
-int yTriggerDistance;
-
-std::queue<markerdetection::Point2D> mouseHistory;
-bool canThrow = false;
-
-float counter = 0;
-float spawnRate = 0;
-int gameScore = 0;
-int highScore;
 
 GameLogic::GameLogic()
 {
@@ -39,6 +27,7 @@ GameLogic::GameLogic()
 	player->addComponent(new AnimationComponent(Rig("elf", Math::vec3d{ 0,0,0 }, Math::vec3d{ 1.0,1.0,1.0 })));
 	player->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::ATTACK_MOUSE);
 	player->setPosition(Math::vec3d{ wallWidth / 2.0f,20.2f,-2.0f });
+	refreshGameObjects();
 
 	gameDuration = std::chrono::duration<float, std::milli>(1 * 60 * 1000);
 	elapsedTime = std::chrono::duration<float, std::milli>(0);
@@ -69,7 +58,7 @@ void GameLogic::update(const float deltaTime)
 	if (!isOver && elapsedTime >= gameDuration)
 	{
 		isOver = true;
-		for (auto && wildling : wildlings)
+		for (auto wildling : wildlings)
 			wildling->die();
 
 		if (gameScore > highScore)
@@ -91,11 +80,17 @@ void GameLogic::update(const float deltaTime)
 	// Destroy all objects that need to be destroyed
 	for (auto i = 0; i < int(projectiles.size()); i++)
 		if (projectiles[i]->canBeDestroyed())
+		{
 			projectiles.erase(projectiles.begin() + i--);
+			refreshGameObjects();
+		}
 
 	for (auto i = 0; i < int(wildlings.size()); i++)
 		if (wildlings[i]->canBeDestroyed())
+		{
 			wildlings.erase(wildlings.begin() + i--);
+			refreshGameObjects();
+		}
 
 	// Add wildling if there are too few
 	counter += deltaTime;
@@ -103,11 +98,13 @@ void GameLogic::update(const float deltaTime)
 	{
 		auto xPos = 0;
 		auto exit = false;
+
+		// Look for an open space to spawn a wilding
 		for (auto i = 0; i < 10; ++i)
 		{
 			xPos = static_cast<int>(rand() % wallWidth - wallWidth / 2.0f);
 			exit = false;
-			for (auto && wildling : wildlings)
+			for (auto wildling : wildlings)
 			{
 				if (wildling->getPosition().y < 10 && abs(wildling->getPosition().x - xPos) < 2)
 				{
@@ -125,6 +122,7 @@ void GameLogic::update(const float deltaTime)
 		wildling->getComponent<AnimationComponent>()->setAnimation(AnimationComponent::Animation::CLIMB);
 
 		wildlings.push_back(wildling);
+		refreshGameObjects();
 		counter = 0;
 	}
 
@@ -150,14 +148,14 @@ void GameLogic::update(const float deltaTime)
 			}
 
 	// Update components
-	for (auto o : getGameObjects())
+	for (auto o : gameObjects)
 		for (auto c : o->getComponents())
 			c->update(deltaTime);
 }
 
 void GameLogic::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std::string, uint16_t>& textures)
 {
-	for (auto o : getGameObjects())
+	for (auto o : gameObjects)
 		for (auto c : o->getComponents())
 			c->draw(meshes, textures);
 
@@ -178,16 +176,17 @@ void GameLogic::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std
 void GameLogic::throwProjectile(const float xVelocity, const float yVelocity)
 {
 	auto p = new Projectile(player->getPosition().x, xVelocity, yVelocity);
-	p->addComponent(new StaticComponent(DataManager::getInstance().currentWeapon, DataManager::getInstance().currentWeapon));
+	p->addComponent(new StaticComponent(DataManager::getInstance().currentWeapon,
+		DataManager::getInstance().currentWeapon));
 
 	p->setScale(Math::vec3d{ 1.0,1.0,1.0 });
 	projectiles.push_back(p);
+	refreshGameObjects();
 	DataManager::getInstance().soundManager.playSound(SoundManager::Sound::THROW, false);
 }
 
-std::vector<GameObject *> GameLogic::getGameObjects()
+std::vector<GameObject *> GameLogic::refreshGameObjects()
 {
-	std::vector<GameObject *> gameObjects;
 	gameObjects.clear();
 	gameObjects.push_back(wall);
 	gameObjects.push_back(wallTop);
@@ -232,12 +231,14 @@ void GameLogic::handleMouse()
 
 	sHeight = DataManager::getInstance().height;
 	yTriggerDistance = static_cast<int>(sHeight / 3.0f);
+	player->getComponent<AnimationComponent>()->setTriggerDistance(yTriggerDistance);
 
 	//If a weapon is not ready
 	if (!canThrow)
 	{
 		//If the mouse is within the trigger area at the top
-		if (mousePos.y - yTriggerDistance <= 0.0f) {
+		if (mousePos.y - yTriggerDistance <= 0.0f)
+		{
 			//Throw
 			canThrow = true;
 		}
