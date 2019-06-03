@@ -26,7 +26,7 @@ void onIdle()
 	//Calculate delta time
 	static float lastTime;
 	const auto currentTime = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
-	const auto deltaTime = currentTime - lastTime;
+	const float deltaTime = currentTime - lastTime;
 	lastTime = currentTime;
 
 	if (deltaTime < 0.0f || deltaTime > 1.0f)
@@ -54,6 +54,6 @@ void onDisplay()
 
 void runOpenCVThread()
 {
-	while (true)
+	while (m.isRunning)
 		m.runMarkerDetection(markerdetection::DetectionMode::opencv);
 }

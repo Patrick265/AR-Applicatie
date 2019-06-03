@@ -19,6 +19,10 @@ bool newMousePosition = false;
 int width;
 int height;
 
+markerdetection::~markerdetection()
+{
+	isRunning = false;
+}
 /*
 //	This function is used for getting the detection mode.
 //

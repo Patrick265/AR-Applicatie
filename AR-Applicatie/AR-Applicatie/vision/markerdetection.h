@@ -41,6 +41,7 @@ public:
 
 	//Global functions
 
+	~markerdetection();
 	/*
 	//	This function starts the openCV module.
 	//
@@ -76,4 +77,6 @@ public:
 	Point2D getCoordinates();
 
 	bool hasNewMousePosition();
+
+	bool isRunning = true;
 };
