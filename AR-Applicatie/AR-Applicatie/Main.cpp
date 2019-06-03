@@ -2,10 +2,7 @@
 #include <GL/freeglut.h>
 #include <thread>
 
-DataManager *data = &DataManager::getInstance();
 markerdetection m;
-float deltaTime;
-float lastFrameTime;
 
 void onIdle();
 void onDisplay();
@@ -13,6 +10,7 @@ void runOpenCVThread();
 
 int main(int argc, char** argv)
 {
+	auto data = &DataManager::getInstance();
 	data->initGlut(argc, argv, onIdle, onDisplay);
 	data->initResources();
 
@@ -26,15 +24,17 @@ int main(int argc, char** argv)
 void onIdle()
 {
 	//Calculate delta time
+	static float lastTime;
 	const auto currentTime = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
-	deltaTime = currentTime - lastFrameTime;
-	lastFrameTime = currentTime;
+	const auto deltaTime = currentTime - lastTime;
+	lastTime = currentTime;
 
-	if (deltaTime < 0 || deltaTime > 1)
+	if (deltaTime < 0.0f || deltaTime > 1.0f)
 		return;
 
+	auto data = &DataManager::getInstance();
 	data->stateHandler.update(deltaTime);
-	data->updateCamera();
+	data->updateCamera(deltaTime);
 
 	if (m.hasNewMousePosition())
 		data->onMotionData(static_cast<int>(data->mousePos.x), static_cast<int>(data->mousePos.y));
@@ -44,6 +44,7 @@ void onIdle()
 
 void onDisplay()
 {
+	auto data = &DataManager::getInstance();
 	data->standardRenderOperations();
 	data->stateHandler.draw(data->meshes, data->textures);
 	data->displayInfo();

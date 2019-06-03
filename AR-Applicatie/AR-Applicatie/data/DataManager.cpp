@@ -8,9 +8,6 @@
 #include <ctime>
 #include <fstream>
 
-extern float deltaTime;
-extern float lastFrameTime;
-
 DataManager::DataManager()
 	: width(1280), height(720), mousePos(), scaleLoading(), mouseControl(true), cursorId(), loadingId(0)
 {
@@ -174,7 +171,7 @@ void DataManager::displayInfo() const
 	glDisable(GL_BLEND);
 }
 
-void DataManager::updateCamera()
+void DataManager::updateCamera(const float deltaTime)
 {
 	const float speed = 6;
 	if (keys[int('a')]) moveCamera(0, deltaTime * speed);
@@ -210,8 +207,6 @@ void DataManager::initGlut(int argc, char** argv, void(*onIdle)(), void(*onDispl
 	glutPassiveMotionFunc(onMousePassiveMotion);
 	glutMotionFunc(onMotion);
 	glutReshapeFunc(onReshape);
-
-	lastFrameTime = static_cast<float>(glutGet(GLUT_ELAPSED_TIME));
 }
 
 void DataManager::initResources()

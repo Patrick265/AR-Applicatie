@@ -95,13 +95,10 @@ markerdetection::Point2D markerdetection::getCoordinates()
 //	@return returnvalue returns the value 0 or 1, 0 for not in bounds and 1 for in bounds
 //
 */
-int markerdetection::checkBounds(const cv::Point point1, const cv::Point point2)
+bool markerdetection::checkBounds(const cv::Point point1, const cv::Point point2) const
 {
-	auto returnValue = 0;
-	if (markerPosition.x >= point1.x && markerPosition.x <= point2.x && markerPosition.y >= point1.y && markerPosition.y <= point2.y)
-		returnValue = 1;
-
-	return returnValue;
+	return markerPosition.x >= point1.x && markerPosition.x <= point2.x
+		&& markerPosition.y >= point1.y && markerPosition.y <= point2.y;
 }
 
 /*
@@ -111,14 +108,14 @@ void markerdetection::detectMarker()
 {
 	newMousePosition = true;
 	auto size = 0;
-	for (const auto k : myBlobs)
+	for (const auto keyPoint : myBlobs)
 	{
-		if (k.size > size)
+		if (keyPoint.size > size)
 		{
-			Point2D points{ k.pt.x, k.pt.y };
-			markerPosition.x = static_cast<float>(k.pt.x);
-			markerPosition.y = static_cast<float>(k.pt.y);
-			size = static_cast<int>(k.size);
+			Point2D points{ keyPoint.pt.x, keyPoint.pt.y };
+			markerPosition.x = static_cast<float>(keyPoint.pt.x);
+			markerPosition.y = static_cast<float>(keyPoint.pt.y);
+			size = static_cast<int>(keyPoint.size);
 		}
 	}
 }
@@ -142,71 +139,6 @@ bool markerdetection::hasNewMousePosition()
 		return true;
 	}
 	return false;
-}
-
-/*
-//	This function is used for drawing the borders on the openCV screen.
-//
-*/
-void markerdetection::drawBounds(cv::Mat drawImg) const
-{
-	//Draw Horizontal raster
-	line(drawImg, cv::Point(0, height / SCREEN_DIVIDER_RATIO), cv::Point(width, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 255, 255), 2);
-	line(drawImg, cv::Point(0, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START),
-		cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 255, 255), 2);
-
-	//Draw Vertical raster
-	line(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO, 0), cv::Point(width / SCREEN_DIVIDER_RATIO, height), CV_RGB(255, 255, 255), 2);
-	line(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, 0),
-		cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height), CV_RGB(255, 255, 255), 2);
-}
-
-/*
-//	This function is used for checking if the x and the y values of the object are in the bounds.
-//
-*/
-void markerdetection::checkAllBounds(cv::Mat drawImg)
-{
-	//Check left bound
-	if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO, 0),
-		cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO)) == 1)
-	{
-		rectangle(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO, 0),
-			cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO), CV_RGB(255, 0, 0), 5, 1, 0);
-	}
-
-	//Check Upper bound
-	if (checkBounds(cv::Point(0, height / SCREEN_DIVIDER_RATIO), cv::Point(width / SCREEN_DIVIDER_RATIO,
-		height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START)) == 1)
-	{
-		rectangle(drawImg, cv::Point(0, height / 5),
-			cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
-	}
-
-	//Check right bound
-	if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO),
-		cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START)) == 1)
-	{
-		rectangle(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO),
-			cv::Point(width, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
-	}
-
-	//Check lower bound
-	if (checkBounds(cv::Point(width / 5, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START),
-		cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height)) == 1)
-	{
-		rectangle(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START),
-			cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height), CV_RGB(255, 0, 0), 5, 1, 0);
-	}
-
-	//Check middle bound
-	if (checkBounds(cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO),
-		cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START, height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START)) == 1)
-	{
-		rectangle(drawImg, cv::Point(width / SCREEN_DIVIDER_RATIO, height / SCREEN_DIVIDER_RATIO),
-			cv::Point(width / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START,
-				height / SCREEN_DIVIDER_RATIO * SCREEN_RIGHT_SIDE_BOUND_START), CV_RGB(255, 0, 0), 5, 1, 0);
-	}
 }
 
 /*
@@ -257,7 +189,7 @@ void markerdetection::calibrate()
 		{
 			counterUp = 0;
 		}
-		if ((myBlobs.size() == 0 || myBlobs.size() > 1) && thresholdUpper != -1)
+		if (myBlobs.size() != 1 && thresholdUpper != -1)
 		{
 			counterDown++;
 			if (counterDown == 3)

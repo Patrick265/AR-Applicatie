@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-class Exceptions 
+class Exceptions : std::exception
 {
 	
 public:

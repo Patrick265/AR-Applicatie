@@ -92,7 +92,7 @@ public:
 	// Helper methods
 	void standardRenderOperations() const;
 	void displayInfo() const;
-	void updateCamera();
+	void updateCamera(float deltaTime);
 	void displaySettings() const;
 
 	// Init methods

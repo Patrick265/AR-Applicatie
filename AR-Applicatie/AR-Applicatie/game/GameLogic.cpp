@@ -53,9 +53,9 @@ GameLogic::~GameLogic()
 {
 	delete wall;
 	delete player;
-	for (auto &&p : projectiles)
+	for (auto p : projectiles)
 		delete p;
-	for (auto &&p : wildlings)
+	for (auto p : wildlings)
 		delete p;
 }
 
