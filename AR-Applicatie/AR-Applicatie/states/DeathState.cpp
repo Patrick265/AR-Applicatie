@@ -5,27 +5,35 @@
 DeathState::DeathState(GameLogic &gameLogic)
 	: gameLogic(gameLogic), timePassedGame(0), timePassedMenu(0)
 {
+	this->width = DataManager::getInstance().width;
+	this->height = DataManager::getInstance().height;
 }
 
 DeathState::~DeathState() = default;
 
 void DeathState::draw(std::map<std::string, Graphics::mesh>& meshes, std::map<std::string, uint16_t>& textures)
 {
+	
 	gameLogic.draw(meshes, textures);
 	DataManager::getInstance().drawBackgroundScreen();
-	DataManager::getInstance().drawDefaultText(DataManager::getInstance().width / 2 - 210,
-	                                           (DataManager::getInstance().height / 2) + 40, "You Lose",
-	                                           GLUT_STROKE_ROMAN, 0.75, 0.75);
-	DataManager::getInstance().drawDefaultText(DataManager::getInstance().width - 300, 50, "Return to map",
-	                                           GLUT_STROKE_ROMAN, 0.25, 0.25);
-	DataManager::getInstance().drawDefaultText(DataManager::getInstance().width - 300, 100, "Return to game",
-	                                           GLUT_STROKE_ROMAN, 0.25, 0.25);
+	DataManager::getInstance().drawDefaultText(this->width / 2 - 210,
+	                                           (this->height / 2) + 40, "You Lose",
+	                                           GLUT_STROKE_ROMAN, this->headerSize, this->headerSize);
+	DataManager::getInstance().drawDefaultText(this->width - 300, 50, "Return to map",
+	                                           GLUT_STROKE_ROMAN, this->textSize, this->textSize);
+	DataManager::getInstance().drawDefaultText(this->width - 300, 100, "Return to game",
+	                                           GLUT_STROKE_ROMAN, this->textSize, this->textSize);
 }
 
 void DeathState::update(const float elapsedTime)
 {
+	//Checking for mouse pos and if its hovering on the buttons
 	hovering(elapsedTime);
+	//Updating the gamelogic
 	gameLogic.update(elapsedTime);
+	//Saving the width every update cycle
+	this->width = DataManager::getInstance().width;
+	this->height = DataManager::getInstance().height;
 }
 
 void DeathState::hovering(const float elapsedTime)
@@ -36,14 +44,18 @@ void DeathState::hovering(const float elapsedTime)
 
 void DeathState::checkForReturnGame(const float elapsedTime)
 {
+	//Checking if mouse pos is in boundaries
 	if (DataManager::getInstance().mousePos.y >= 5 && DataManager::getInstance().mousePos.y <= 50 &&
-		DataManager::getInstance().mousePos.x >= DataManager::getInstance().width - 300 &&
-		DataManager::getInstance().mousePos.x <= DataManager::getInstance().width)
+		DataManager::getInstance().mousePos.x >= static_cast<float>(this->width) - 300.0f &&
+		DataManager::getInstance().mousePos.x <= static_cast<float>(this->width))
 	{
+		// Adding to the total time
 		timePassedGame += elapsedTime;
 
+		//Checking if time is around 3s this is for the loading animation
 		if (timePassedGame >= 3.0f && timePassedGame <= 3.1f)
 		{
+			//Changing to the menu
 			timePassedGame = 0;
 			DataManager::getInstance().soundManager.setVolume(0.2);
 			DataManager::getInstance().stateHandler.setState(StateHandler::States::MENU);
@@ -57,6 +69,7 @@ void DeathState::checkForReturnGame(const float elapsedTime)
 	}
 	else
 	{
+		//When moving away from the button reset the scale of animation
 		DataManager::getInstance().scaleLoading = 0;
 		timePassedGame = 0;
 	}
@@ -64,14 +77,17 @@ void DeathState::checkForReturnGame(const float elapsedTime)
 
 void DeathState::checkForReturnMenu(const float elapsedTime)
 {
+	//Checking if mouse pos is in boundaries
 	if (DataManager::getInstance().mousePos.y >= 60 && DataManager::getInstance().mousePos.y <= 110 &&
-		DataManager::getInstance().mousePos.x >= DataManager::getInstance().width - 300 &&
-		DataManager::getInstance().mousePos.x <= DataManager::getInstance().width)
+		DataManager::getInstance().mousePos.x >= static_cast<float>(this->width) - 300.0f &&
+		DataManager::getInstance().mousePos.x <= static_cast<float>(this->width))
 	{
+		// Adding to the total time
 		timePassedMenu += elapsedTime;
-
+		//Checking if time is around 3s this is for the loading animation
 		if (timePassedMenu >= 3.0f && timePassedMenu <= 3.1f)
 		{
+			// Changing state to game
 			timePassedMenu = 0;
 			DataManager::getInstance().soundManager.setVolume(0.2);
 			DataManager::getInstance().stateHandler.setState(StateHandler::States::GAME);
@@ -89,6 +105,8 @@ void DeathState::checkForReturnMenu(const float elapsedTime)
 	}
 	else
 	{
+		// When moving away from the button reset the scale of animation
+		DataManager::getInstance().scaleLoading = 0;
 		timePassedMenu = 0;
 	}
 }
