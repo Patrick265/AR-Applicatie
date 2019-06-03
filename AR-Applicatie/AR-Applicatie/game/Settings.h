@@ -1,5 +1,5 @@
-#ifndef DEATHSTATE
-#define DEATHSTATE
+#pragma once
+
 #include <string>
 
 /*
@@ -39,5 +39,3 @@ public:
 	//Constructor
 	Settings();
 };
-
-#endif // !DEATHSTATE
