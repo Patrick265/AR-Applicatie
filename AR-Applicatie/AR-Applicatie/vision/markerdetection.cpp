@@ -9,16 +9,15 @@
 */
 
 //Global variables
-cv::VideoCapture cap(0);
+
 markerdetection::Point2D markerPosition;
-markerdetection::DetectionMode mode;
-
-bool newMousePosition = false;
-
-//Variables for camera
 int width;
 int height;
 
+markerdetection::~markerdetection()
+{
+	isRunning = false;
+}
 /*
 //	This function is used for getting the detection mode.
 //
@@ -120,16 +119,7 @@ void markerdetection::detectMarker()
 	}
 }
 
-/*
-//	This function is a callback used for using the mouse on the openCV screen.
-//
-*/
-void mouseCallback(int event, const int x, const int y, int flag, void *param)
-{
-	markerPosition.x = static_cast<float>(x);
-	markerPosition.y = static_cast<float>(y);
-	newMousePosition = true;
-}
+
 
 bool markerdetection::hasNewMousePosition()
 {
@@ -206,33 +196,10 @@ void markerdetection::calibrate()
 	threshold = (thresholdUpper + thresholdLower) / 2.0f;
 }
 
-/*
-//	This function starts the mouse detection modus.
-//
-*/
-void markerdetection::executeMouseDetection()
+
+void markerdetection::setCap(int index)
 {
-	originalBlobImg = cv::imread("Resources/Vision/Black_Picture.jpg");
-
-	blobImg = originalBlobImg;
-
-	cv::setMouseCallback("binair beeld", mouseCallback);
-
-	width = 640;
-	height = 480;
-
-	blobImg = originalBlobImg.clone();
-
-	//Showing the text
-	imshow("binair beeld", blobImg);
-	cv::resizeWindow("binair beeld", width, height);
-
-	if (cv::waitKey(1) == 32)
-	{
-		terminateDetection();
-		changeDetectionMode();
-		runMarkerDetection(getDetectionMode());
-	}
+	cap.open(index);
 }
 
 /*
@@ -310,10 +277,9 @@ void markerdetection::runMarkerDetection(const DetectionMode mode)
 
 		calibrate();
 
-		executeOpenCVDetection();
-	}
-	if (mode == DetectionMode::mouse)
-	{
-		executeMouseDetection();
+		while (isRunning)
+		{
+			executeOpenCVDetection();
+		}
 	}
 }
