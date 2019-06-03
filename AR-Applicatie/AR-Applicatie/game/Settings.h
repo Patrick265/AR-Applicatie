@@ -1,7 +1,6 @@
-#ifndef SETTINGS
-#define SETTINGS
+#ifndef DEATHSTATE
+#define DEATHSTATE
 #include <string>
-#include <iostream>
 
 /*
 //	This class is used for storing and modification of settings
@@ -30,8 +29,8 @@ public:
 	Input currentInput;
 
 	// Getter methods
-	std::string getDifficultyString()const;
-	std::string getInputString()const;
+	std::string getDifficultyString() const;
+	std::string getInputString() const;
 
 	// Change methods
 	void changeDifficulty();
@@ -41,4 +40,4 @@ public:
 	Settings();
 };
 
-#endif // !SETTINGS
+#endif // !DEATHSTATE

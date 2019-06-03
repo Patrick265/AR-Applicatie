@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GRAPHICS
+#define GRAPHICS
 
 #include <vector>
 #include "Math.h"
@@ -41,3 +42,4 @@ public:
 	*/
 	static void inverseNormals(mesh &mesh);
 };
+#endif // !GRAPHICS

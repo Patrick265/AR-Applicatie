@@ -1,3 +1,5 @@
+#ifndef MATH
+#define MATH
 #include <algorithm>
 #include "Math.h"
 
@@ -87,3 +89,4 @@ Math::vec3d Math::crossProduct(const vec3d &v1, const vec3d &v2)
 
 	return newVec;
 }
+#endif // !GRAPHICS

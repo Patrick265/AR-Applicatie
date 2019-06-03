@@ -6,14 +6,14 @@
 */
 
 Settings::Settings() {
-	resX = 1280;
-	resY = 720;
-	currentDifficulty = Difficulty::Medium;
-	currentInput = Input::Mouse;
-	isChangeDif = false;
-	isChangeInput = false;
-	isSettingsScreen = false;
-	isGameObject = false;
+	this->resX = 1280;
+	this->resY = 720;
+	this->currentDifficulty = Difficulty::Medium;
+	this->currentInput = Input::Mouse;
+	this->isChangeDif = false;
+	this->isChangeInput = false;
+	this->isSettingsScreen = false;
+	this->isGameObject = false;
 }
 
 // Returns the string of the current difficulty that is selected
@@ -26,6 +26,8 @@ std::string Settings::getDifficultyString()const
 		return "Medium";
 	case Difficulty::Hard:
 		return "Hard  ";
+	default: 
+		return "Easy  ";
 	}
 }
 
