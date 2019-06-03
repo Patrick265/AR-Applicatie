@@ -1,5 +1,10 @@
 #include "Settings.h"
 
+/*
+//	This class is used for storing and modification of settings
+//	Author: Tim de Booij
+*/
+
 Settings::Settings() {
 	resX = 1280;
 	resY = 720;
@@ -11,6 +16,7 @@ Settings::Settings() {
 	isGameObject = false;
 }
 
+// Returns the string of the current difficulty that is selected
 std::string Settings::getDifficultyString()const
 {
 	switch (this->currentDifficulty) {
@@ -39,6 +45,7 @@ void Settings::changeDifficulty()
 	}
 }
 
+// Returns the string of the current input that is selected
 std::string Settings::getInputString()const
 {
 	if (this->currentInput == Input::Marker) {
@@ -49,6 +56,7 @@ std::string Settings::getInputString()const
 	}
 }
 
+// Checks the current input and changes it to the next
 void Settings::changeInput() {
 	if (this->currentInput == Input::Marker) {
 		this->currentInput = Input::Mouse;

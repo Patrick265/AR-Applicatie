@@ -1,6 +1,12 @@
-#pragma once
+#ifndef SETTINGS
+#define SETTINGS
 #include <string>
 #include <iostream>
+
+/*
+//	This class is used for storing and modification of settings
+//	Author: Tim de Booij
+*/
 
 class Settings
 {
@@ -34,3 +40,5 @@ public:
 	//Constructor
 	Settings();
 };
+
+#endif // !SETTINGS

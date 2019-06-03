@@ -7,11 +7,16 @@
 #include <math.h>
 #include <chrono>
 
+/*
+//	This class is used for mouse picking
+//	Author: Tim de Booij, Patrick de Jonge
+*/
+
 class MousePicking {
 private:
+	DataManager *dataMP = &DataManager::getInstance();
 	int windowHeight;
 	//The object the MousePicker has to check
-
 	std::vector<GameObject*> objectsToCheck;
 	//Variables for checking what the last position of the cursor was
 	int lastX, lastY;
@@ -47,6 +52,10 @@ public:
 	time: The time that has passed since the last time update was called
 	*/
 	void update(int cursorX, int cursorY, int height, float time);
+
+	/*
+	The method returns the float which determines how far the selection progress is
+	*/
 	float getTimePassed();
 };
 
