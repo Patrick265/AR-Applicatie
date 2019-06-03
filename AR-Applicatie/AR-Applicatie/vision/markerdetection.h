@@ -8,8 +8,6 @@ class markerdetection
 	void resetBlobDetector();
 	bool checkBounds(cv::Point point1, cv::Point point2) const;
 	void detectMarker();
-	void drawBounds(cv::Mat drawImg) const;
-	void checkAllBounds(cv::Mat drawImg);
 	void calibrate();
 	void executeMouseDetection();
 	void executeOpenCVDetection();
