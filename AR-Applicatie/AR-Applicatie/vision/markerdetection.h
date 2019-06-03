@@ -5,12 +5,20 @@
 
 class markerdetection
 {
+public:
+	struct Point2D
+	{
+		float x, y;
+	};
+
+private:
 	void resetBlobDetector();
 	bool checkBounds(cv::Point point1, cv::Point point2) const;
 	void detectMarker();
 	void calibrate();
 	void executeMouseDetection();
 	void executeOpenCVDetection();
+	
 
 	const int SCREEN_DIVIDER_RATIO = 5;
 	const int SCREEN_RIGHT_SIDE_BOUND_START = 4;
@@ -26,16 +34,17 @@ class markerdetection
 	cv::Ptr<cv::SimpleBlobDetector> detector;
 	cv::SimpleBlobDetector::Params params;
 	std::vector<cv::KeyPoint> myBlobs;
+	cv::VideoCapture cap;
+
+	
+
 
 public:
 	// typesafe enums
 	enum class DetectionMode { opencv, mouse };
 
 	//struct for passing the x and y
-	struct Point2D
-	{
-		float x, y;
-	};
+	
 
 	//Global functions
 
@@ -76,5 +85,11 @@ public:
 
 	bool hasNewMousePosition();
 
+	void setCap(int index);
+
+	//public variables
 	bool isRunning = true;
+	DetectionMode mode;
+	bool newMousePosition = false;
+
 };

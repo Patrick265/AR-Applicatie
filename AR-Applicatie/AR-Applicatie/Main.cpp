@@ -16,6 +16,7 @@ int main(int argc, char** argv)
 
 	data->stateHandler.setState(StateHandler::States::MENU);
 
+
 	std::thread openCV(runOpenCVThread);
 
 	glutMainLoop();
@@ -54,6 +55,6 @@ void onDisplay()
 
 void runOpenCVThread()
 {
-	while (m.isRunning)
-		m.runMarkerDetection(markerdetection::DetectionMode::opencv);
+	m.setCap(0);
+	m.runMarkerDetection(markerdetection::DetectionMode::opencv);
 }
