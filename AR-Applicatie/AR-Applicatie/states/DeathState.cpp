@@ -77,17 +77,14 @@ void DeathState::checkForReturnGame(const float elapsedTime)
 
 void DeathState::checkForReturnMenu(const float elapsedTime)
 {
-	//Checking if mouse pos is in boundaries
 	if (DataManager::getInstance().mousePos.y >= 60 && DataManager::getInstance().mousePos.y <= 110 &&
-		DataManager::getInstance().mousePos.x >= static_cast<float>(this->width) - 300.0f &&
-		DataManager::getInstance().mousePos.x <= static_cast<float>(this->width))
+		DataManager::getInstance().mousePos.x >= DataManager::getInstance().width - 300 &&
+		DataManager::getInstance().mousePos.x <= DataManager::getInstance().width)
 	{
-		// Adding to the total time
 		timePassedMenu += elapsedTime;
-		//Checking if time is around 3s this is for the loading animation
+
 		if (timePassedMenu >= 3.0f && timePassedMenu <= 3.1f)
 		{
-			// Changing state to game
 			timePassedMenu = 0;
 			DataManager::getInstance().soundManager.setVolume(0.2);
 			DataManager::getInstance().stateHandler.setState(StateHandler::States::GAME);
@@ -105,8 +102,6 @@ void DeathState::checkForReturnMenu(const float elapsedTime)
 	}
 	else
 	{
-		// When moving away from the button reset the scale of animation
-		DataManager::getInstance().scaleLoading = 0;
 		timePassedMenu = 0;
 	}
 }
