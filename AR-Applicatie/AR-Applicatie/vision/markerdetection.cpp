@@ -193,7 +193,7 @@ void markerdetection::calibrate()
 		}
 		threshold -= 2;
 	}
-	threshold = (thresholdUpper + thresholdLower) / 2.0f;
+	threshold = static_cast<int>((thresholdUpper + thresholdLower) / 2.0f);
 }
 
 

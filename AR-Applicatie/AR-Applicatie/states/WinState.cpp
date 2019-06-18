@@ -52,7 +52,7 @@ void WinState::checkForReturnGame(const float elapsedTime)
 		{
 			timePassedGame = 0;
 			DataManager::getInstance().soundManager.stopSounds();
-			DataManager::getInstance().soundManager.setVolume(0.2);
+			DataManager::getInstance().soundManager.setVolume(0.2f);
 			DataManager::getInstance().newHighScore = false;
 			DataManager::getInstance().stateHandler.setState(StateHandler::States::MENU);
 			if (!isBackgroundMusicon)
@@ -83,7 +83,7 @@ void WinState::checkForReturnMenu(const float elapsedTime)
 			timePassedMenu = 0;
 			DataManager::getInstance().soundManager.stopSounds();
 			DataManager::getInstance().newHighScore = false;
-			DataManager::getInstance().soundManager.setVolume(0.2);
+			DataManager::getInstance().soundManager.setVolume(0.2f);
 			DataManager::getInstance().stateHandler.setState(StateHandler::States::GAME);
 			if (!isBackgroundMusicon)
 			{

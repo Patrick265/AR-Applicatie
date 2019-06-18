@@ -527,14 +527,14 @@ void DataManager::displaySettings() const
 		"\nInput:        " + inp + "     ->CHANGE<-";
 
 	glRasterPos2f(350, 260);
-	const int len = settingsInfo.length();
-	auto yPosSettings = 260;
+	const size_t len = settingsInfo.length();
+	auto yPosSettings = 260.0f;
 	for (auto i = 0; i < len; i++)
 	{
 		if (settingsInfo[i] == '\n')
 		{
 			yPosSettings += 20;
-			glRasterPos2f(350, yPosSettings);
+			glRasterPos2f(350.0f, yPosSettings);
 			continue;
 		}
 		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, settingsInfo[i]);

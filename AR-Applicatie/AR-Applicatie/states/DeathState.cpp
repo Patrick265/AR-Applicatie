@@ -57,7 +57,7 @@ void DeathState::checkForReturnGame(const float elapsedTime)
 		{
 			//Changing to the menu
 			timePassedGame = 0;
-			DataManager::getInstance().soundManager.setVolume(0.2);
+			DataManager::getInstance().soundManager.setVolume(0.2f);
 			DataManager::getInstance().stateHandler.setState(StateHandler::States::MENU);
 			if (!isBackgroundMusicon)
 			{
@@ -86,7 +86,7 @@ void DeathState::checkForReturnMenu(const float elapsedTime)
 		if (timePassedMenu >= 3.0f && timePassedMenu <= 3.1f)
 		{
 			timePassedMenu = 0;
-			DataManager::getInstance().soundManager.setVolume(0.2);
+			DataManager::getInstance().soundManager.setVolume(0.2f);
 			DataManager::getInstance().stateHandler.setState(StateHandler::States::GAME);
 			if (!isBackgroundMusicon)
 			{
